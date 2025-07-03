@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YHOTMOS",
+  title: "YHOTAMOS",
   description:
-    "YHOTMOS - My Personal Blog and Portfolio and Open Source Projects",
+    "YHOTAMOS - My Personal Blog and Portfolio and Open Source Projects",
 };
 
 export default async function RootLayout({

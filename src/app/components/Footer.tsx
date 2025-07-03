@@ -42,7 +42,7 @@ export default function Footer() {
               </div>
               <div className="ps-4">
                 <p>
-                  YHOTMOSは、私の個人ブログ、ポートフォリオ、オープンソースプロジェクトを紹介するサイトです。
+                  YHOTAMOSは、私の個人ブログ、ポートフォリオ、オープンソースプロジェクトを紹介するサイトです。
                 </p>
               </div>
             </div>
