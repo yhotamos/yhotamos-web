@@ -1,0 +1,52 @@
+{
+  "footer": [
+    {
+      "title": "About",
+      "description": "About the project",
+      "url": {
+        "path": "/about",
+        "external": false
+      }
+    },
+    {
+      "title": "Contact",
+      "description": "Contact us for more information",
+      "items": [
+        {
+          "title": "Email",
+          "path": "/contact/email",
+          "external": false
+        },
+        {
+          "title": "Twitter",
+          "path": "https://twitter.com/yhotta240",
+          "external": true
+        },
+        {
+          "title": "GitHub",
+          "path": "https://github.com/yhotta240",
+          "icon": {
+            "src": "/imgs/qiita_icon.png"
+          },
+          "external": true
+        },
+        {
+          "title": "Qiita",
+          "path": "https://qiita.com/yhotta240",
+          "icon": {
+            "src": "/imgs/qiita_icon.png"
+          },
+          "external": true
+        }
+      ]
+    },
+    {
+      "title": "Blog",
+      "description": "Blog posts about the project"
+    },
+    {
+      "title": "Product",
+      "description": " Product information and features"
+    }
+  ]
+}
