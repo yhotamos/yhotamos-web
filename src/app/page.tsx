@@ -1,11 +1,10 @@
 // "use server";
 
-import Image from "next/image";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import { Theme } from "./components/Theme";
-import TopArrowIcon from "./components/TopArrowIcon";
-import Breadcrumbs from "./components/Breadcrumbs";
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import { Theme } from "@/components/layout/theme";
+import TopArrowIcon from "@/components/layout/topArrowIcon";
+import Breadcrumbs from "@/components/layout/breadcrumbs";
 
 export default async function Home() {
   const theme = await Theme();

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun, faDesktop } from "@fortawesome/free-solid-svg-icons";
-import { useSetTheme } from "./Theme";
+import { useSetTheme } from "./theme";
 import {
   NavigationMenu,
   NavigationMenuContent,

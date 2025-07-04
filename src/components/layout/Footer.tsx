@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import json from "../data/footer.json";
+import json from "@/data/footer.json";
 
 const githubSvg = (
   <svg
