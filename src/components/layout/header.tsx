@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,17 +9,20 @@ import { faMoon, faSun, faDesktop } from "@fortawesome/free-solid-svg-icons";
 import { useSetTheme } from "./theme";
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+
+const navItems: { name: string; href: string }[] = [
+  { name: "Products", href: "/products" },
+  { name: "Blog", href: "/blog" },
+  { name: "Support", href: "/support" },
+];
 
 export default function Header({ initialTheme }: { initialTheme: string }) {
   const [theme, setTheme] = useState<string>(initialTheme);
+  const pathname = usePathname();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -43,21 +47,18 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
       <div className="flex items-center gap-4">
         <NavigationMenu>
           <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/products">Products</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/blog">Blog</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/support">Support</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+            {navItems.map((item) => (
+              <NavigationMenuItem key={item.name}>
+                <NavigationMenuLink
+                  asChild
+                  className={
+                    pathname === item.href ? " underline bg-accent" : ""
+                  }
+                >
+                  <Link href={item.href}>{item.name}</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
           </NavigationMenuList>
         </NavigationMenu>
         <button
