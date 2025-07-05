@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Theme } from "../components/layout/theme";
+import { Theme } from "@/components/layout/theme";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 const geistSans = Geist({
@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YHOTAMOS",
+  title: {
+    default: "YHOTAMOS",
+    template: "%s | YHOTAMOS",
+  },
   description:
     "YHOTAMOS - My Personal Blog and Portfolio and Open Source Projects",
 };
