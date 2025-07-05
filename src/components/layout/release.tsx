@@ -33,29 +33,31 @@ export default async function Release({ title }: { title: string }) {
     <div className="w-full ">
       <h1 className="font-bold text-xl mb-3">{title}</h1>
       <Card
-        className="rounded-md bg-violet-200 grid grid-cols-3 px-3 dark:bg-violet-900"
         key="1"
+        className="rounded-md bg-violet-200 grid grid-cols-3 px-3 dark:bg-violet-900 transition-transform duration-300 hover:scale-101 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer"
+        title={latestItem.title}
       >
         <img src={latestItem.src} alt="" className="rounded-sm border-solid" />
-        <div className="col-span-2 flex flex-col justify-between">
-          <CardHeader>
+        <div className="col-span-2 grid gap-1">
+          <CardHeader className="gap-1">
             <CardTitle>{latestItem.title}</CardTitle>
-            <div className="flex gap-1 pt-1">
+            <div className="flex gap-1">
               <Badge>{latestItem.category}</Badge>
               {latestItem.tags
-                ? latestItem.tags
-                    .split(",")
-                    .map((tag: string, i: number) => (
-                      <Badge key={i}>{tag.trim()}</Badge>
-                    ))
+                ? latestItem.tags.map((tag: string) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))
                 : null}
             </div>
+            <div>{latestItem.releaseDate}</div>
           </CardHeader>
           <CardContent className="">
-            <CardDescription>{latestItem.description}</CardDescription>
+            <CardDescription className="line-clamp-2">
+              {latestItem.description}
+            </CardDescription>
           </CardContent>
           <CardFooter>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="">
               <Link href={latestItem.url} target="_blank">
                 今すぐダウンロード
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} />

@@ -1,17 +1,5 @@
-type ExtensionRawData = [
-  string,
-  string,
-  string,
-  string,
-  string | number,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string
-];
+
+import { Product } from "./components/types/product";
 
 export const getChromeWebStoreItems = async () => {
   // スプレッドシートIDをenvから取得する
@@ -22,11 +10,14 @@ export const getChromeWebStoreItems = async () => {
   const res = await fetch(url);
   const data = await res.json();
 
-  const formatted = data.values.slice(1).map((item: ExtensionRawData) => {
+  const formatted : Product[] = data.values.slice(1).map((item: string[]) => {
     const [title, version] = item[0].split("\n");
+    // "バージョン 1.0.3" => ["バージョン", "1.0.3"]　に変換
+    const versionSplit = version.split(" ");
+
     return {
       title,
-      version,
+      version: versionSplit[1],
       category: item[1],
       releaseDate: item[2],
       updateDate: item[3],
@@ -36,7 +27,7 @@ export const getChromeWebStoreItems = async () => {
       url: item[7],
       src: item[8],
       description: item[9],
-      tags: item[10],
+      tags: item[10].split(","),
       github: item[11],
     };
   });
