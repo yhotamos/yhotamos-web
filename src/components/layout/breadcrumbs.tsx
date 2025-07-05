@@ -21,9 +21,13 @@ export default function Breadcrumbs({ urls }: BreadcrumbsProps) {
         </BreadcrumbItem>
         {urls.map((url, index) => (
           <React.Fragment key={index}>
-            <BreadcrumbSeparator key={index} />
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={url}>{url}</BreadcrumbLink>
+              {index === urls.length - 1 ? (
+                <BreadcrumbLink>{url}</BreadcrumbLink>
+              ) : (
+                <BreadcrumbLink href={url}>{url}</BreadcrumbLink>
+              )}
             </BreadcrumbItem>
           </React.Fragment>
         ))}
