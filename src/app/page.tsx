@@ -5,6 +5,7 @@ import Footer from "@/components/layout/footer";
 import { Theme } from "@/components/layout/theme";
 import TopArrowIcon from "@/components/layout/topArrowIcon";
 import Breadcrumbs from "@/components/layout/breadcrumbs";
+import Release from "@/components/layout/release";
 
 export default async function Home() {
   const theme = await Theme();
@@ -15,7 +16,9 @@ export default async function Home() {
       <Header initialTheme={theme} />
       <main className="h-screen w-full">
         <Breadcrumbs urls={urls} />
-        メインコンテンツ
+        <div className="mt-5 p-6 border-y border-gray-200 dark:border-gray-700">
+          <Release title="Release"/>
+        </div>
       </main>
       <TopArrowIcon />
       <Footer />
