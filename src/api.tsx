@@ -1,5 +1,5 @@
-
 import { Product } from "./components/types/product";
+import { SortType } from "./components/types/repo";
 
 export const getChromeWebStoreItems = async () => {
   // スプレッドシートIDをenvから取得する
@@ -10,7 +10,7 @@ export const getChromeWebStoreItems = async () => {
   const res = await fetch(url);
   const data = await res.json();
 
-  const formatted : Product[] = data.values.slice(1).map((item: string[]) => {
+  const formatted: Product[] = data.values.slice(1).map((item: string[]) => {
     const [title, version] = item[0].split("\n");
     // "バージョン 1.0.3" => ["バージョン", "1.0.3"]　に変換
     const versionSplit = version.split(" ");
@@ -34,4 +34,13 @@ export const getChromeWebStoreItems = async () => {
 
   const items = formatted;
   return items;
+};
+
+export const getRepos = async (sort?: SortType, limit?: number) => {
+  const response = await fetch(
+    `https://api.github.com/users/yhotta240/repos?sort=${sort}&per_page=${limit}`
+  );
+  const repos = await response.json();
+
+  return repos;
 };

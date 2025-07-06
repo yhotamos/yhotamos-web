@@ -30,16 +30,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export { ProductItems, ViewMap, Grip, List };
+export { ProductItems, ProductGrid, ProductList };
 
 function ProductItems({ items }: any) {
   const [chromeFilter, setChromeFilter] = useState(false);
   const [vsCodeFilter, setVsCodeFilter] = useState(false);
-  const [view, setView] = useState<"list" | "grip">("grip");
+  const [view, setView] = useState<"list" | "grid">("grid");
 
   const iconMap = {
     list: faList,
-    grip: faGrip,
+    grid: faGrip,
+  };
+
+  const ViewMap = ({ view, items }: any) => {
+    switch (view) {
+      case "list":
+        return ProductList({ items });
+      case "grid":
+        return ProductGrid({ items });
+      default:
+        return ProductGrid({ items });
+    }
   };
 
   return (
@@ -68,13 +79,13 @@ function ProductItems({ items }: any) {
       <div className="flex justify-end">
         <Select
           defaultValue={view}
-          onValueChange={(value) => setView(value as "list" | "grip")}
+          onValueChange={(value) => setView(value as "list" | "grid")}
         >
           <SelectTrigger className="justify-center">
             <FontAwesomeIcon icon={iconMap[view]} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="grip">
+            <SelectItem value="grid">
               <FontAwesomeIcon icon={faGrip} />
               グリッド表示
             </SelectItem>
@@ -91,24 +102,13 @@ function ProductItems({ items }: any) {
   );
 }
 
-function ViewMap({ view, items }: any) {
-  switch (view) {
-    case "list":
-      return List({ items });
-    case "grip":
-      return Grip({ items });
-    default:
-      return Grip({ items });
-  }
-}
-
 type Filter = {
   filter?: string;
   sort?: string;
   limit?: number;
 };
 
-function Grip({
+function ProductGrid({
   items,
   title,
   filter,
@@ -176,7 +176,7 @@ function Grip({
   );
 }
 
-function List({
+function ProductList({
   items,
   title,
   filter,
