@@ -30,6 +30,7 @@ export default async function Home() {
           title="Chrome 拡張機能"
           sort={"users-desc"}
           limit={3}
+          isOpen={true}
         />
         <Hr />
         <Project title="プロジェクト" repos={repos} limit={2} />

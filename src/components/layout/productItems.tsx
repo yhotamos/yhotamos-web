@@ -114,17 +114,38 @@ function ProductGrid({
   filter,
   sort,
   limit,
-}: Filter & { items: any; title?: string }) {
-  const filteredItems = filterItems({ items, filter, sort, limit });
+  isOpen = false,
+}: Filter & { items: any; title?: string; isOpen?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const filteredItems = filterItems({
+    items,
+    filter,
+    sort,
+    limit: open ? 9 : limit,
+  });
+
+  const scrollView = (id: string) => {
+    const el = document.getElementById(id);
+    el?.previousElementSibling?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <div className="w-full">
+    <div id="product-grid" className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-all duration-1000 px-3 pb-5 ${
+          isOpen && (open ? "max-h-full" : "max-h-[600px]")
+        }  overflow-hidden`}
+      >
         {filteredItems.map((item: any, index: number) => (
           <Card
             key={index}
-            className="rounded-md gap-4 transition-transform duration-300 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer"
+            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${
+              !open
+                ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]"
+                : "delay-[" + index * 1000 + "ms]"
+            }
+            translate-y-4 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer`}
             title={item.title}
           >
             <div className="relative">
@@ -172,6 +193,27 @@ function ProductGrid({
           </Card>
         ))}
       </div>
+      {isOpen &&
+        (!open ? (
+          <Button
+            variant="default"
+            className="w-fit flex justify-center mx-auto mt-4 hover:scale-101 hover:shadow-sm bg-violet-700 hover:bg-violet-800 text-white"
+            onClick={() => setOpen(true)}
+          >
+            もっと見る
+          </Button>
+        ) : (
+          <Button
+            variant="default"
+            className="w-fit flex justify-center mx-auto mt-4 hover:scale-101 hover:shadow-sm bg-violet-700 hover:bg-violet-800 text-white"
+            onClick={() => {
+              setOpen(false);
+              scrollView("product-grid");
+            }}
+          >
+            閉じる
+          </Button>
+        ))}
     </div>
   );
 }
@@ -187,8 +229,8 @@ function ProductList({
     <div className="w-full">
       <h1 className="font-bold text-xl mb-3">{title}</h1>
       <div className="overflow-x-auto ">
-        <div className="w-full p-2 rounded-md border">
-          <Table className="grid grid-cols-1">
+        <div className="w-full p-2 rounded-md border grid">
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>タイトル</TableHead>
