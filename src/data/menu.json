@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Home",
+    "href": "/",
+    "ja": "ホーム",
+    "description": "トップページ．サイトの概要や最新情報を掲載．"
+  },
+  {
+    "name": "Products",
+    "href": "/products",
+    "ja": "製品",
+    "description": "提供している拡張機能やツールの一覧と詳細．"
+  },
+  {
+    "name": "Blog",
+    "href": "/blog",
+    "ja": "ブログ",
+    "description": "開発に関する記事やお知らせを掲載．"
+  },
+  {
+    "name": "Support",
+    "href": "/support",
+    "ja": "サポート",
+    "description": "お問い合わせや質問に対する回答を掲載．"
+  }
+]

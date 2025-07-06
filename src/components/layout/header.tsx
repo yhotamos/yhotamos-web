@@ -3,9 +3,14 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon, faSun, faDesktop } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMoon,
+  faSun,
+  faDesktop,
+  faBars,
+} from "@fortawesome/free-solid-svg-icons";
 import { useSetTheme } from "./theme";
 import {
   NavigationMenu,
@@ -13,16 +18,24 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-
-const navItems: { name: string; href: string }[] = [
-  { name: "Products", href: "/products" },
-  { name: "Blog", href: "/blog" },
-  { name: "Support", href: "/support" },
-];
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { useMediaQuery } from "@custom-react-hooks/use-media-query";
+import navItems from "@/data/menu.json";
 
 export default function Header({ initialTheme }: { initialTheme: string }) {
   const [theme, setTheme] = useState<string>(initialTheme);
   const pathname = usePathname();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -45,34 +58,16 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
         />
       </a>
       <div className="flex items-center gap-4">
-        <NavigationMenu>
-          <NavigationMenuList>
-            {navItems.map((item) => (
-              <NavigationMenuItem key={item.name}>
-                <NavigationMenuLink
-                  asChild
-                  className={
-                    pathname === item.href ? " underline bg-accent" : ""
-                  }
-                >
-                  <Link href={item.href}>{item.name}</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+        {isDesktop && <DesktopMenu pathname={pathname} />}
         <button
           id="switch-theme"
           className="switch-theme px-3 py-1 "
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           aria-label="テーマ切り替え"
         >
-          {theme === "light" ? (
-            <FontAwesomeIcon icon={faMoon} />
-          ) : (
-            <FontAwesomeIcon icon={faSun} />
-          )}
+          <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
         </button>
+        {!isDesktop && <MobileMenu pathname={pathname} />}
         {/* <div className="relative z-0 inline-grid grid-cols-3 gap-0.5 rounded-full bg-gray-950/5 p-0.75 text-gray-950 dark:bg-white/10 dark:text-white">
           <span
             className="rounded-full p-1 *:size-6 data-checked:bg-white data-checked:ring data-checked:inset-ring data-checked:ring-gray-950/10 data-checked:inset-ring-white/10 sm:p-0 dark:data-checked:bg-gray-700 dark:data-checked:text-white dark:data-checked:ring-transparent"
@@ -105,5 +100,65 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
         </div> */}
       </div>
     </header>
+  );
+}
+
+function DesktopMenu({ pathname }: { pathname: string }) {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        {navItems.map((item) => (
+          <NavigationMenuItem key={item.name}>
+            <NavigationMenuLink
+              className={pathname === item.href ? " underline bg-accent" : ""}
+              title={item.description}
+              asChild
+            >
+              <Link href={item.href}>{item.name}</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        ))}
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+
+function MobileMenu({ pathname }: { pathname: string }) {
+  const currentItem = navItems.find((item) => pathname === item.href);
+  return (
+    <div className="flex items-center gap-4">
+      <Drawer direction="right">
+        <DrawerTrigger asChild>
+          <Button variant="outline">
+            <FontAwesomeIcon icon={faBars} />
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent className="w-full">
+          <DrawerHeader>
+            <DrawerTitle>{currentItem?.name}</DrawerTitle>
+            <DrawerDescription>{currentItem?.description}</DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-2 px-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`block ${
+                  pathname === item.href ? "underline bg-accent" : ""
+                }`}
+              >
+                {item.name} - {item.ja}
+              </Link>
+            ))}
+          </div>
+
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
   );
 }
