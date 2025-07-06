@@ -120,7 +120,7 @@ function ProductGrid({
   return (
     <div className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {filteredItems.map((item: any, index: number) => (
           <Card
             key={index}

@@ -19,7 +19,7 @@ export default async function Products() {
   const items = await getChromeWebStoreItems();
 
   return (
-    <div className="grid grid-rows-[20px_1fr] items-center justify-items-center min-h-screen max-w-5xl mx-auto p-8 pb-20 gap-14 font-(family-name:--font-geist-sans)">
+    <div className="grid grid-rows-[20px_1fr] items-center justify-items-center min-h-screen max-w-5xl mx-auto p-4 sm:p-8 pb-20 gap-14 font-(family-name:--font-geist-sans)">
       <Header initialTheme={theme} />
       <main className="w-full">
         <Breadcrumbs urls={pathnames} />

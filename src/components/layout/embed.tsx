@@ -6,8 +6,7 @@ export const HatenaEmbed = ({ url }: { url: string }) => {
   return (
     <Iframe
       url={hatenaUrl}
-      width="75%"
-      className="block border-solid rounded-md duration-100 hover:scale-101 hover:shadow-sm hover:shadow-gray-500"
+      className="w-full sm:w-xl  border-solid rounded-md duration-100 hover:scale-101 hover:shadow-sm hover:shadow-gray-500"
     />
   );
 };
@@ -22,7 +21,7 @@ export const TwitterEmbed = ({
   height: number;
 }) => {
   return (
-    <div className="not-italic w-lg mx-auto">
+    <div className="not-italic w-full sm:w-1/2 mx-auto">
       <h2 className="font-bold text-xl mb-3">Twitter</h2>
       <a
         className="twitter-timeline"

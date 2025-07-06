@@ -30,11 +30,11 @@ export default async function Release({ title }: { title: string }) {
   )[0];
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <h1 className="font-bold text-xl mb-3">{title}</h1>
       <Card
         key="1"
-        className="rounded-md bg-violet-200 grid grid-cols-3 px-3 dark:bg-violet-900 transition-transform duration-300 hover:scale-101 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer"
+        className="rounded-md bg-violet-200 grid gap-4 grid-cols-1 sm:grid-cols-3 px-3 dark:bg-violet-900 transition-transform duration-300 hover:scale-101 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer"
         title={latestItem.title}
       >
         <img src={latestItem.src} alt="" className="rounded-sm border-solid" />
