@@ -13,12 +13,12 @@ export function Project({
     <div className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
       <div className="grid gap-3">
-        {repos.map((repo: any, index) => {
-          if (index < limit) {
-            console.log(repo.url);
-            return <HatenaEmbed url={repo.html_url} key={index} />;
-          }
-        })}
+        {repos.length > 0 &&
+          repos.map((repo: any, index) => {
+            if (index < limit) {
+              return <HatenaEmbed url={repo.html_url} key={index} />;
+            }
+          })}
       </div>
     </div>
   );

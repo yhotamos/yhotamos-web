@@ -18,7 +18,7 @@ export const getChromeWebStoreItems = async () => {
     return {
       title,
       version: versionSplit[1],
-      category: item[1],
+      category: "Chrome " + item[1],
       releaseDate: item[2],
       updateDate: item[3],
       rate: item[4],
