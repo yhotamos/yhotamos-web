@@ -29,14 +29,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useMediaQuery } from "@custom-react-hooks/use-media-query";
 import { navigationItems as navItems } from "@/components/config/navigation";
 import { iconMap } from "@/components/config/iconMap";
 
 export default function Header({ initialTheme }: { initialTheme: string }) {
   const [theme, setTheme] = useState<string>(initialTheme);
   const pathname = usePathname();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -59,7 +57,9 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
         />
       </a>
       <div className="flex items-center gap-4">
-        {isDesktop && <DesktopMenu pathname={pathname} />}
+        <div className="hidden md:block">
+          <DesktopMenu pathname={pathname} />
+        </div>
         <button
           id="switch-theme"
           className="switch-theme px-3 py-1 "
@@ -68,7 +68,9 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
         >
           <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
         </button>
-        {!isDesktop && <MobileMenu pathname={pathname} />}
+        <div className="block md:hidden">
+          <MobileMenu pathname={pathname} />
+        </div>
         {/* <div className="relative z-0 inline-grid grid-cols-3 gap-0.5 rounded-full bg-gray-950/5 p-0.75 text-gray-950 dark:bg-white/10 dark:text-white">
           <span
             className="rounded-full p-1 *:size-6 data-checked:bg-white data-checked:ring data-checked:inset-ring data-checked:ring-gray-950/10 data-checked:inset-ring-white/10 sm:p-0 dark:data-checked:bg-gray-700 dark:data-checked:text-white dark:data-checked:ring-transparent"
