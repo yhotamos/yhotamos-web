@@ -30,7 +30,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@custom-react-hooks/use-media-query";
-import navItems from "@/data/menu.json";
+import { navigationItems as navItems } from "@/components/config/navigation";
+import { iconMap } from "@/components/config/iconMap";
 
 export default function Header({ initialTheme }: { initialTheme: string }) {
   const [theme, setTheme] = useState<string>(initialTheme);
@@ -107,14 +108,17 @@ function DesktopMenu({ pathname }: { pathname: string }) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {navItems.map((item) => (
+        {navItems.map((item: any) => (
           <NavigationMenuItem key={item.name}>
             <NavigationMenuLink
-              className={pathname === item.href ? " underline bg-accent" : ""}
-              title={item.description}
-              asChild
+              className={`flex flex-row items-center gap-1 ${
+                pathname === item.href ? "underline bg-accent" : ""
+              }`}
+              title={item.ja + " - " + item.description}
+              href={item.href}
             >
-              <Link href={item.href}>{item.name}</Link>
+              <FontAwesomeIcon icon={iconMap[item.icon]} />
+              {item.name}
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
@@ -139,19 +143,20 @@ function MobileMenu({ pathname }: { pathname: string }) {
             <DrawerDescription>{currentItem?.description}</DrawerDescription>
           </DrawerHeader>
           <div className="flex flex-col gap-2 px-4">
-            {navItems.map((item) => (
+            {navItems.map((item: any) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`block ${
                   pathname === item.href ? "underline bg-accent" : ""
-                }`}
+                } flex items-center gap-2 py-1`}
+                title={item.description}
               >
+                <FontAwesomeIcon icon={iconMap[item.icon]} />
                 {item.name} - {item.ja}
               </Link>
             ))}
           </div>
-
           <DrawerFooter>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
