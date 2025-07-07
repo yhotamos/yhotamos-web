@@ -133,7 +133,7 @@ function ProductGrid({
     <div id="product-grid" className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-all duration-1000 px-3 pb-5 ${
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-all duration-500 ease-in px-3 pb-5 ${
           isOpen && (open ? "max-h-full" : "max-h-[600px]")
         }  overflow-hidden`}
       >
@@ -158,7 +158,7 @@ function ProductGrid({
             </div>
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-4">
-                <CardTitle className="flex justify-between">
+                <CardTitle className="leading-none font-semibold grid grid-cols-[1fr_auto] items-start gap-2 whitespace-normal break-words">
                   <a
                     href={item.url}
                     className="hover:underline line-clamp-2"
@@ -171,17 +171,17 @@ function ProductGrid({
                 </CardTitle>
                 <div className="">
                   <div className="text-sm flex justify-between">
-                    <span>{item.releaseDate}</span>
-                    <span>{item.users !== "—" ? item.users : 0} ユーザー</span>
+                    <div>{item.releaseDate}</div>
+                    <div>{item.users !== "—" ? item.users : 0} ユーザー</div>
                   </div>
-                  <span className="flex gap-1 pt-1">
+                  <div className="flex gap-1 pt-1 flex-wrap">
                     <Badge>{item.category}</Badge>
                     {item.tags
                       ? item.tags.map((tag: string) => (
                           <Badge key={tag}>{tag}</Badge>
                         ))
                       : null}
-                  </span>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="px-4">
