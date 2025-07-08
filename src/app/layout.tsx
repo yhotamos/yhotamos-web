@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Theme } from "@/components/layout/theme";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import TopArrowIcon from "@/components/layout/topArrowIcon";
+import Footer from "@/components/layout/footer";
+import Header from "@/components/layout/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +37,12 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="grid grid-rows-[20px_1fr] items-center justify-items-center min-h-screen max-w-5xl mx-auto p-4 sm:p-8 pb-20 gap-14 font-(family-name:--font-geist-sans)">
+          <Header initialTheme={theme} />
+          {children}
+          <TopArrowIcon />
+          <Footer />
+        </div>
       </body>
     </html>
   );
