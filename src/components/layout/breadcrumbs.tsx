@@ -17,14 +17,18 @@ export default function Breadcrumbs({ urls }: BreadcrumbsProps) {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          {urls.length > 0 ? (
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>Home</BreadcrumbPage>
+          )}
         </BreadcrumbItem>
         {urls.map((url, index) => (
           <React.Fragment key={index}>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               {index === urls.length - 1 ? (
-                <BreadcrumbLink>{url}</BreadcrumbLink>
+                <BreadcrumbPage>{url}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink href={url}>{url}</BreadcrumbLink>
               )}
