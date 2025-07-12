@@ -35,14 +35,12 @@ export default async function RootLayout({
   return (
     <html lang="jp" className={theme}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-geist-sans)`}
       >
-        <div className="grid grid-rows-[20px_1fr] items-center justify-items-center min-h-screen max-w-5xl mx-auto p-4 sm:p-8 pb-20 gap-14 font-(family-name:--font-geist-sans)">
-          <Header initialTheme={theme} />
-          {children}
-          <TopArrowIcon />
-          <Footer />
-        </div>
+        <Header initialTheme={theme} />
+        {children}
+        <TopArrowIcon />
+        <Footer />
       </body>
     </html>
   );

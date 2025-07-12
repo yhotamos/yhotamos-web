@@ -20,76 +20,71 @@ export default function Footer() {
   const footerData = json.footer;
 
   return (
-    <footer
-      className="w-full border-t border-gray-200 dark:border-gray-700"
-      style={{ height: "500px" }}
-    >
-      <div style={{ paddingTop: "3rem" }}>
-        <div>
-          <div className="">
-            <div className="flex flex-col justify-center mb-5">
-              <div className="flex items-center mb-5">
-                <a className="me-3" href="https://qiita.com/yhotta240">
-                  <Image
-                    aria-hidden
-                    src="/imgs/icon.jpg"
-                    alt="icon"
-                    width={32}
-                    height={32}
-                  />
-                </a>
-                <h1 className="font-bold text-2xl">YHOTAMOS - ヨタモス</h1>
-              </div>
-              <div className="ps-4">
-                <p>
-                  YHOTAMOSは、私の個人ブログ、ポートフォリオ、オープンソースプロジェクトを紹介するサイトです。
-                </p>
-              </div>
+    <footer className="w-full px-4 mt-10 border-t border-gray-200 dark:border-gray-700 min-h-[400px]">
+      <div className="pt-[3rem]">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-2">
+          <div className="flex flex-col mb-5">
+            <div className="flex items-center mb-5">
+              <a className="me-3" href="https://qiita.com/yhotta240">
+                <Image
+                  aria-hidden
+                  src="/imgs/icon.jpg"
+                  alt="icon"
+                  width={32}
+                  height={32}
+                />
+              </a>
+              <h1 className="font-bold text-2xl">YHOTAMOS - ヨタモス</h1>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4">
-              {footerData.map((item, index) => (
-                <div key={index}>
-                  <div className="text-gray-700 dark:text-gray-400">
-                    {item.title}
-                  </div>
-                  <div className="my-2 me-10">
-                    {item.items?.map((link, idx) => {
-                      let icon = null;
-                      if (link?.title === "GitHub") {
-                        icon = githubSvg;
-                      } else if (link?.icon) {
-                        icon = (
-                          <Image
-                            src={link.icon.src}
-                            alt="icon"
-                            width={16}
-                            height={16}
-                          />
-                        );
-                      }
-                      return (
-                        <div key={idx} className="text-lg mb-2">
-                          <a
-                            href={link?.path}
-                            className="flex items-center justify-between w-full"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {link?.title}
-                            {icon}
-                          </a>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+            <div className="ps-4">
+              <p>
+                YHOTAMOSは、私の個人ブログ、ポートフォリオ、オープンソースプロジェクトを紹介するサイトです。
+              </p>
             </div>
           </div>
-          <p className="text-end text-gray-700 dark:text-gray-400 my-2">
-            &copy; 2025 yhotta240. All rights reserved.
-          </p>
+          <div className="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 px-4">
+            {footerData.map((item, index) => (
+              <div key={index}>
+                <div className="text-gray-700 dark:text-gray-400">
+                  {item.title}
+                </div>
+                <div className="my-2 me-10">
+                  {item.items?.map((link, idx) => {
+                    let icon = null;
+                    if (link?.title === "GitHub") {
+                      icon = githubSvg;
+                    } else if (link?.icon) {
+                      icon = (
+                        <Image
+                          src={link.icon.src}
+                          alt="icon"
+                          width={16}
+                          height={16}
+                        />
+                      );
+                    }
+                    return (
+                      <div key={idx} className="text-lg mb-2">
+                        <a
+                          href={link?.path}
+                          className="flex items-center justify-between w-full"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link?.title}
+                          {icon}
+                        </a>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+        <p className="text-end text-gray-700 dark:text-gray-400 my-2">
+          &copy; 2025 yhotta240. All rights reserved.
+        </p>
       </div>
     </footer>
   );

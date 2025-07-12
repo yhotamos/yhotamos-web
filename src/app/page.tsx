@@ -19,7 +19,7 @@ export default async function Home() {
   const repos = await getRepos("updated", 3);
 
   return (
-    <main className=" w-full grid gap-8">
+    <main className="max-w-7xl mx-auto p-5 w-full grid gap-8">
       <Breadcrumbs paths={urls} />
       <Release title="最新リリース" />
       <Hr />
@@ -27,7 +27,7 @@ export default async function Home() {
         items={items}
         title="Chrome 拡張機能"
         sort={"users-desc"}
-        limit={3}
+        limit={8}
         isOpen={true}
       />
       <Hr />

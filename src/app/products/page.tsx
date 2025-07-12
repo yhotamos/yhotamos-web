@@ -14,7 +14,7 @@ export default async function Products() {
   const items = await getChromeWebStoreItems();
 
   return (
-    <main className="w-full">
+    <main className="max-w-7xl mx-auto p-5">
       <Breadcrumbs paths={pathnames} />
       <ProductItems items={items} />
     </main>

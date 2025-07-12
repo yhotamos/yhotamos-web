@@ -38,14 +38,12 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-    if (typeof window !== "undefined") {
-      console.log("theme", theme);
-      useSetTheme(theme);
-    }
+    console.log("theme", theme);
+    useSetTheme(theme);
   }, [theme]);
 
   return (
-    <header className="row-start-1 flex items-center justify-between w-full border-b border-gray-200 dark:border-gray-700 p-4">
+    <header className="bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700 p-2">
       <a href="/">
         <Image
           className={theme === "dark" ? "dark:invert" : ""}
