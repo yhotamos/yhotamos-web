@@ -8,29 +8,32 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-type BreadcrumbsProps = {
-  urls: string[];
+export type BreadcrumbsProps = {
+  paths:{
+    name: string;
+    href?: string ;
+  }[];
 };
 
-export default function Breadcrumbs({ urls }: BreadcrumbsProps) {
+export function Breadcrumbs({ paths }: BreadcrumbsProps) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          {urls.length > 0 ? (
+          {paths.length > 0 ? (
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
           ) : (
             <BreadcrumbPage>Home</BreadcrumbPage>
           )}
         </BreadcrumbItem>
-        {urls.map((url, index) => (
+        {paths.map((path, index) => (
           <React.Fragment key={index}>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              {index === urls.length - 1 ? (
-                <BreadcrumbPage>{url}</BreadcrumbPage>
+              {index === paths.length - 1 ? (
+                <BreadcrumbPage>{path.name}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={url}>{url}</BreadcrumbLink>
+                <BreadcrumbLink href={path.href}>{path.name}</BreadcrumbLink>
               )}
             </BreadcrumbItem>
           </React.Fragment>

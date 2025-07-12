@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import Breadcrumbs from "@/components/layout/breadcrumbs";
+import { Breadcrumbs , BreadcrumbsProps} from "@/components/layout/breadcrumbs";
 import { ProductItems } from "@/components/layout/productItems";
 import { getChromeWebStoreItems } from "@/api";
 
-const pathnames: string[] = ["Products"];
+const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }];
 
 export const metadata: Metadata = {
-  title: pathnames[0],
+  title: pathnames[0].name,
   description: "YHOTAMOS - My Products",
 };
 
@@ -15,7 +15,7 @@ export default async function Products() {
 
   return (
     <main className="w-full">
-      <Breadcrumbs urls={pathnames} />
+      <Breadcrumbs paths={pathnames} />
       <ProductItems items={items} />
     </main>
   );
