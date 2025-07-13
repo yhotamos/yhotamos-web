@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { DocHtml, Document } from "@/components/layout/document";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
+import React from "react";
+import NotFoundPage from "@/components/layout/notFound";
 
 const tabs: { name: string; value: string }[] = [
   { name: "概要", value: "description" },
@@ -36,9 +38,10 @@ export default async function Page({
 
   if (!item) {
     return (
-      <div className="w-full">
-        <h2 className="font-bold text-xl mb-3 text-center">Page not found</h2>
-      </div>
+      <NotFoundPage
+        className={`min-h-screen mt-20 text-center font-bold`}
+        backTop={true}
+      />
     );
   }
 
@@ -50,7 +53,7 @@ export default async function Page({
       </div>
       <ProductItem item={item} className="px-5 max-w-7xl mx-auto" />
       <Tabs defaultValue="description" className="">
-        <div className="sticky top-12 px-5 z-60 bg-background border-b shadow-sm border-gray-200 dark:border-gray-700">
+        <div className="sticky top-12 px-5 z-60 bg-background border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)]  border-gray-200 dark:border-gray-700">
           <div className="max-w-7xl mx-auto ">
             <TabsList className="flex flex-wrap gap-2 px-5 pb-0 h-fit bg-background">
               {tabs.map((tab) => (
@@ -67,34 +70,44 @@ export default async function Page({
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto md:px-5 min-h-screen">
+        <div className="max-w-7xl mx-auto md:px-2 min-h-screen">
+          {/* 概要 */}
           <TabsContent className="grid md:grid-cols-5 pt-5" value="description">
             <Description
               item={item}
-              className="min-h-screen col-span-3 col-start-2"
+              className="min-h-screen col-span-3 md:col-start-2"
             />
           </TabsContent>
-          {/* <p>ドキュメント</p> */}
+          {/* ドキュメント */}
           <TabsContent className="" value="document">
             <Document item={item} className="" />
           </TabsContent>
           {/* バージョン */}
           <TabsContent className="grid md:grid-cols-5 pt-5" value="version">
-            <div className="col-span-3 col-start-2">
-              <p>{item.version}</p>
-            </div>
+            <Version
+              item={item}
+              className="min-h-screen col-span-3 md:col-start-2"
+            />
           </TabsContent>
-          <TabsContent value="faq">
-            <p></p>
+          {/* 問題報告 */}
+          <TabsContent className="grid md:grid-cols-5 pt-5" value="issue">
+            <Issue
+              item={item}
+              className="min-h-screen col-span-3 md:col-start-2"
+            />
           </TabsContent>
-          <TabsContent value="review">
-            <p></p>
+          {/* 評価 & レビュー */}
+          <TabsContent className="grid md:grid-cols-5 pt-5" value="review">
+            <Review
+              item={item}
+              className="min-h-screen col-span-3 md:col-start-2"
+            />
           </TabsContent>
           {/* 詳細情報 */}
           <TabsContent value="info" className="grid md:grid-cols-5 pt-5">
             <DetailInfo
               item={item}
-              className="pt-5 md:ps-4 col-span-3 col-start-2 bg-secondary rounded-xl "
+              className="p-3 lg:p-5 col-span-3 md:col-start-2 bg-secondary rounded-xl "
             />
           </TabsContent>
         </div>
@@ -167,9 +180,42 @@ function Description({
 }) {
   return (
     <div
-      className={`${className} bg-secondary dark:bg-secondary rounded-md pt-3 px-5`}
+      className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5 `}
     >
       <DocHtml src={item.doc} className="" />
+    </div>
+  );
+}
+
+function Version({ item, className }: { item: Product; className?: string }) {
+  return (
+    <div
+      className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5 `}
+    >
+      <div className="font-bold text-xl mb-3">バージョン情報</div>
+      <p>{item.version}</p>
+    </div>
+  );
+}
+
+function Issue({ item, className }: { item: Product; className?: string }) {
+  return (
+    <div
+      className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5`}
+    >
+      <div className="font-bold text-xl mb-3">問題報告</div>
+      <div>issue</div>
+    </div>
+  );
+}
+
+function Review({ item, className }: { item: Product; className?: string }) {
+  return (
+    <div
+      className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5`}
+    >
+      <div className="font-bold text-xl mb-3">レビュー</div>
+      <div>review</div>
     </div>
   );
 }
@@ -181,6 +227,20 @@ function DetailInfo({
   item: Product;
   className?: string;
 }) {
+  const info = [
+    { name: "タイトル", value: item.title },
+    { name: "カテゴリ", value: item.category },
+    { name: "ステータス", value: item.status },
+    { name: "バージョン", value: item.version },
+    { name: "作成者", value: item.author },
+    { name: "評価", value: item.rate },
+    { name: "ユーザー", value: item.users },
+    { name: "作成日", value: item.releaseDate },
+    { name: "更新日", value: item.updateDate },
+    { name: "言語", value: item.language },
+    { name: "GitHub", value: item.github, link: true },
+  ];
+
   return (
     <div className={"h-fit" + (className ? " " + className : "")}>
       <div className="font-bold text-xl mb-3">詳細情報</div>
@@ -212,71 +272,26 @@ function DetailInfo({
           </ul>
         </li>
         <hr />
-        <li>
-          タイトル: <br /> {item.title}
-        </li>
-        <hr />
-        <li>
-          カテゴリ: <br />
-          {item.category}
-        </li>
-        <hr />
-        <li>
-          ステータス: <br />
-          {item.status}
-        </li>
-        <hr />
-        <li>
-          説明:
-          <br /> {item.description}
-        </li>{" "}
-        <hr />
-        <li>
-          バージョン: <br />
-          {item.version}
-        </li>{" "}
-        <hr />
-        <li>
-          評価: <br />
-          {item.rate}
-        </li>
-        <hr />
-        <li>
-          ユーザー: <br />
-          {item.users}
-        </li>
-        <hr />
-        <li>
-          作成日: <br />
-          {item.releaseDate}
-        </li>{" "}
-        <hr />
-        <li>
-          更新日: <br />
-          {item.updateDate}
-        </li>{" "}
-        <hr />
-        <li>
-          言語: <br />
-          {item.language || "日本語"}
-        </li>
-        <hr />
-        <li>
-          作成者: <br />
-          {item.author || "yhotta240"}
-        </li>
-        <hr />
-        <li>
-          GitHub: <br />
-          <a
-            href={item.github}
-            className="underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {item.github}
-          </a>
-        </li>
+        {info.map((item, index) => (
+          <React.Fragment key={index}>
+            <li>
+              {item.name}: <br />
+              {item.link ? (
+                <a
+                  href={item.value}
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.value}
+                </a>
+              ) : (
+                item.value
+              )}
+            </li>
+            <hr />
+          </React.Fragment>
+        ))}
       </ul>
     </div>
   );
