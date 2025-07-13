@@ -1,0 +1,121 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { getMarkdown } from "@/api";
+import Loading from "./loading";
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import {
+  getTocFromMarkdown,
+  TocItem,
+} from "@/components/utils/getTocFromMarkdown";
+import { Product } from "@/components/types/product";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Hr } from "@/components/layout/hr";
+
+export function Document({
+  item,
+  className,
+}: {
+  item: Product;
+  className?: string;
+}) {
+  const [tocItems, setTocItems] = useState<TocItem[]>([]);
+
+  return (
+    <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
+      <TabsList className="sticky top-25 flex flex-col gap-4 w-full h-fit pt-3 rounded-none rounded-l-xl">
+        <TabsTrigger
+          className="cursor-pointer w-full h-fit rounded-none rounded-l-xl"
+          value="usage"
+        >
+          使い方
+        </TabsTrigger>
+        <TabsTrigger
+          className="cursor-pointer w-full h-fit rounded-none rounded-l-xl"
+          value="options"
+        >
+          オプション
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent
+        value="usage"
+        className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-secondary rounded-none rounded-tr-xl rounded-b-xl"
+      >
+        <div className="sticky top-20 h-fit pt-5 px-3 col-span-3 md:col-span-1">
+          目次
+          <Hr />
+          <div className="flex flex-col gap-4 pt-5">
+            {tocItems.map((item, index) => (
+              <div key={index}>
+                <a
+                  className={`${
+                    item.depth === 3 && "pl-3 "
+                  }  text-secondary-foreground/70 hover:underline`}
+                  href={`#${item.id}`}
+                >
+                  {item.text}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+        <DocHtml
+          src={item.usage}
+          className="pt-3 px-5 col-span-3 md:order-first"
+          onTocGenerated={setTocItems}
+        />
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+export function DocHtml({
+  src,
+  className,
+  onTocGenerated,
+}: {
+  src: string;
+  className?: string;
+  onTocGenerated?: (toc: TocItem[]) => void;
+}) {
+  const [markdown, setMarkdown] = useState("");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const doc = iframeRef.current;
+  let toc;
+  useEffect(() => {
+    getMarkdown(src).then((markdown) => {
+      const isHtml = markdown.startsWith("<!DOCTYPE");
+      if (!isHtml) {
+        setMarkdown(markdown);
+        toc = getTocFromMarkdown(markdown);
+        console.log(toc);
+        onTocGenerated?.(toc);
+      }
+    });
+  }, []);
+
+  if (!src) {
+    return (
+      <div className={`${className} mt-10 text-center font-bold text-xl`}>
+        Page not found
+      </div>
+    );
+  }
+
+  if (!markdown) {
+    return <Loading />;
+  }
+
+  return (
+    <div
+      className={`prose prose-neutral dark:prose-invert prose-sm [&_h2]:border-b [&_h2]:border-gray-200 dark:[&_h2]:border-gray-700  max-w-none ${className}`}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+        {markdown}
+      </ReactMarkdown>
+    </div>
+  );
+}

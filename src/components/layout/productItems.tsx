@@ -29,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 export { ProductItems, ProductGrid, ProductList };
 
@@ -133,7 +134,7 @@ function ProductGrid({
     <div id="product-grid" className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-all duration-500 ease-in px-3 pb-5 ${
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 transition-all duration-500 ease-in px-3 pb-5 ${
           isOpen && (open ? "max-h-full" : "max-h-[600px]")
         }  overflow-hidden`}
       >
@@ -190,6 +191,7 @@ function ProductGrid({
                 </CardDescription>
               </CardContent>
             </div>
+            <Link href={`/products/${item.name}`} className="absolute inset-0 z-10" />
           </Card>
         ))}
       </div>

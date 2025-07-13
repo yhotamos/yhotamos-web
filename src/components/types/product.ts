@@ -12,4 +12,11 @@ export type Product = {
   description: string;
   tags: string[];
   github: string;
+  author: string;
+  doc: string;
+  usage: string;
+  language: string;
+  price: string;
+  id: string;
+  name: string;
 };

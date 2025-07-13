@@ -29,6 +29,13 @@ export const getChromeWebStoreItems = async () => {
       description: item[9],
       tags: item[10].split(","),
       github: item[11],
+      author: item[12],
+      doc: item[13],
+      usage: item[14],
+      language: item[15],
+      price: item[16],
+      id: item[17],
+      name: item[18],
     };
   });
 
@@ -43,4 +50,11 @@ export const getRepos = async (sort?: SortType, limit?: number) => {
   const repos = await response.json();
 
   return repos;
+};
+
+export const getMarkdown = async (url: string) => {
+  const response = await fetch(url);
+  const markdown = await response.text();
+
+  return markdown;
 };
