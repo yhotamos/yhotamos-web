@@ -1,9 +1,10 @@
 // "use server";
-
-import { Theme } from "@/components/layout/theme";
+import { Blogs } from "@/components/layout/blogs";
 
 export default async function Home() {
-  const theme = await Theme();
-
-  return <main className="h-screen"></main>;
+  return (
+    <main className="max-w-7xl mx-auto p-5">
+      <Blogs />
+    </main>
+  );
 }
