@@ -7,10 +7,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import {
-  getTocFromMarkdown,
-  TocItem,
-} from "@/components/utils/getTocFromMarkdown";
+import { getTocFromMarkdown, TocItem } from "@/utils/getTocFromMarkdown";
 import { Product } from "@/components/types/product";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Hr } from "@/components/layout/hr";
