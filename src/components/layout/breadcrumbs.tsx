@@ -9,16 +9,19 @@ import {
 } from "@/components/ui/breadcrumb";
 
 export type BreadcrumbsProps = {
-  paths:{
+  paths: {
     name: string;
-    href?: string ;
+    href?: string;
   }[];
 };
 
-export function Breadcrumbs({ paths }: BreadcrumbsProps) {
+export function Breadcrumbs({
+  paths,
+  className,
+}: BreadcrumbsProps & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
+    <Breadcrumb className={` ${className}`}>
+      <BreadcrumbList className="">
         <BreadcrumbItem>
           {paths.length > 0 ? (
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
