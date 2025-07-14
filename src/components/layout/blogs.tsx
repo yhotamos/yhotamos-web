@@ -13,7 +13,7 @@ export async function Blogs({
 }) {
   return (
     <div className={`${className} w-full`}>
-      <h2 className="font-bold text-xl mb-3">Blog</h2>
+      <h2 className="font-bold text-xl mb-3">ブログ記事</h2>
       <BlogList />
     </div>
   );
@@ -26,11 +26,12 @@ export async function BlogList() {
     <div className="w-full">
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
         {qittaBlogs.map((blog: any, index: number) => (
-          <li key={index} className="">
+          <li key={index}>
             <Link
               href={blog.url}
               target="_blank"
               className="block py-3 hover:bg-accent"
+              title={blog.title}
             >
               <div className="flex items-center gap-2">
                 <Image
@@ -39,17 +40,34 @@ export async function BlogList() {
                   width={16}
                   height={16}
                 />
-                <h3 className="text-lg font-semibold">{blog.title}</h3>
+                <h3 className="text-lg font-semibold line-clamp-1">
+                  {blog.title}
+                </h3>
               </div>
-              <time className="text-sm text-gray-600 dark:text-gray-400">
-                <FormattedDate isoDate={blog.publishDate} />
-              </time>
-              {blog.tags.length > 1 &&
-                blog.tags.map((tag: string, index: number) => (
-                  <Badge key={index} variant="outline">
-                    {tag}
-                  </Badge>
-                ))}
+              <div className="flex flex-col flex-wrap gap-1 mt-2">
+                <div className="flex flex-wrap gap-x-1 ms-5">
+                  {blog.tags.length > 1 &&
+                    blog.tags.map((tag: string, index: number) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                </div>
+                <div className="flex items-center gap-5">
+                  <time className="ms-5 text-sm text-accent-foreground/50">
+                    <FormattedDate isoDate={blog.publishDate} />
+                  </time>
+                  <span className="text-sm text-accent-foreground/50">
+                    {blog.views} views
+                  </span>
+                  <span className="text-sm text-accent-foreground/50">
+                    {blog.likes} いいね
+                  </span>
+                  <span className="text-sm text-accent-foreground/50">
+                    {blog.bookmarks} ブックマーク
+                  </span>
+                </div>
+              </div>
             </Link>
           </li>
         ))}
