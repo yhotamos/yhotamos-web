@@ -150,16 +150,17 @@ function ProductGrid({
             title={item.title}
           >
             <div className="relative">
-              {item.rate !== "—" ? (
+              {item.rate !== "—" && (
                 <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">
                   {item.rate}
                 </div>
-              ) : null}
-              <img src={item.src} alt="" />
+              )}
+              <img src={item.src} alt={item.title}/>
             </div>
             <div className="col-span-2 grid gap-1">
-              <CardHeader className="px-4">
-                <CardTitle className="leading-none font-semibold grid grid-cols-[1fr_auto] items-start gap-2 whitespace-normal break-words">
+              <CardHeader className="px-2">
+                <CardTitle className="leading-none font-semibold flex items-start gap-2 whitespace-normal break-words">
+                  <img src={item.icon} alt="" className="w-6 h-6"/>
                   <a
                     href={item.url}
                     className="hover:underline line-clamp-2"
@@ -168,7 +169,7 @@ function ProductGrid({
                   >
                     {item.title}
                   </a>
-                  <span className="text-sm text-end ms-2">v{item.version}</span>
+                  <span className="text-sm text-end">v{item.version}</span>
                 </CardTitle>
                 <div className="">
                   <div className="text-sm flex justify-between">
@@ -185,13 +186,16 @@ function ProductGrid({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="px-4">
+              <CardContent className="px-2">
                 <CardDescription className="line-clamp-2">
                   {item.description}
                 </CardDescription>
               </CardContent>
             </div>
-            <Link href={`/products/${item.name}`} className="absolute inset-0 z-10" />
+            <Link
+              href={`/products/${item.name}`}
+              className="absolute inset-0 z-10"
+            />
           </Card>
         ))}
       </div>

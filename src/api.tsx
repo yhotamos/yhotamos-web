@@ -36,6 +36,7 @@ export const getChromeWebStoreItems = async () => {
       price: item[16],
       id: item[17],
       name: item[18],
+      icon: item[19],
     };
   });
 
@@ -63,9 +64,7 @@ export const getQiitaList = async () => {
   const apiKey = process.env.GOOGLE_API_KEY;
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID_QIITA;
   const range = "article";
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
-    range
-  )}?key=${apiKey}`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
   const res = await fetch(url);
   const data = await res.json();
 
