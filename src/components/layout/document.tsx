@@ -88,8 +88,8 @@ export function DocHtml({
   let toc;
   useEffect(() => {
     getMarkdown(src).then((markdown) => {
-      const isHtml = markdown.startsWith("<!DOCTYPE");
-      if (!isHtml) {
+      const statusCode = markdown.startsWith("404:");
+      if (!statusCode) {
         setMarkdown(markdown);
         toc = getTocFromMarkdown(markdown);
         onTocGenerated?.(toc);
