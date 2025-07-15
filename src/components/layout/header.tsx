@@ -44,7 +44,7 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
 
   return (
     <header className="p-2 md:px-10 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">
-      <a href="/" className={`text-3xl font-bold ${nicoMoji.className}`}>
+      <a href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
         YHOTAMOS
       </a>
       <div className="flex items-center gap-4">
@@ -100,7 +100,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
             <FontAwesomeIcon icon={faBars} />
           </Button>
         </DrawerTrigger>
-        <DrawerContent className="w-full">
+        <DrawerContent className="w-full z-100">
           <DrawerHeader>
             <DrawerTitle>{currentItem?.name}</DrawerTitle>
             <DrawerDescription>{currentItem?.description}</DrawerDescription>
