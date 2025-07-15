@@ -23,7 +23,7 @@ export default async function RootLayout({
 }>) {
   const theme = await Theme();
   return (
-    <html lang="jp" className={theme}>
+    <html lang="ja" className={theme}>
       <body
         className={`md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
       >
