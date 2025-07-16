@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useLayoutEffect, useCallback } from "react";
 import { getMarkdown } from "@/api";
-import Loading from "./loading";
+import Loading from "@/components/layout/loading";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
