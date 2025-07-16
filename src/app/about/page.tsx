@@ -3,9 +3,7 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Image from "next/image";
 import { SnsLinks } from "@/components/layout/snsLinks";
 
-const pathnames: BreadcrumbsProps["paths"] = [
-  { name: "About", href: "/about" },
-];
+const pathnames: BreadcrumbsProps["paths"] = [{ name: "About", href: "/about" }];
 
 export const metadata: Metadata = {
   title: pathnames[0].name,
@@ -20,49 +18,28 @@ export default function Blog() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-0">
         {/* ブランド */}
         <div className="flex flex-col gap-5 items-center justify-center">
-          <Image
-            className="rounded-4xl border-2 border-violet-600"
-            src="/imgs/icon.jpg"
-            alt="icon"
-            width={200}
-            height={200}
-            title="ブランドロゴ"
-          />
+          <Image className="rounded-4xl border-2 border-violet-600" src="/imgs/icon.jpg" alt="icon" width={200} height={200} title="ブランドロゴ" />
           <div>
-            <span className="font-bold text-2xl after:content-['_-_']">
-              ブランド
-            </span>
+            <span className="font-bold text-2xl after:content-['_-_']">ブランド</span>
             <span className="font-bold text-2xl">YHOTAMOS</span>
-            {/* <span className="font-bold text-xl">(ヨタモス)</span> */}
           </div>
           <div className="flex flex-col max-w-lg gap-3 mx-auto">
-            <div>
-              自作のツールや拡張機能，ブログなどを公開しています．気に入っていただけたら，応援やシェアも大歓迎です．
-            </div>
-            <div>
-              誰かの作業がちょっと楽になるようなものを目指して開発しています．
-            </div>
+            <div>自作ツールや拡張機能，技術ブログをまとめた個人開発サイトです．Next.js 15 と Tailwind CSS v4 で構築しています．</div>
+            <div>気に入っていただけたら，応援やシェアも大歓迎です．</div>
           </div>
         </div>
         {/* 著者 */}
         <div className="flex flex-col gap-5 justify-between items-center">
-          <Image
-            className="rounded-full"
-            src="/imgs/admin_icon.png"
-            alt="icon"
-            width={200}
-            height={200}
-            title="admin icon"
-          />
+          <Image className="rounded-full" src="/imgs/admin_icon.png" alt="icon" width={200} height={200} title="admin icon" />
           <div className="font-bold text-2xl">著者 - yhotta240</div>
           <div>
-            駆け出しエンジニア．最近はChrome拡張機能開発にハマってます．
+            駆け出しエンジニア． 最近はChrome拡張機能開発にハマってます．
             <br />
-            Web以外にも，センサーやマイコンなどの制御系にも興味があります．
+            誰かの作業がちょっと楽になるようなものを目指して開発しています．
           </div>
         </div>
       </div>
-      <SnsLinks className="flex justify-center gap-10 " />
+      <SnsLinks className="flex justify-center gap-8" />
     </main>
   );
 }
