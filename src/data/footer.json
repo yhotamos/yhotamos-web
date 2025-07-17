@@ -1,52 +1,105 @@
-{
-  "footer": [
-    {
-      "title": "About",
-      "description": "About the project",
-      "url": {
+[
+  {
+    "title": "About",
+    "description": "About the project",
+    "url": {
+      "path": "/about",
+      "external": false
+    },
+    "items": [
+      {
+        "title": "このサイトについて",
         "path": "/about",
         "external": false
+      },
+      {
+        "title": "利用規約",
+        "path": "/about/terms-of-service",
+        "external": false
+      },
+      {
+        "title": "プライバシーポリシー",
+        "path": "/about/privacy-policy",
+        "external": false
       }
-    },
-    {
-      "title": "Contact",
-      "description": "Contact us for more information",
-      "items": [
-        {
-          "title": "Email",
-          "path": "/contact/email",
-          "external": false
-        },
-        {
-          "title": "Twitter",
-          "path": "https://twitter.com/yhotta240",
-          "external": true
-        },
-        {
-          "title": "GitHub",
-          "path": "https://github.com/yhotta240",
-          "icon": {
-            "src": "/imgs/qiita_icon.png"
-          },
-          "external": true
-        },
-        {
-          "title": "Qiita",
-          "path": "https://qiita.com/yhotta240",
-          "icon": {
-            "src": "/imgs/qiita_icon.png"
-          },
-          "external": true
-        }
-      ]
-    },
-    {
-      "title": "Blog",
-      "description": "Blog posts about the project"
-    },
-    {
-      "title": "Product",
-      "description": " Product information and features"
-    }
-  ]
-}
+    ]
+  },
+  {
+    "title": "Products",
+    "description": "Products and services",
+    "items": [
+      {
+        "title": "Chrome拡張機能",
+        "path": "/products/chrome-extension",
+        "external": false
+      },
+      {
+        "title": "VS Code 拡張機能",
+        "path": "/products/vscode-extension",
+        "external": true
+      },
+      {
+        "title": "その他のサイト",
+        "path": "/products/web-sites",
+        "external": true
+      },
+      {
+        "title": "開発者向け",
+        "path": "/products/developers",
+        "external": true
+      }
+    ]
+  },
+  {
+    "title": "Blog",
+    "description": "Blog posts about the project",
+    "items": [
+      {
+        "title": "ブログ",
+        "path": "/blog/users",
+        "external": false
+      },
+      {
+        "title": "技術メモ",
+        "path": "/blog/dev",
+        "external": false
+      },
+      {
+        "title": "その他",
+        "path": "/blog/others",
+        "external": false
+      },
+      {
+        "title": "更新情報",
+        "path": "/blog/updates",
+        "external": true
+      }
+    ]
+  },
+  {
+    "title": "Support",
+    "description": " Product information and features",
+    "items": [
+      {
+        "title": "お問い合わせ",
+        "path": "/support",
+        "external": false
+      },
+      {
+        "title": "FAQ",
+        "path": "/support/faq",
+        "external": false
+      },
+      {
+        "title": "フィードバック",
+        "path": "/support/feedback",
+        "external": false
+      },
+      {
+        "title": "寄付・支援",
+        "path": "/support/donate",
+        "external": false
+      }
+    ]
+  }
+]
