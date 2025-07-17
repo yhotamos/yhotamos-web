@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Breadcrumbs , BreadcrumbsProps} from "@/components/layout/breadcrumbs";
+import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { ProductItems } from "@/components/layout/productItems";
 import { getChromeWebStoreItems } from "@/api";
 
@@ -14,7 +14,7 @@ export default async function Products() {
   const items = await getChromeWebStoreItems();
 
   return (
-    <main className="max-w-7xl mx-auto p-5">
+    <main className="max-w-7xl mx-auto p-5 min-h-screen">
       <Breadcrumbs paths={pathnames} />
       <ProductItems items={items} />
     </main>

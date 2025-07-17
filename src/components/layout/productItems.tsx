@@ -1,42 +1,118 @@
 "use client";
 
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faList, faGrip } from "@fortawesome/free-solid-svg-icons";
-import Image from "next/image";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Badge } from "../ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faGrip } from "@fortawesome/free-solid-svg-icons";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import products from "@/data/products.json";
 
 export { ProductItems, ProductGrid, ProductList };
 
+const categories = products.categories;
+const devCategories = products.devCategories;
+
 function ProductItems({ items }: any) {
-  const [chromeFilter, setChromeFilter] = useState(false);
-  const [vsCodeFilter, setVsCodeFilter] = useState(false);
+  const router = useRouter(); // ルーター(urlに書き込む用)
+  const searchParams = useSearchParams();
+  const selectedCategories = searchParams.get("category")?.split(",") || [];
+  let newCategories: string[] = [];
+  const [tab, setTab] = useState(searchParams.get("tab") || "user");
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString()); // URLパラメータを取得
+    params.set("tab", value); // URLパラメータを変更
+    params.delete("category"); // URLパラメータを削除
+    router.push(`/products?${params.toString()}`);
+  };
+
+  const handleCategory = (key: string) => {
+    const params = new URLSearchParams(searchParams.toString()); // URLパラメータを取得
+    const categoryParams = params.get("category")?.split(",").filter(Boolean) || []; // URLパラメータからカテゴリがあったら取得
+
+    newCategories = [...categoryParams]; // 配列をコピー
+
+    if (categoryParams.includes(key)) {
+      // 選択済み → 削除
+      newCategories = categoryParams.filter((c) => c !== key);
+    } else {
+      // 未選択 → keyを追加
+      newCategories.push(key);
+    }
+
+    if (newCategories.length > 0) {
+      params.set("category", newCategories.join(","));
+    } else {
+      params.delete("category");
+    }
+
+    router.push(`/products?${params.toString()}`); // URLパラメータを変更
+  };
+
+  return (
+    <div className="max-w-full grid gap-4 my-3">
+      <h1 className="text-center md:text-left text-2xl font-bold mb-2">Products</h1>
+
+      <Tabs defaultValue={tab} className="w-full">
+        <TabsList className="flex gap-3 h-10">
+          <TabsTrigger className="h-fit" value="user" onClick={() => handleTabChange("user")}>
+            ユーザー向け
+          </TabsTrigger>
+          <TabsTrigger className="h-fit" value="developer" onClick={() => handleTabChange("developer")}>
+            開発者向け
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent className="flex flex-col gap-5" value="user">
+          <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
+          <ProductContents items={items} categories={selectedCategories} />
+        </TabsContent>
+        <TabsContent value="developer">
+          <ProductCategory categories={devCategories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function ProductCategory({ categories, selectedCategories, handleCategory }: any) {
+  return (
+    <div className="flex flex-col gap-2 text-white bg-gray-800 p-4 rounded-lg border">
+      <p className="font-medium">カテゴリーから絞り込む</p>
+      <div className="flex flex-wrap gap-2">
+        {categories.map(({ key, label }: any) => {
+          const isActive = selectedCategories.includes(key);
+          return (
+            <Badge
+              key={key}
+              variant={isActive ? undefined : "outline"}
+              className={`${isActive ? "bg-yellow-300 " : "bg-white "} text-black cursor-pointer`}
+              onClick={() => handleCategory(key)} // クリックしたらhandleCategoryを呼び出す
+            >
+              {label} {isActive && "✕"}
+            </Badge>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ProductContents({ items, className, categories }: { items: any; className?: string; categories?: string[] }) {
   const [view, setView] = useState<"list" | "grid">("grid");
+  const [sort, setSort] = useState("sort-popular");
+
+  const sortData = [
+    { value: "sort-popular", label: "人気順" },
+    { value: "sort-new", label: "新着順" },
+    { value: "sort-update", label: "更新順" },
+  ];
 
   const iconMap = {
     list: faList,
@@ -54,51 +130,51 @@ function ProductItems({ items }: any) {
     }
   };
 
+  const filteredItems = filterItems({ items, categories, sort });
+
   return (
-    <div className="max-w-full grid gap-4 my-3">
-      <h1 className="font-bold text-xl">拡張機能</h1>
-
-      <div className="">
-        <Button
-          variant={chromeFilter ? undefined : "outline"}
-          onClick={() => setChromeFilter(!chromeFilter)}
-          className="mr-3 "
-        >
-          Chrome 拡張機能
-          {chromeFilter ? <FontAwesomeIcon icon={faXmark} /> : ""}
-        </Button>
-        <Button
-          variant={vsCodeFilter ? undefined : "outline"}
-          onClick={() => setVsCodeFilter(!vsCodeFilter)}
-          className="mr-3 "
-        >
-          VS Code 拡張機能
-          {vsCodeFilter ? <FontAwesomeIcon icon={faXmark} /> : ""}
-        </Button>
+    <div className={`${className}`}>
+      <div className="flex items-center justify-between mb-4">
+        {/* 件数表示 */}
+        <h2 className="text-lg font-semibold ms-3">{filteredItems.length}件</h2>
+        <div className="flex gap-4 justify-end">
+          {/* 並べ替えオプション */}
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            {sortData.map(({ value, label }, index) => (
+              <React.Fragment key={value}>
+                <button
+                  id={value}
+                  className={`${
+                    sort === value ? "text-black underline dark:text-white" : ""
+                  } cursor-pointer hover:text-black dark:hover:text-white`}
+                  onClick={() => setSort(value)}
+                >
+                  {label}
+                </button>
+                {index < sortData.length - 1 && <span>|</span>}
+              </React.Fragment>
+            ))}
+          </div>
+          {/* 表示オプション */}
+          <Select defaultValue={view} onValueChange={(value) => setView(value as "list" | "grid")}>
+            <SelectTrigger className="justify-center">
+              <FontAwesomeIcon icon={iconMap[view]} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="grid">
+                <FontAwesomeIcon icon={faGrip} />
+                グリッド表示
+              </SelectItem>
+              <SelectItem value="list">
+                <FontAwesomeIcon icon={faList} />
+                リスト表示
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div className="flex justify-end">
-        <Select
-          defaultValue={view}
-          onValueChange={(value) => setView(value as "list" | "grid")}
-        >
-          <SelectTrigger className="justify-center">
-            <FontAwesomeIcon icon={iconMap[view]} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="grid">
-              <FontAwesomeIcon icon={faGrip} />
-              グリッド表示
-            </SelectItem>
-            <SelectItem value="list">
-              <FontAwesomeIcon icon={faList} />
-              リスト表示
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <ViewMap view={view} items={items} className="my-3" />
+      <ViewMap view={view} items={filteredItems} className="my-3" />
     </div>
   );
 }
@@ -109,14 +185,7 @@ type Filter = {
   limit?: number;
 };
 
-function ProductGrid({
-  items,
-  title,
-  filter,
-  sort,
-  limit,
-  isOpen = false,
-}: Filter & { items: any; title?: string; isOpen?: boolean }) {
+function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
   const [open, setOpen] = useState(false);
   const filteredItems = filterItems({
     items,
@@ -142,31 +211,22 @@ function ProductGrid({
           <Card
             key={index}
             className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${
-              !open
-                ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]"
-                : "delay-[" + index * 1000 + "ms]"
+              !open ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]" : "delay-[" + index * 1000 + "ms]"
             }
             translate-y-4 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer`}
             title={item.title}
           >
             <div className="relative">
               {item.rate !== "—" && (
-                <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">
-                  {item.rate}
-                </div>
+                <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">{item.rate}</div>
               )}
-              <img src={item.src} alt={item.title}/>
+              <img src={item.src} alt={item.title} />
             </div>
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-2">
                 <CardTitle className="leading-none font-semibold flex items-start gap-2 whitespace-normal break-words">
-                  <img src={item.icon} alt="" className="w-6 h-6"/>
-                  <a
-                    href={item.url}
-                    className="hover:underline line-clamp-2"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
+                  <img src={item.icon} alt="" className="w-6 h-6" />
+                  <a href={item.url} className="hover:underline line-clamp-2" rel="noopener noreferrer" target="_blank">
                     {item.title}
                   </a>
                   <span className="text-sm text-end">v{item.version}</span>
@@ -178,24 +238,15 @@ function ProductGrid({
                   </div>
                   <div className="flex gap-1 pt-1 flex-wrap">
                     <Badge>{item.category}</Badge>
-                    {item.tags
-                      ? item.tags.map((tag: string) => (
-                          <Badge key={tag}>{tag}</Badge>
-                        ))
-                      : null}
+                    {item.tags ? item.tags.map((tag: string) => <Badge key={tag}>{tag}</Badge>) : null}
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="px-2">
-                <CardDescription className="line-clamp-2">
-                  {item.description}
-                </CardDescription>
+                <CardDescription className="line-clamp-2">{item.description}</CardDescription>
               </CardContent>
             </div>
-            <Link
-              href={`/products/${item.name}`}
-              className="absolute inset-0 z-10"
-            />
+            <Link href={`/products/${item.name}`} className="absolute inset-0 z-10" />
           </Card>
         ))}
       </div>
@@ -224,13 +275,7 @@ function ProductGrid({
   );
 }
 
-function ProductList({
-  items,
-  title,
-  filter,
-  sort,
-  limit,
-}: Filter & { items: any; title?: string }) {
+function ProductList({ items, title }: Filter & { items: any; title?: string }) {
   return (
     <div className="w-full">
       <h1 className="font-bold text-xl mb-3">{title}</h1>
@@ -251,12 +296,7 @@ function ProductList({
                 <TableRow key={index}>
                   <TableCell>
                     <div className="truncate w-50">
-                      <a
-                        href={item.url}
-                        className="hover:underline"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
+                      <a href={item.url} className="hover:underline" rel="noopener noreferrer" target="_blank">
                         {item.title}
                       </a>
                     </div>
@@ -282,19 +322,41 @@ function ProductList({
   );
 }
 
-function filterItems({ items, filter, sort, limit }: Filter & { items: any }) {
+function filterItems({ items, categories = [], filter, sort, limit }: Filter & { items: any; categories?: string[] }) {
   let filtered = [...items];
+  // カテゴリ処理
+  if (categories.length > 0) {
+    filtered = filtered.filter((item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag)));
+  }
 
+  // 検索処理
   if (filter) {
     filtered = filtered.filter((item) => item.category.includes(filter));
   }
 
   // ソート処理
-  if (sort === "users-desc") {
+  // 人気順
+  if (sort === "users-desc" || sort === "sort-popular") {
     filtered = filtered.sort((a, b) => {
       const aUsers = parseInt(a.users.replace(/,/g, "")) || 0;
       const bUsers = parseInt(b.users.replace(/,/g, "")) || 0;
       return bUsers - aUsers;
+    });
+  }
+  // 新着順
+  if (sort === "sort-new") {
+    filtered = filtered.sort((a, b) => {
+      const aDate = new Date(a.releaseDate).getTime() || 0;
+      const bDate = new Date(b.releaseDate).getTime() || 0;
+      return bDate - aDate;
+    });
+  }
+  // 更新順
+  if (sort === "sort-update") {
+    filtered = filtered.sort((a, b) => {
+      const aDate = new Date(a.updateDate).getTime() || 0;
+      const bDate = new Date(b.updateDate).getTime() || 0;
+      return bDate - aDate;
     });
   }
 
