@@ -4,19 +4,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMoon,
-  faSun,
-  faDesktop,
-  faBars,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useSetTheme } from "./theme";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -47,18 +37,20 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
       <a href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
         YHOTAMOS
       </a>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <div className="hidden md:block">
           <DesktopMenu pathname={pathname} />
         </div>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           id="switch-theme"
-          className="switch-theme px-3 py-1 "
+          className="switch-theme cursor-pointer rounded-full"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           aria-label="テーマ切り替え"
         >
-          <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
-        </button>
+          <FontAwesomeIcon icon={theme === "light" ? faSun : faMoon} />
+        </Button>
         <div className="block md:hidden">
           <MobileMenu pathname={pathname} />
         </div>
@@ -74,9 +66,7 @@ function DesktopMenu({ pathname }: { pathname: string }) {
         {navItems.map((item: any) => (
           <NavigationMenuItem key={item.name}>
             <NavigationMenuLink
-              className={`flex flex-row items-center gap-1 ${
-                pathname === item.href ? "underline bg-accent" : ""
-              }`}
+              className={`flex flex-row items-center gap-1 ${pathname === item.href ? "underline bg-accent" : ""}`}
               title={item.ja + " - " + item.description}
               href={item.href}
             >
@@ -110,9 +100,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block ${
-                  pathname === item.href ? "underline bg-accent" : ""
-                } flex items-center gap-2 py-1`}
+                className={`block ${pathname === item.href ? "underline bg-accent" : ""} flex items-center gap-2 py-1`}
                 title={item.description}
               >
                 <FontAwesomeIcon icon={iconMap[item.icon]} />
