@@ -10,15 +10,13 @@ export default function Footer() {
   const footerData = json;
 
   return (
-    <footer className="w-full px-4 xl:px-10 mt-10 border-t border-gray-200 dark:border-gray-700 pb-[6rem]">
-      <div className="pt-[3rem]">
+    <footer className=" mt-10 border-t border-gray-200 dark:border-gray-700 pb-[6rem]">
+      <div className="pt-[3rem] max-w-7xl mx-auto ">
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 px-4">
           <div className="flex flex-col gap-3 mb-5 xl:col-span-2">
-            <div className="flex items-center">
-              <a className="me-3" href="https://qiita.com/yhotta240">
-                <Image className="rounded-full" src="/imgs/icon.jpg" alt="icon" width={32} height={32} />
-              </a>
-              <a href="/" className={`ps-2 text-4xl font-bold ${nicoMoji.className}`}>
+            <div className="flex items-center cursor-pointer">
+              <Image className="rounded-full" src="/imgs/icon.jpg" alt="icon" width={40} height={40} />
+              <a href="/" className={`ps-3 text-4xl font-bold ${nicoMoji.className}`}>
                 YHOTAMOS
               </a>
             </div>
@@ -36,7 +34,7 @@ export default function Footer() {
                       key={idx}
                       href={link?.path}
                       className="text-base flex items-center justify-between w-full"
-                      target="_blank"
+                      target={link.external ? "_blank" : "_self"}
                       rel="noopener noreferrer"
                     >
                       {link?.title}

@@ -33,26 +33,28 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
   }, [theme]);
 
   return (
-    <header className="p-2 md:px-10 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">
-      <a href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
-        YHOTAMOS
-      </a>
-      <div className="flex items-center gap-2">
-        <div className="hidden md:block">
-          <DesktopMenu pathname={pathname} />
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          id="switch-theme"
-          className="switch-theme cursor-pointer rounded-full"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          aria-label="テーマ切り替え"
-        >
-          <FontAwesomeIcon icon={theme === "light" ? faSun : faMoon} />
-        </Button>
-        <div className="block md:hidden">
-          <MobileMenu pathname={pathname} />
+    <header className="py-2 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto px-5 w-full flex items-center justify-between">
+        <a href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
+          YHOTAMOS
+        </a>
+        <div className="flex items-center gap-2">
+          <div className="hidden md:block">
+            <DesktopMenu pathname={pathname} />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            id="switch-theme"
+            className="switch-theme cursor-pointer rounded-full"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            aria-label="テーマ切り替え"
+          >
+            <FontAwesomeIcon icon={theme === "light" ? faSun : faMoon} />
+          </Button>
+          <div className="block md:hidden">
+            <MobileMenu pathname={pathname} />
+          </div>
         </div>
       </div>
     </header>
