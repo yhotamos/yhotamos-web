@@ -1,9 +1,6 @@
 // "use server";
 
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import { Theme } from "@/components/layout/theme";
-import TopArrowIcon from "@/components/layout/topArrowIcon";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/productItems";
@@ -23,13 +20,7 @@ export default async function Home() {
       <Breadcrumbs paths={urls} />
       <Release title="最新リリース" />
       <Hr />
-      <ProductGrid
-        items={items}
-        title="Chrome 拡張機能"
-        sort={"users-desc"}
-        limit={8}
-        isOpen={true}
-      />
+      <ProductGrid items={items} title="Chrome 拡張機能" sort={"users-desc"} limit={8} isOpen={true} />
       <Hr />
       <Project title="プロジェクト" repos={repos} limit={2} />
       <Hr />

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,27 +22,32 @@ function ProductItems({ items }: any) {
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
   const selectedCategories = searchParams.get("category")?.split(",") || [];
-  let newCategories: string[] = [];
   const [tab, setTab] = useState(searchParams.get("tab") || "user");
 
+  useEffect(() => {
+    //余計なURLパラメータを削除
+    const tabParams = searchParams.get("tab")?.split("?")[0];
+    setTab(tabParams || "user");
+  }, [searchParams]);
+
   const handleTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString()); // URLパラメータを取得
-    params.set("tab", value); // URLパラメータを変更
-    params.delete("category"); // URLパラメータを削除
-    router.push(`/products?${params.toString()}`);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+    params.delete("category"); // タブ切り替え時にカテゴリをリセット
+    router.push(`/products?${params.toString()}`, { scroll: false });
   };
 
   const handleCategory = (key: string) => {
-    const params = new URLSearchParams(searchParams.toString()); // URLパラメータを取得
-    const categoryParams = params.get("category")?.split(",").filter(Boolean) || []; // URLパラメータからカテゴリがあったら取得
+    const params = new URLSearchParams(searchParams.toString());
+    const categoryParams = params.get("category")?.split(",").filter(Boolean) || [];
 
-    newCategories = [...categoryParams]; // 配列をコピー
+    let newCategories = [...categoryParams];
 
     if (categoryParams.includes(key)) {
       // 選択済み → 削除
       newCategories = categoryParams.filter((c) => c !== key);
     } else {
-      // 未選択 → keyを追加
+      // 未選択 → 追加
       newCategories.push(key);
     }
 
@@ -52,14 +57,14 @@ function ProductItems({ items }: any) {
       params.delete("category");
     }
 
-    router.push(`/products?${params.toString()}`); // URLパラメータを変更
+    router.push(`/products?${params.toString()}`, { scroll: false });
   };
 
   return (
     <div className="max-w-full grid gap-4 my-3">
       <h1 className="text-center md:text-left text-2xl font-bold mb-2">Products</h1>
 
-      <Tabs defaultValue={tab} className="flex items-center md:items-start">
+      <Tabs defaultValue={tab} className="flex items-center md:items-start" value={tab}>
         <TabsList className="flex gap-3 h-10">
           <TabsTrigger className="h-fit cursor-pointer" value="user" onClick={() => handleTabChange("user")}>
             ユーザー向け
