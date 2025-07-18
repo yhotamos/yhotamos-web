@@ -59,21 +59,21 @@ function ProductItems({ items }: any) {
     <div className="max-w-full grid gap-4 my-3">
       <h1 className="text-center md:text-left text-2xl font-bold mb-2">Products</h1>
 
-      <Tabs defaultValue={tab} className="w-full">
+      <Tabs defaultValue={tab} className="flex items-center md:items-start">
         <TabsList className="flex gap-3 h-10">
-          <TabsTrigger className="h-fit" value="user" onClick={() => handleTabChange("user")}>
+          <TabsTrigger className="h-fit cursor-pointer" value="user" onClick={() => handleTabChange("user")}>
             ユーザー向け
           </TabsTrigger>
-          <TabsTrigger className="h-fit" value="developer" onClick={() => handleTabChange("developer")}>
+          <TabsTrigger className="h-fit cursor-pointer" value="developer" onClick={() => handleTabChange("developer")}>
             開発者向け
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent className="flex flex-col gap-5" value="user">
+        <TabsContent className="flex flex-col gap-5 w-full" value="user">
           <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
           <ProductContents items={items} categories={selectedCategories} />
         </TabsContent>
-        <TabsContent value="developer">
+        <TabsContent className="flex flex-col gap-5 w-full" value="developer">
           <ProductCategory categories={devCategories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
         </TabsContent>
       </Tabs>
@@ -157,15 +157,15 @@ function ProductContents({ items, className, categories }: { items: any; classNa
           </div>
           {/* 表示オプション */}
           <Select defaultValue={view} onValueChange={(value) => setView(value as "list" | "grid")}>
-            <SelectTrigger className="justify-center">
+            <SelectTrigger className="cursor-pointer justify-center">
               <FontAwesomeIcon icon={iconMap[view]} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="grid">
+              <SelectItem className="cursor-pointer" value="grid">
                 <FontAwesomeIcon icon={faGrip} />
                 グリッド表示
               </SelectItem>
-              <SelectItem value="list">
+              <SelectItem className="cursor-pointer" value="list">
                 <FontAwesomeIcon icon={faList} />
                 リスト表示
               </SelectItem>
@@ -326,7 +326,9 @@ function filterItems({ items, categories = [], filter, sort, limit }: Filter & {
   let filtered = [...items];
   // カテゴリ処理
   if (categories.length > 0) {
-    filtered = filtered.filter((item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag)));
+    filtered = filtered.filter(
+      (item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag.trim()))
+    );
   }
 
   // 検索処理
