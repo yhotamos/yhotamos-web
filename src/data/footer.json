@@ -10,12 +10,12 @@
       },
       {
         "title": "利用規約",
-        "path": "/about/terms-of-service",
+        "path": "/about/terms",
         "external": false
       },
       {
         "title": "プライバシーポリシー",
-        "path": "/about/privacy-policy",
+        "path": "/about/privacy",
         "external": false
       }
     ]

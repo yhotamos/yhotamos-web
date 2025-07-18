@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Image from "next/image";
 import { SnsLinks } from "@/components/layout/snsLinks";
+import Link from "next/link";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "About", href: "/about" }];
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   description: "YHOTAMOS - About",
 };
 
-export default function Blog() {
+export default function About() {
   return (
     <main className="max-w-7xl mx-auto p-5 flex flex-col gap-20">
       <Breadcrumbs paths={pathnames} />
@@ -18,7 +19,14 @@ export default function Blog() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-0">
         {/* ブランド */}
         <div className="flex flex-col gap-5 items-center justify-center">
-          <Image className="rounded-4xl border-2 border-violet-600" src="/imgs/icon.jpg" alt="icon" width={200} height={200} title="ブランドロゴ" />
+          <Image
+            className="rounded-4xl border-2 border-violet-600"
+            src="/imgs/icon.jpg"
+            alt="icon"
+            width={200}
+            height={200}
+            title="ブランドロゴ"
+          />
           <div>
             <span className="font-bold text-2xl after:content-['_-_']">ブランド</span>
             <span className="font-bold text-2xl">YHOTAMOS</span>
@@ -40,6 +48,14 @@ export default function Blog() {
         </div>
       </div>
       <SnsLinks className="flex justify-center gap-8" />
+      <div className="flex flex-col items-center gap-5">
+        <Link href="/about/terms" className="flex justify-center ">
+          <button className="btn btn-primary cursor-pointer">利用規約</button>
+        </Link>
+        <Link href="/about/privacy" className="flex justify-center">
+          <button className="btn btn-primary cursor-pointer">プライバシーポリシー</button>
+        </Link>
+      </div>
     </main>
   );
 }
