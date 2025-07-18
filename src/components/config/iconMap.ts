@@ -6,7 +6,7 @@ import {
   faDiagramProject,
   faCircleQuestion,
 } from "@fortawesome/free-solid-svg-icons";
-import { faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export const iconMap: { [key: string]: IconDefinition } = {
@@ -17,5 +17,6 @@ export const iconMap: { [key: string]: IconDefinition } = {
   faDiagramProject,
   faCircleQuestion,
   faGithub,
-  faXTwitter
+  faXTwitter,
+  faDiscord
 };

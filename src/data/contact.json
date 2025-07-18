@@ -35,6 +35,15 @@
         "value": "/imgs/qiita_icon.png"
       },
       "external": true
+    },
+    {
+      "title": "Discord",
+      "path": "https://discord.gg/Ghub7sDX",
+      "icon": {
+        "type": "fontAwesome",
+        "value": "faDiscord"
+      },
+      "external": true
     }
   ]
 }
