@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "YHOTAMOS - " + pathnames[0].name,
 };
 
-export default async function Support() {
+export default function Support() {
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
@@ -46,7 +46,7 @@ export default async function Support() {
   );
 }
 
-export const SupportHero: React.FC = () => {
+const SupportHero: React.FC = () => {
   return (
     <header className="text-center space-y-4">
       <h1 className="text-3xl font-bold tracking-tight">サポートセンター</h1>
@@ -57,7 +57,7 @@ export const SupportHero: React.FC = () => {
   );
 };
 
-export const SectionGrid = ({ children }: { children: React.ReactNode }) => (
+const SectionGrid = ({ children }: { children: React.ReactNode }) => (
   <div className="grid gap-5 md:gap-10 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
 );
 
@@ -68,7 +68,7 @@ interface Props {
   icon?: string;
   className?: string;
 }
-export const SupportCard: React.FC<Props> = ({ title, description, href, icon, className }) => {
+const SupportCard: React.FC<Props> = ({ title, description, href, icon, className }) => {
   return (
     <Link
       href={href}
@@ -87,7 +87,7 @@ export const SupportCard: React.FC<Props> = ({ title, description, href, icon, c
   );
 };
 
-export const FAQPreview: React.FC = () => {
+const FAQPreview: React.FC = () => {
   const top = faqItems.slice(0, 3);
   return (
     <section className="rounded-xl border border-secondary-foreground/30 p-6 shadow-sm">
@@ -110,7 +110,7 @@ export const FAQPreview: React.FC = () => {
   );
 };
 
-export const FeedbackPreview: React.FC = () => {
+const FeedbackPreview: React.FC = () => {
   return (
     <section className="rounded-xl border border-secondary-foreground/30 p-6 shadow-sm flex flex-col">
       <h3 className="text-lg font-semibold mb-2">フィードバック</h3>
@@ -126,7 +126,7 @@ export const FeedbackPreview: React.FC = () => {
   );
 };
 
-export const DonatePreview: React.FC = () => (
+const DonatePreview: React.FC = () => (
   <section className="rounded-xl border border-secondary-foreground/30 p-6 shadow-sm">
     <h3 className="text-lg font-semibold mb-2">寄付・支援</h3>
     <p className="text-sm text-secondary-foreground/70">
@@ -140,7 +140,7 @@ export const DonatePreview: React.FC = () => (
   </section>
 );
 
-export const ContactPreview: React.FC = () => (
+const ContactPreview: React.FC = () => (
   <section className="rounded-xl border border-secondary-foreground/30 p-6 shadow-sm">
     <h3 className="text-lg font-semibold mb-2">お問い合わせ</h3>
     <p className="text-sm text-secondary-foreground/70">
