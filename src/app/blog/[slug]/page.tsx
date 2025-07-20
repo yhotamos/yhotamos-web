@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   );
 }
 
-export const BlogHeader: React.FC<{ data: any }> = ({ data }) => {
+const BlogHeader: React.FC<{ data: any }> = ({ data }) => {
   const date = data.date.split("-").join("/");
   const today = new Date().toISOString().split("T")[0];
   const diff = Math.floor((new Date(today).getTime() - new Date(data.date).getTime()) / 1000 / 60 / 60 / 24);
