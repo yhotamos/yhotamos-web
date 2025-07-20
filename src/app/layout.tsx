@@ -25,7 +25,7 @@ export default async function RootLayout({
   return (
     <html lang="ja" className={theme}>
       <body
-        className={`md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
+        className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
       >
         <Header initialTheme={theme} />
         {children}

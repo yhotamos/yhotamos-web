@@ -5,8 +5,11 @@ import {
   faCircleInfo,
   faDiagramProject,
   faCircleQuestion,
+  faChevronRight,
+  faThumbsUp,
+  faCommentDots,
 } from "@fortawesome/free-solid-svg-icons";
-import { faDiscord, faGithub, faXTwitter } from '@fortawesome/free-brands-svg-icons'
+import { faDiscord, faFacebook, faGithub, faXTwitter, } from '@fortawesome/free-brands-svg-icons'
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export const iconMap: { [key: string]: IconDefinition } = {
@@ -18,5 +21,9 @@ export const iconMap: { [key: string]: IconDefinition } = {
   faCircleQuestion,
   faGithub,
   faXTwitter,
-  faDiscord
+  faDiscord,
+  faFacebook,
+  faChevronRight,
+  faThumbsUp,
+  faCommentDots
 };
