@@ -9,14 +9,20 @@ export const shareTwitter = ({ text, tags }: { text: string; tags: string[] }) =
   window.open(shareUrl, "_blank");
 };
 
-export const shareFacebook = ({ text, tags }: { text: string; tags: string[] }) => {
-
+export const shareFacebook = () => {
   if (typeof window === "undefined") return;
 
   const url = window.location.href;
-  const hashtags = tags.map((tag) => `#${tag}`).join(" ");
-  const body = `${text}\n${hashtags}\n${url}`;
-  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(body)}`;
+  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
 
-  window.open(shareUrl, "_blank");
+  window.open(shareUrl, "_blank", "noopener,noreferrer");
+};
+
+export const shareHatena = () => {
+  if (typeof window === "undefined") return;
+
+  const url = window.location.href;
+  const shareUrl = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
+
+  window.open(shareUrl, "_blank", "noopener,noreferrer");
 };

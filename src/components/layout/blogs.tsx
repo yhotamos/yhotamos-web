@@ -9,15 +9,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export function Blogs({ title, className, qittaBlogs, blogs }: { title?: string; className?: string; qittaBlogs?: any; blogs?: any }) {
+export function Blogs({
+  title,
+  className,
+  qittaBlogs,
+  blogs,
+  blogTags,
+}: {
+  title?: string;
+  className?: string;
+  qittaBlogs?: any;
+  blogs?: any;
+  blogTags?: any;
+}) {
   return (
     <div className={`${className} w-full`}>
       <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
-      <BlogSearch className="mb-5" tags={["React", "Next.js", "TypeScript", "Tailwind CSS"]} />
+      <BlogSearch className="mb-5" tags={blogTags} />
       <BlogTabs className="">
         {/* ユーザー向けのコンテンツ */}
         <TabsContent className="flex flex-col gap-2 w-full" value="user">
-          <BlogTags tags={["React", "Next.js", "TypeScript", "Tailwind CSS"]} />
+          <BlogTags tags={blogTags} />
           <BlogSectionHeader total={10} currentCategory="React" />
           <BlogCards blogs={blogs} />
         </TabsContent>
@@ -120,7 +132,7 @@ function BlogCards({ blogs }: { blogs: any[] }) {
       {blogs.map((blog: any, index) => (
         <a
           href={"/blog/" + blog.id}
-          target="self"
+          target="_self"
           key={index}
           className="block border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
         >

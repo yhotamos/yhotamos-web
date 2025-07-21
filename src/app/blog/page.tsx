@@ -14,13 +14,12 @@ export const metadata: Metadata = {
 export default async function Blog() {
   const qittaBlogs = await getQiitaList();
   const blogData = getBlogData();
-  console.log("blogData", blogData);
   const blogTags = getBlogTags();
 
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <Blogs qittaBlogs={qittaBlogs} blogs={blogData} />
+      <Blogs qittaBlogs={qittaBlogs} blogs={blogData} blogTags={blogTags} />
     </main>
   );
 }

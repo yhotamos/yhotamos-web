@@ -1,13 +1,24 @@
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getBlogBody } from "@/lib/getBlog";
-import { BlogBody } from "./blogBody";
+import { BlogBody } from "./_components/body";
 import NotFoundPage from "@/components/layout/notFound";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const slug: any = await params;
+  const blogId = decodeURIComponent(slug.slug);
+  const blogBody = getBlogBody(blogId);
+
+  return {
+    title: blogBody?.data.title || "Blog",
+    description: "YHOTAMOS - ブログ記事",
+  };
+}
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const slug: any = await params;
-  const decodedSlug = decodeURIComponent(slug.slug);
-  const blogBody = getBlogBody(decodedSlug);
-  // console.log("decodedSlug", blogBody);
+  const blogId = decodeURIComponent(slug.slug);
+  const blogBody = getBlogBody(blogId);
+  // console.log("blogId", blogBody);
   if (!blogBody) {
     return <NotFoundPage className={`min-h-screen mt-20 text-center font-bold`} backTop={true} />;
   }
@@ -21,7 +32,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <main className="max-w-7xl mx-auto p-5 ">
       <Breadcrumbs paths={pathnames} className="mb-5" />
       <BlogHeader data={blogBody.data} />
-      <BlogBody body={blogBody} />
+      <BlogBody blogId={blogId} body={blogBody} />
     </main>
   );
 }
@@ -30,10 +41,9 @@ const BlogHeader: React.FC<{ data: any }> = ({ data }) => {
   const date = data.date.split("-").join("/");
   const today = new Date().toISOString().split("T")[0];
   const diff = Math.floor((new Date(today).getTime() - new Date(data.date).getTime()) / 1000 / 60 / 60 / 24);
-  // console.log("diff", diff);
 
   return (
-    <div className="w-full py-10 px-2 md:px-20">
+    <div className="w-full pt-8 pb-4 px-2 md:px-20">
       {data.thumbnail && <img src={data.thumbnail} className="w-full mb-5" />}
       <div id="title" className="text-3xl font-bold mb-5">
         {data.title}
