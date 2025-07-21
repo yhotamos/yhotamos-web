@@ -67,6 +67,10 @@ export function getDevBlogTags() {
 const changelogPath = path.join(process.cwd(), "content/changelog");
 
 export function getChangelog() {
+  if (!fs.existsSync(changelogPath)) {
+    return;
+  }
+
   const files = fs.readdirSync(changelogPath)
     .filter((file) => file.endsWith(".md"));
 
