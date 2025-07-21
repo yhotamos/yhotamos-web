@@ -52,3 +52,43 @@ export function getBlogTags() {
 
   return tag;
 }
+
+export function getDevBlogTags() {
+  const blogIndex = getBlogData();
+  const devType = blogIndex.filter((blog: any) => blog.type === "dev");
+  const devTags = devType.map((blog: any) => blog.tags);
+  // 冗長なタグは除く
+  const tagsSet = new Set(devTags.flat());
+  const devTagSet = [...tagsSet];
+  return devTagSet;
+}
+
+
+const changelogPath = path.join(process.cwd(), "content/changelog");
+
+export function getChangelog() {
+  const files = fs.readdirSync(changelogPath)
+    .filter((file) => file.endsWith(".md"));
+
+  const changelogs = files.map((file) => {
+    const filePath = path.join(changelogPath, file);
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const { data, content } = matter(fileContent);
+
+    // ファイル名から日付とslugを抽出（例：20250719_ui改善.md）
+    const [date, ...titleParts] = file.replace(/\.md$/, "").split("_");
+    const slug = titleParts.join("_");
+
+    return {
+      slug,
+      date,
+      title: data.title || slug,
+      version: data.version || null,
+      tags: data.tags || [],
+      content,
+    };
+  });
+
+  // 日付で降順ソート
+  return changelogs.sort((a, b) => (a.date < b.date ? 1 : -1));
+}

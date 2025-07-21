@@ -37,8 +37,8 @@ export const BlogBody: React.FC<{ blogId: any; body: any }> = ({ blogId, body })
         <div
           className={clsx(
             "bg-white dark:bg-secondary lg:col-span-2 min-w-full lg:order-first p-2 md:p-5 prose prose-sm prose-neutral dark:prose-invert ",
-            "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20"
-            ,"[&_h3]:scroll-mt-20"
+            "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
+            "[&_h3]:scroll-mt-20"
           )}
         >
           <ReactMarkdown
@@ -111,7 +111,13 @@ const BlogSidebar: React.FC<{ blogId: any; data: any; className?: string }> = ({
   };
 
   return (
-    <div className={clsx(className, "fixed bottom-0 left-0 border-t md:border-t-0 bg-secondary w-full md:mt-5", "md:sticky md:top-20 md:w-fit")}>
+    <div
+      className={clsx(
+        className,
+        "fixed bottom-0 left-0 border-t md:border-t-0 bg-secondary w-full md:mt-5 dark:bg-background",
+        "md:sticky md:top-20 md:w-fit"
+      )}
+    >
       <div className="flex justify-evenly items-center gap-4 p-2 md:p-0 md:flex-col">
         <div className="flex md:flex-col gap-1 justify-center items-center ">
           <FontAwesomeIcon

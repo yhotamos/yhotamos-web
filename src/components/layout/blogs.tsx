@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
+import { filterItems, SortType } from "@/utils/filterItems";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 export function Blogs({
   title,
@@ -15,33 +22,136 @@ export function Blogs({
   qittaBlogs,
   blogs,
   blogTags,
+  devBlogTags,
+  changelogs,
 }: {
   title?: string;
   className?: string;
   qittaBlogs?: any;
   blogs?: any;
   blogTags?: any;
+  devBlogTags?: any;
+  changelogs?: any;
 }) {
+  const trigger =
+    "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
+  const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
+  const router = useRouter(); // ルーター(urlに書き込む用)
+  const searchParams = useSearchParams();
+  const selectedTags = searchParams.get("tag")?.split(",") || [];
+  const [tab, setTab] = useState(searchParams.get("tab") || "all");
+  const [sort, setSort]: any = useState("blog-new");
+
+  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort });
+  const filteredDevBlogs = filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: sort });
+
+  useEffect(() => {
+    //余計なURLパラメータを削除
+    const tabParams = searchParams.get("tab")?.split("?")[0];
+    setTab(tabParams || "all");
+  }, [searchParams]);
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+    params.delete("tag");
+    router.push(`/blog?${params.toString()}`, { scroll: false });
+  };
+
+  const handleTagClick = (tag: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const categoryParams = params.get("tag")?.split(",").filter(Boolean) || [];
+
+    let newCategories = [...categoryParams];
+
+    if (categoryParams.includes(tag)) {
+      // 選択済み → 削除
+      newCategories = categoryParams.filter((c) => c !== tag);
+    } else {
+      // 未選択 → 追加
+      newCategories.push(tag);
+    }
+
+    if (newCategories.length > 0) {
+      params.set("tag", newCategories.join(","));
+    } else {
+      params.delete("tag");
+    }
+
+    router.push(`/blog?${params.toString()}`, { scroll: false });
+  };
+
   return (
-    <div className={`${className} w-full`}>
+    <div className={`${className} w-full min-h-screen`}>
       <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
-      <BlogSearch className="mb-5" tags={blogTags} />
-      <BlogTabs className="">
+      {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
+      <Tabs defaultValue={tab} className={`${className} flex flex-col`}>
+        <TabsList className="flex gap-4 h-10 bg-secondary dark:bg-background mb-3">
+          <TabsTrigger onClick={() => handleTabChange("all")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="all">
+            すべて
+          </TabsTrigger>
+          <TabsTrigger onClick={() => handleTabChange("user")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="user">
+            ユーザー向け
+          </TabsTrigger>
+          <TabsTrigger onClick={() => handleTabChange("dev")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="dev">
+            開発者向け
+          </TabsTrigger>
+          <TabsTrigger onClick={() => handleTabChange("external")} className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="external">
+            外部の記事
+          </TabsTrigger>
+          <TabsTrigger onClick={() => handleTabChange("update")} className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="update">
+            更新情報
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent className="grid space-y-3" value="all">
+          <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=user">
+            ユーザー向け &gt;
+          </a>
+          <BlogCards blogs={filterItems({ items: blogs, tags: selectedTags, filter: "", sort: "blog-new", limit: 3 })} />
+          <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=dev">
+            開発者向け &gt;
+          </a>
+          <BlogCards blogs={filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: "blog-new", limit: 3 })} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2 mt-4">
+              <a className="text-lg font-bold p-3 hover:underline block" href="?tab=external">
+                外部の記事 &gt;
+              </a>
+              <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
+            </div>
+            <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4 mt-4">
+              <a className="text-lg font-bold hover:underline block w-fit pb-3" href="?tab=update">
+                更新情報 &gt;
+              </a>
+              <h3 className="text-lg font-bold block ">▼ 本サイトの更新情報</h3>
+              <ChangeLog changelogs={changelogs} />
+            </div>
+          </div>
+        </TabsContent>
         {/* ユーザー向けのコンテンツ */}
-        <TabsContent className="flex flex-col gap-2 w-full" value="user">
-          <BlogTags tags={blogTags} />
-          <BlogSectionHeader total={10} currentCategory="React" />
-          <BlogCards blogs={blogs} />
+        <TabsContent className="space-y-5" value="user">
+          <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
+          <BlogSectionHeader total={filteredBlogs.length} currentCategory={selectedTags[0]} sort={sort} setSort={setSort} />
+          <BlogCards blogs={filteredBlogs} />
         </TabsContent>
         {/* 開発者向けのコンテンツ */}
-        <TabsContent value="dev">
-          <BlogList qittaBlogs={qittaBlogs} />
+        <TabsContent className="space-y-5" value="dev">
+          <BlogTags tags={devBlogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
+          <BlogSectionHeader total={filteredDevBlogs.length} currentCategory={selectedTags[0]} sort={sort} setSort={setSort} />
+          <BlogCards blogs={filteredDevBlogs} />
         </TabsContent>
-        {/* その他 */}
-        <TabsContent value="other">a</TabsContent>
+        {/* 外部の記事  */}
+        <TabsContent value="external">
+          <div>
+            <div className="text-xl font-bold my-5"> 外部の記事 </div>
+            <BlogList className="bg-white" qittaBlogs={qittaBlogs} />
+          </div>
+        </TabsContent>
         {/* 更新情報 */}
-        <TabsContent value="update">a</TabsContent>
-      </BlogTabs>
+        <TabsContent className="ms-3" value="update">
+          <Update changelogs={changelogs} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -59,82 +169,131 @@ export function BlogSearch({ tags, className = "" }: { tags: string[]; className
   return (
     <div className={`${className}`}>
       {/* 検索バー */}
-      <input type="text" placeholder="記事を検索" className="w-full border-2 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500" />
+      <input
+        type="text"
+        placeholder="記事を検索"
+        className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
+      />
     </div>
   );
 }
 
-export function BlogTabs({ className = "", children }: { className?: string; children?: React.ReactNode }) {
-  const trigger =
-    "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
-  const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
+export function BlogTags({
+  className,
+  tags,
+  selectedTags,
+  handleTagClick,
+}: {
+  className?: string;
+  tags: string[];
+  selectedTags: string[];
+  handleTagClick: (tag: string) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <Tabs defaultValue="user" className={`${className} flex flex-col`}>
-      <TabsList className="flex gap-4 h-10 bg-secondary dark:bg-black mb-3">
-        <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="user">
-          ユーザー向け
-        </TabsTrigger>
-        <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="dev">
-          開発者向け
-        </TabsTrigger>
-        <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="other">
-          その他
-        </TabsTrigger>
-        <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="update">
-          更新情報
-        </TabsTrigger>
-      </TabsList>
-      {children}
-    </Tabs>
+    <div className={`${className} flex items-center justify-between border border-muted-foreground/50 p-2 rounded-lg`}>
+      {/* タグフィルタ */}
+      <div className={cn(isOpen ? "h-auto" : "max-h-[73px] overflow-auto", "flex flex-wrap gap-2 ")}>
+        {tags.map((tag) => {
+          const isActive = selectedTags?.includes(tag);
+          return (
+            <Button
+              key={tag}
+              size={"sm"}
+              className={cn(
+                isActive ? "!bg-violet-500 !text-white" : "",
+                "px-4 py-2 text-black dark:text-white bg-gray-200 dark:bg-secondary rounded-full",
+                "hover:bg-gray-300 text-sm whitespace-nowrap"
+              )}
+              onClick={() => handleTagClick(tag)}
+            >
+              {tag}
+              {/* <div className="text-xs text-muted-foreground">10</div> */}
+              {isActive && " ✕"}
+            </Button>
+          );
+        })}
+      </div>
+      <Button
+        title={isOpen ? "開く" : "閉じる"}
+        onClick={toggleOpen}
+        variant={"ghost"}
+        size={"icon"}
+        className={cn("px-4 py-2 ms-2 rounded-full hover:bg-gray-300 text-sm ")}
+      >
+        <FontAwesomeIcon
+          className={cn(isOpen ? "" : " rotate-180", "transition-transform duration-300 ease-in-out")}
+          icon={iconMap["faAngleDown"]}
+        />
+      </Button>
+    </div>
   );
 }
 
-export function BlogTags({ tags, className }: { tags: string[]; className?: string }) {
+export function BlogSectionHeader({
+  total,
+  currentCategory,
+  sort,
+  setSort,
+}: {
+  total: number;
+  currentCategory?: string;
+  sort: string;
+  setSort: any;
+}) {
+  // const [sort, setSort] = useState("sort-popular");
+
+  const sortData: { value: SortType; label: string }[] = [
+    // { value: "blog-popular", label: "人気順" },
+    { value: "blog-new", label: "新着順" },
+    { value: "blog-update", label: "更新順" },
+  ];
+
   return (
-    <div className={`${className}`}>
-      {/* タグフィルタ */}
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <Button
-            key={tag}
-            size={"sm"}
-            className="px-4 py-2 text-black bg-gray-200 rounded-full hover:bg-gray-300 text-sm whitespace-nowrap "
-          >
-            {tag}
-          </Button>
+    <div className="flex items-center justify-between">
+      {/* 件数表示 */}
+      <h2 className="ms-1 text-lg font-semibold">
+        {currentCategory ? `${currentCategory}の記事` : "すべての記事"}（{total}件）
+      </h2>
+
+      {/* 並べ替えオプション */}
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        {sortData.map(({ value, label }, index) => (
+          <React.Fragment key={value}>
+            <button
+              id={value}
+              className={`${
+                sort === value ? "text-black underline dark:text-white" : ""
+              } cursor-pointer hover:text-black dark:hover:text-white`}
+              onClick={() => setSort(value)}
+            >
+              {label}
+            </button>
+            {index < sortData.length - 1 && <span>|</span>}
+          </React.Fragment>
         ))}
       </div>
     </div>
   );
 }
 
-export function BlogSectionHeader({ total, currentCategory }: { total: number; currentCategory?: string }) {
-  return (
-    <div className="flex items-center justify-between mb-4">
-      {/* 件数表示 */}
-      <h2 className="text-lg font-semibold">
-        {currentCategory ? `${currentCategory}の記事` : "すべての記事"}（{total}件）
-      </h2>
+export function BlogCards({ className, blogs, currentTab }: { className?: string; blogs: any[]; currentTab?: string }) {
+  const allClassName =
+    currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
 
-      {/* 並べ替えオプション */}
-      <div className="flex gap-2 text-sm text-gray-500">
-        <button className="hover:text-black">最新順</button>
-        <span>|</span>
-        <button className="hover:text-black">人気順</button>
-      </div>
-    </div>
-  );
-}
-
-function BlogCards({ blogs }: { blogs: any[] }) {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
+    <div className={cn(className, allClassName)}>
       {blogs.map((blog: any, index) => (
         <a
           href={"/blog/" + blog.id}
           target="_self"
           key={index}
-          className="block border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
+          className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
         >
           {/* サムネイル */}
           {blog.thumbnail && (
@@ -142,20 +301,22 @@ function BlogCards({ blogs }: { blogs: any[] }) {
           )}
 
           {/* 本文 */}
-          <div className="p-4">
+          <div className="flex flex-col justify-between p-4 h-full ">
             <h2 className="text-lg font-semibold mb-2">{blog.title}</h2>
-            <p className="text-sm text-secondary-foreground/70 mb-2">{blog.date}</p>
 
             {/* 開発者向けなら抜粋を表示 */}
             {blog.type === "dev" && blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
 
-            {/* タグ */}
-            <div className="flex flex-wrap gap-2">
-              {blog.tags?.map((tag: string) => (
-                <span key={tag} className="text-xs text-secondary-foreground/80 bg-secondary-foreground/10 px-2 py-1 rounded-full">
-                  {tag}
-                </span>
-              ))}
+            <div>
+              <p className="text-sm text-secondary-foreground/70 mb-2">{blog.date}</p>
+              {/* タグ */}
+              <div className="flex flex-wrap gap-2">
+                {blog.tags?.map((tag: string) => (
+                  <span key={tag} className="text-xs text-secondary-foreground/80 bg-secondary-foreground/10 px-2 py-1 rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </a>
@@ -164,18 +325,28 @@ function BlogCards({ blogs }: { blogs: any[] }) {
   );
 }
 
-export function BlogList({ qittaBlogs }: { qittaBlogs: any }) {
-  // const qittaBlogs = await getQiitaList();
-
+export function BlogList({
+  className,
+  qittaBlogs,
+  currentTab,
+  limit,
+}: {
+  className?: string;
+  qittaBlogs: any[];
+  currentTab?: string;
+  limit?: number;
+}) {
+  const allClassName = currentTab === "all" ? "" : "md:pe-15";
+  qittaBlogs = qittaBlogs.slice(0, limit);
   return (
-    <div className="w-full">
+    <div className={className}>
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
         {qittaBlogs.map((blog: any, index: number) => (
           <li key={index}>
             <Link
               href={blog.url}
               target="_blank"
-              className="flex justify-between items-center p-4 md:pe-15 hover:bg-accent"
+              className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")}
               title={blog.title}
             >
               <div>
@@ -207,6 +378,68 @@ export function BlogList({ qittaBlogs }: { qittaBlogs: any }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function Update({ changelogs }: { changelogs: any }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="border border-muted-foreground/50 rounded-lg p-4">
+        <div className="text-lg font-semibold mb-5">本サイトの更新情報</div>
+        <ChangeLog changelogs={changelogs} />
+      </div>
+      <div className="border border-muted-foreground/50 rounded-lg p-4">
+        <div className="text-lg font-semibold mb-5">プロダクト・ツールの更新履歴</div>
+        <NotFound />
+      </div>
+      <div className="border border-muted-foreground/50 rounded-lg p-4">
+        <div className="text-lg font-semibold mb-5">ブログ・記事の追加・更新情報</div>
+        <NotFound />
+      </div>
+      <div className="border border-muted-foreground/50 rounded-lg p-4">
+        <div className="text-lg font-semibold mb-5">メディア・コミュニティ活動情報</div>
+        <NotFound />
+      </div>
+    </div>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="min-h-[200px] flex items-center justify-center">
+      <div className="text-lg">更新情報はありません</div>
+    </div>
+  );
+}
+
+function ChangeLog({ className, changelogs }: { className?: string; changelogs: any }) {
+  return (
+    <div className={cn(className, "space-y-4")}>
+      {changelogs ? (
+        changelogs.map((log: any, index: number) => (
+          <div key={index}>
+            <div className="flex gap-3">
+              <div>{log.title}</div>
+              <div>・</div>
+              <div>{log.date}</div>
+            </div>
+            <div
+              className={cn(
+                "prose prose-sm prose-neutral dark:prose-invert ",
+                "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
+                "[&_h3]:scroll-mt-20"
+              )}
+            >
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {log.content}
+              </ReactMarkdown>
+            </div>
+          </div>
+        ))
+      ) : (
+        <NotFound />
+      )}
     </div>
   );
 }
