@@ -40,9 +40,9 @@ export default function TabController({ item, className }: { item: Product; clas
 
   return (
     <Tabs defaultValue={activeTab} className={className} id="tabs" value={activeTab} onValueChange={handleTabChange}>
-      <div className="sticky top-12 px-5 z-50 bg-background border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)]  border-gray-200 dark:border-gray-700">
+      <div className="sticky top-12 px-5 z-50  border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)] bg-background border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto ">
-          <TabsList id="tabs-list" className="flex flex-wrap gap-2 px-5 pb-0 h-fit bg-background">
+          <TabsList id="tabs-list" className="flex flex-wrap gap-2 px-5 pb-0 h-fit bg-background ">
             {tabs.map((tab: any) => (
               <TabsTrigger
                 id={tab.value}
@@ -81,7 +81,7 @@ export default function TabController({ item, className }: { item: Product; clas
         </TabsContent>
         {/* 詳細情報 */}
         <TabsContent value="info" className="grid md:grid-cols-5 pt-5">
-          <DetailInfo item={item} className="p-3 lg:p-5 col-span-3 md:col-start-2 bg-secondary rounded-xl " />
+          <DetailInfo item={item} className="p-3 lg:p-5 col-span-3 md:col-start-2 bg-white rounded-xl " />
         </TabsContent>
       </div>
     </Tabs>
@@ -90,7 +90,7 @@ export default function TabController({ item, className }: { item: Product; clas
 
 function Description({ item, className }: { item: Product; className?: string }) {
   return (
-    <div className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5 `}>
+    <div className={`${className} bg-white dark:bg-secondary rounded-md p-3 lg:p-5 `}>
       <DocHtml src={item.doc} className="" />
     </div>
   );
@@ -98,7 +98,7 @@ function Description({ item, className }: { item: Product; className?: string })
 
 function Version({ item, className }: { item: Product; className?: string }) {
   return (
-    <div className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5 `}>
+    <div className={`${className} bg-white dark:bg-secondary rounded-md p-3 lg:p-5 `}>
       <div className="font-bold text-xl mb-3">バージョン情報</div>
       <p>{item.version}</p>
     </div>
@@ -107,7 +107,7 @@ function Version({ item, className }: { item: Product; className?: string }) {
 
 function Feedback({ item, className }: { item: Product; className?: string }) {
   return (
-    <div className={`${className} w-full bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5`}>
+    <div className={`${className} w-full bg-white dark:bg-secondary rounded-md p-3 lg:p-5`}>
       <div className="font-bold text-xl mb-3">フィードバック</div>
       <div>feedback</div>
     </div>
@@ -116,7 +116,7 @@ function Feedback({ item, className }: { item: Product; className?: string }) {
 
 function Review({ item, className }: { item: Product; className?: string }) {
   return (
-    <div className={`${className} bg-secondary dark:bg-secondary rounded-md p-3 lg:p-5`}>
+    <div className={`${className} bg-white dark:bg-secondary rounded-md p-3 lg:p-5`}>
       <div className="font-bold text-xl mb-3">レビュー</div>
       <div>review</div>
     </div>

@@ -19,15 +19,21 @@ export function Document({ item, className }: { item: Product; className?: strin
 
   return (
     <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
-      <TabsList className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl" style={{ top: `${top + 10}px` }}>
-        <TabsTrigger className="cursor-pointer w-full h-fit rounded-none rounded-l-xl" value="usage">
+      <TabsList
+        className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl bg-white dark:bg-secondary"
+        style={{ top: `${top + 10}px` }}
+      >
+        <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl " value="usage">
           使い方
         </TabsTrigger>
-        <TabsTrigger className="cursor-pointer w-full h-fit rounded-none rounded-l-xl" value="options">
+        <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl" value="options">
           オプション
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="usage" className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-secondary rounded-none rounded-tr-xl rounded-b-xl">
+      <TabsContent
+        value="usage"
+        className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-white dark:bg-secondary rounded-none rounded-tr-xl rounded-b-xl"
+      >
         <div className="border-1 rounded-xl border-gray-200 dark:border-gray-700 lg:border-none m-2 lg:m-0 lg:sticky lg:top-20 h-fit py-5 px-3 lg:ps-0 col-span-3 lg:col-span-1">
           目次
           <Hr />
@@ -47,7 +53,17 @@ export function Document({ item, className }: { item: Product; className?: strin
   );
 }
 
-export function DocHtml({ src, className, onTocGenerated, top }: { src: string; className?: string; onTocGenerated?: (toc: TocItem[]) => void; top?: number }) {
+export function DocHtml({
+  src,
+  className,
+  onTocGenerated,
+  top,
+}: {
+  src: string;
+  className?: string;
+  onTocGenerated?: (toc: TocItem[]) => void;
+  top?: number;
+}) {
   const [markdown, setMarkdown] = useState("");
   const [notFound, setNotFound] = useState(false);
 
@@ -58,6 +74,7 @@ export function DocHtml({ src, className, onTocGenerated, top }: { src: string; 
       if (!statusCode) {
         setMarkdown(markdown);
         toc = getTocFromMarkdown(markdown);
+        console.log("toc", toc);
         onTocGenerated?.(toc);
       } else {
         setNotFound(true);

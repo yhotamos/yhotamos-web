@@ -10,7 +10,7 @@ export default function Footer() {
   const footerData = json;
 
   return (
-    <footer className=" mt-10 border-t border-gray-200 dark:border-gray-700 pb-[6rem]">
+    <footer className="mt-10 bg-white dark:bg-background border-t border-gray-200 dark:border-gray-700 pb-[6rem]">
       <div className="pt-[3rem] max-w-7xl mx-auto ">
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 px-4">
           <div className="flex flex-col gap-3 mb-5 xl:col-span-2">

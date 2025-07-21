@@ -26,7 +26,7 @@ export const BlogBody: React.FC<{ blogId: any; body: any }> = ({ blogId, body })
           <div className="flex flex-col gap-2 pt-5">
             {tocItems.map((item, index) => (
               <div key={index}>
-                <a className={`${item.depth === 3 && "pl-3 "} text-secondary-foreground/70 hover:underline`} href={`#${item.id}`}>
+                <a className={`${item.depth === 3 && "pl-3 "} text-base text-secondary-foreground/80 hover:underline`} href={`#${item.id}`}>
                   {item.text}
                 </a>
               </div>
@@ -36,8 +36,9 @@ export const BlogBody: React.FC<{ blogId: any; body: any }> = ({ blogId, body })
         {/* 本文 */}
         <div
           className={clsx(
-            "bg-white dark:bg-secondary lg:col-span-2 min-w-full lg:order-first p-5 lg:p-5 prose prose-sm prose-neutral dark:prose-invert ",
-            "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h2]:border-b [&_h2]:border-secondary-foreground/30"
+            "bg-white dark:bg-secondary lg:col-span-2 min-w-full lg:order-first p-2 md:p-5 prose prose-sm prose-neutral dark:prose-invert ",
+            "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20"
+            ,"[&_h3]:scroll-mt-20"
           )}
         >
           <ReactMarkdown

@@ -93,7 +93,7 @@ export function BlogTags({ tags, className }: { tags: string[]; className?: stri
   return (
     <div className={`${className}`}>
       {/* タグフィルタ */}
-      <div className="flex overflow-x-auto gap-2">
+      <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <Button
             key={tag}
