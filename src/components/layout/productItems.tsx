@@ -11,14 +11,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import products from "@/data/products.json";
 
 export { ProductItems, ProductGrid, ProductList };
 
-const categories = products.categories;
-const devCategories = products.devCategories;
-
-function ProductItems({ items }: any) {
+function ProductItems({ items, userCategories, devCategories }: any) {
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
@@ -62,8 +58,8 @@ function ProductItems({ items }: any) {
   };
 
   return (
-    <div className="max-w-full grid gap-4 my-3">
-      <h1 className="text-center md:text-left text-2xl font-bold mb-2">Products</h1>
+    <div className="max-w-full my-3">
+      <ProductHero className="mb-6" title={"Product"} description="開発したツールやWEBサービスなどをまとめています．" />
 
       <Tabs defaultValue={tab} className="flex items-center md:items-start" onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex gap-3 h-10">
@@ -76,7 +72,7 @@ function ProductItems({ items }: any) {
         </TabsList>
 
         <TabsContent className="flex flex-col gap-5 w-full" value="user">
-          <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
+          <ProductCategory categories={userCategories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
           <ProductContents items={items} categories={selectedCategories} />
         </TabsContent>
         <TabsContent className="flex flex-col gap-5 w-full" value="developer">
@@ -87,24 +83,34 @@ function ProductItems({ items }: any) {
   );
 }
 
+export function ProductHero({ title, description, className = "" }: { title: string; description: string; className?: string }) {
+  return (
+    <section className={`${className} text-center space-y-4`}>
+      <h1 className="text-3xl font-bold">{title}</h1>
+      <p className="text-secondary-foreground/70 text-sm md:text-base">{description}</p>
+    </section>
+  );
+}
+
 function ProductCategory({ categories, selectedCategories, handleCategory }: any) {
   return (
     <div className="flex flex-col gap-2 text-white bg-gray-800 p-4 rounded-lg border">
       <p className="font-medium">カテゴリーから絞り込む</p>
       <div className="flex flex-wrap gap-2">
-        {categories.map(({ key, label }: any) => {
-          const isActive = selectedCategories.includes(key);
+        {categories.map((category: string) => {
+          const isActive = selectedCategories.includes(category);
           return (
             <Badge
-              key={key}
+              key={category}
               variant={isActive ? undefined : "outline"}
               className={`${isActive ? "bg-yellow-300 " : "bg-white "} text-black cursor-pointer`}
-              onClick={() => handleCategory(key)} // クリックしたらhandleCategoryを呼び出す
+              onClick={() => handleCategory(category)} // クリックしたらhandleCategoryを呼び出す
             >
-              {label} {isActive && "✕"}
+              {category} {isActive && "✕"}
             </Badge>
           );
         })}
+        {categories.length === 0 && <div className="text-sm text-muted/70">カテゴリがありません</div>}
       </div>
     </div>
   );

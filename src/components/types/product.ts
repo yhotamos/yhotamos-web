@@ -19,4 +19,5 @@ export type Product = {
   price: string;
   id: string;
   name: string;
+  type: "dev" | "user" | "all" | "";
 };
