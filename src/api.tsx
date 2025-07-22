@@ -7,9 +7,9 @@ export const getChromeWebStoreItems = async () => {
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
   const range = "シート1";
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
-  const res = await fetch(url);
+  // APIを叩く(1時間に1回まで)
+  const res = await fetch(url, { next: { revalidate: 60 * 60 } }); // Incremental Static Regeneration
   const data = await res.json();
-
   const formatted: Product[] = data.values.slice(1).map((item: string[]) => {
     const [title, version] = item[0].split("\n");
     // "バージョン 1.0.3" => ["バージョン", "1.0.3"]　に変換
@@ -37,6 +37,7 @@ export const getChromeWebStoreItems = async () => {
       id: item[17],
       name: item[18],
       icon: item[19],
+      type: "user",
     };
   });
 
@@ -45,9 +46,7 @@ export const getChromeWebStoreItems = async () => {
 };
 
 export const getRepos = async (sort?: SortType, limit?: number) => {
-  const response = await fetch(
-    `https://api.github.com/users/yhotta240/repos?sort=${sort}&per_page=${limit}`
-  );
+  const response = await fetch(`https://api.github.com/users/yhotta240/repos?sort=${sort}&per_page=${limit}`);
   const repos = await response.json();
 
   return repos;
@@ -67,7 +66,7 @@ export const getQiitaList = async () => {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`;
   const res = await fetch(url);
   const data = await res.json();
-
+  // console.log("apiを叩いたz",data);
   const formatted: any = data.values.slice(1).map((item: string[]) => {
     return {
       title: item[0],
