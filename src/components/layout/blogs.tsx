@@ -15,6 +15,7 @@ import { filterItems, SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import Loading from "./loading";
 
 export function Blogs({
   title,
@@ -38,68 +39,75 @@ export function Blogs({
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
-  const selectedTags = searchParams.get("tag")?.split(",") || [];
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.get("tag")?.split(",") || []);
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
+  const [limit, setLimit] = useState(3); // 初期表示は3件
 
-  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort });
-  const filteredDevBlogs = filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: sort });
+  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, limit: limit });
+  const filteredDevBlogs = filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: sort, limit: limit });
+
+  const updateURL = (params: URLSearchParams) => {
+    router.replace(`/blog?${params.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
-    //余計なURLパラメータを削除
     const tabParams = searchParams.get("tab")?.split("?")[0];
-    setTab(tabParams || "all");
+    setTab("all"); // デフォルトは "all"
+    if (tabParams != "all") {
+      setLimit(25); // ユーザー向け，開発者向けの記事は25件表示
+    }
   }, [searchParams]);
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = (tab: string) => {
+    console.log("Content limit changed to:", tab);
+    setLimit(tab === "all" ? 3 : 25); // 全ての記事は3件，他は25件表示
+    setTab(tab); // UI即時更新
     const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", value);
-    params.delete("tag");
-    router.push(`/blog?${params.toString()}`, { scroll: false });
+    params.set("tab", tab);
+    params.delete("tag"); // タブ変更時にタグをリセット
+    updateURL(params);
   };
 
   const handleTagClick = (tag: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const categoryParams = params.get("tag")?.split(",").filter(Boolean) || [];
-
-    let newCategories = [...categoryParams];
-
-    if (categoryParams.includes(tag)) {
+    let newTags = [...selectedTags];
+    if (newTags.includes(tag)) {
       // 選択済み → 削除
-      newCategories = categoryParams.filter((c) => c !== tag);
+      newTags = newTags.filter((c) => c !== tag);
     } else {
       // 未選択 → 追加
-      newCategories.push(tag);
+      newTags.push(tag);
     }
+    setSelectedTags(newTags); // UI即時更新
 
-    if (newCategories.length > 0) {
-      params.set("tag", newCategories.join(","));
+    const params = new URLSearchParams(searchParams.toString());
+    if (newTags.length > 0) {
+      params.set("tag", newTags.join(","));
     } else {
       params.delete("tag");
     }
-
-    router.push(`/blog?${params.toString()}`, { scroll: false });
+    updateURL(params);
   };
 
   return (
     <div className={`${className} w-full min-h-screen`}>
       <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
-      <Tabs defaultValue={tab} className={`${className} flex flex-col`}>
+      <Tabs defaultValue={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex gap-4 h-10 bg-secondary dark:bg-background mb-3">
-          <TabsTrigger onClick={() => handleTabChange("all")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="all">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="all">
             すべて
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange("user")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="user">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="user">
             ユーザー向け
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange("dev")} className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="dev">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="dev">
             開発者向け
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange("external")} className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="external">
+          <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="external">
             外部の記事
           </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange("update")} className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="update">
+          <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="update">
             更新情報
           </TabsTrigger>
         </TabsList>
@@ -107,11 +115,12 @@ export function Blogs({
           <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=user">
             ユーザー向け &gt;
           </a>
-          <BlogCards blogs={filterItems({ items: blogs, tags: selectedTags, filter: "", sort: "blog-new", limit: 3 })} />
+          {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredBlogs} />}
+          {/* <BlogCards blogs={filteredBlogs} /> */}
           <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=dev">
             開発者向け &gt;
           </a>
-          <BlogCards blogs={filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: "blog-new", limit: 3 })} />
+          {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredDevBlogs} />}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2 mt-4">
               <a className="text-lg font-bold p-3 hover:underline block" href="?tab=external">

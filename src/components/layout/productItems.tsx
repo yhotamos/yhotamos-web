@@ -21,55 +21,56 @@ const devCategories = products.devCategories;
 function ProductItems({ items }: any) {
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
-  const selectedCategories = searchParams.get("category")?.split(",") || [];
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
   const [tab, setTab] = useState(searchParams.get("tab") || "user");
 
+  const updateURL = (params: URLSearchParams) => {
+    router.replace(`/products?${params.toString()}`, { scroll: false });
+  };
+
   useEffect(() => {
-    //余計なURLパラメータを削除
-    const tabParams = searchParams.get("tab")?.split("?")[0];
-    setTab(tabParams || "user");
+    setTab("user");
   }, [searchParams]);
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = (tab: string) => {
+    setTab(tab); // UI即時更新
     const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", value);
+    params.set("tab", tab);
     params.delete("category"); // タブ切り替え時にカテゴリをリセット
-    router.push(`/products?${params.toString()}`, { scroll: false });
+    updateURL(params);
   };
 
   const handleCategory = (key: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const categoryParams = params.get("category")?.split(",").filter(Boolean) || [];
-
-    let newCategories = [...categoryParams];
-
-    if (categoryParams.includes(key)) {
+    let newCategories = [...selectedCategories];
+    if (selectedCategories.includes(key)) {
       // 選択済み → 削除
-      newCategories = categoryParams.filter((c) => c !== key);
+      newCategories = selectedCategories.filter((c) => c !== key);
     } else {
       // 未選択 → 追加
       newCategories.push(key);
     }
+    setSelectedCategories(newCategories); // UI即時更新
 
+    const params = new URLSearchParams(searchParams.toString());
     if (newCategories.length > 0) {
       params.set("category", newCategories.join(","));
     } else {
       params.delete("category");
     }
 
-    router.push(`/products?${params.toString()}`, { scroll: false });
+    updateURL(params); // URL更新
   };
 
   return (
     <div className="max-w-full grid gap-4 my-3">
       <h1 className="text-center md:text-left text-2xl font-bold mb-2">Products</h1>
 
-      <Tabs defaultValue={tab} className="flex items-center md:items-start" value={tab}>
+      <Tabs defaultValue={tab} className="flex items-center md:items-start" onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex gap-3 h-10">
-          <TabsTrigger className="h-fit cursor-pointer" value="user" onClick={() => handleTabChange("user")}>
+          <TabsTrigger className="h-fit cursor-pointer" value="user">
             ユーザー向け
           </TabsTrigger>
-          <TabsTrigger className="h-fit cursor-pointer" value="developer" onClick={() => handleTabChange("developer")}>
+          <TabsTrigger className="h-fit cursor-pointer" value="developer">
             開発者向け
           </TabsTrigger>
         </TabsList>
