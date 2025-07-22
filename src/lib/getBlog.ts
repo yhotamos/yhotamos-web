@@ -12,7 +12,6 @@ export function getBlogData() {
   }
   const blogIndex = fs.readFileSync(blogIndexPath, "utf-8");
   const blogIndexJson = JSON.parse(blogIndex);
-  // console.log("files", blogIndexJson);
 
   return blogIndexJson;
 }
@@ -33,21 +32,13 @@ export function getBlogBody(id: string) {
   };
 }
 
-export function getBlogTags() {
-  const files = fs.readdirSync(blogDir);
-  const tags = files.map((dirName) => {
-    const mdPath = path.join(blogDir, dirName, "index.md");
-    // console.log(mdPath);
-    if (!fs.existsSync(mdPath)) {
-      return;
-    }
-    const source = fs.readFileSync(mdPath, "utf-8");
-    const { data } = matter(source);
-
-    return data.tags;
-  }).flat();
+export function getUserBlogTags() {
+  const blogIndex = getBlogData();
+  // ユーザー向けの記事のタグを取得
+  const blogType = blogIndex.filter((blog: any) => blog.type === "user");
+  const tags = blogType.map((blog: any) => blog.tags);
   // 冗長なタグは除く
-  const tagsSet = new Set(tags);
+  const tagsSet = new Set(tags.flat());
   const tag = [...tagsSet];
 
   return tag;
@@ -63,7 +54,6 @@ export function getDevBlogTags() {
   return devTagSet;
 }
 
-
 const changelogPath = path.join(process.cwd(), "content/changelog");
 
 export function getChangelog() {
@@ -71,21 +61,20 @@ export function getChangelog() {
     return;
   }
 
-  const files = fs.readdirSync(changelogPath)
-    .filter((file) => file.endsWith(".md"));
+  const files = fs.readdirSync(changelogPath).filter((file) => file.endsWith(".md"));
 
   const changelogs = files.map((file) => {
     const filePath = path.join(changelogPath, file);
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const { data, content } = matter(fileContent);
 
-    // ファイル名から日付とslugを抽出（例：20250719_ui改善.md）
-    const [date, ...titleParts] = file.replace(/\.md$/, "").split("_");
+    // ファイル名から日付とslugを抽出（例：20250719_タイトル.md）
+    const [date, ...titleParts]: string[] = file.replace(/\.md$/, "").split("_");
     const slug = titleParts.join("_");
-
+    const newdate = new Date(`${date.slice(0, 4)}/${date.slice(4, 6)}/${date.slice(6, 8)}`);
     return {
       slug,
-      date,
+      date: newdate.toLocaleString().split(" ")[0], // 日付をYYYY/MM/DD形式に変換
       title: data.title || slug,
       version: data.version || null,
       tags: data.tags || [],

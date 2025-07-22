@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Blogs } from "@/components/layout/blogs";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getQiitaList } from "@/api";
-import { getBlogData, getBlogTags, getChangelog, getDevBlogTags } from "@/lib/getBlog";
+import { getBlogData, getUserBlogTags, getChangelog, getDevBlogTags } from "@/lib/getBlog";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Blog", href: "/blog" }];
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function Blog() {
   const qittaBlogs = await getQiitaList();
   const blogData = getBlogData();
-  const blogTags = getBlogTags();
+  const blogTags = getUserBlogTags();
   const devBlogTags = getDevBlogTags();
   const changelogs = getChangelog();
 

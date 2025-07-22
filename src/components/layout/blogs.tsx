@@ -44,7 +44,7 @@ export function Blogs({
   const [sort, setSort]: any = useState("blog-new");
   const [limit, setLimit] = useState(3); // 初期表示は3件
 
-  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, limit: limit });
+  const filteredBlogs = filterItems({ items: blogs, tags: blogTags, filter: "", sort: sort, limit: limit });
   const filteredDevBlogs = filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: sort, limit: limit });
 
   const updateURL = (params: URLSearchParams) => {
@@ -53,19 +53,18 @@ export function Blogs({
 
   useEffect(() => {
     const tabParams = searchParams.get("tab")?.split("?")[0];
-    setTab("all"); // デフォルトは "all"
     if (tabParams != "all") {
       setLimit(25); // ユーザー向け，開発者向けの記事は25件表示
     }
   }, [searchParams]);
 
   const handleTabChange = (tab: string) => {
-    console.log("Content limit changed to:", tab);
+    setSelectedTags([]); // 選択したタグをリセット
     setLimit(tab === "all" ? 3 : 25); // 全ての記事は3件，他は25件表示
-    setTab(tab); // UI即時更新
+    setTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
-    params.delete("tag"); // タブ変更時にタグをリセット
+    params.delete("tag"); // タグをリセット
     updateURL(params);
   };
 
@@ -78,7 +77,7 @@ export function Blogs({
       // 未選択 → 追加
       newTags.push(tag);
     }
-    setSelectedTags(newTags); // UI即時更新
+    setSelectedTags(newTags);
 
     const params = new URLSearchParams(searchParams.toString());
     if (newTags.length > 0) {
@@ -94,7 +93,7 @@ export function Blogs({
       <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
       <Tabs defaultValue={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
-        <TabsList className="flex gap-4 h-10 bg-secondary dark:bg-background mb-3">
+        <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">
           <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="all">
             すべて
           </TabsTrigger>
