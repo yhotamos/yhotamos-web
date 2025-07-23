@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import FormattedDate from "@/components/ui/formatted-date";
+import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
@@ -316,7 +316,9 @@ export function BlogCards({ className, blogs, currentTab }: { className?: string
             {blog.type === "dev" && blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
 
             <div>
-              <p className="text-sm text-secondary-foreground/70 mb-2">{blog.date}</p>
+              <p className="text-sm text-secondary-foreground/70 mb-2">
+                <FormattedDate isoDate={blog.date} isTime={false} /> ・ <DiffDate isoDate={blog.date} />
+              </p>
               {/* タグ */}
               <div className="flex flex-wrap gap-2">
                 {blog.tags?.map((tag: string) => (

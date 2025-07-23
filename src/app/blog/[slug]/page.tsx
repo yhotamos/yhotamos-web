@@ -2,6 +2,7 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getBlogBody } from "@/lib/getBlog";
 import { BlogBody } from "./_components/body";
 import NotFoundPage from "@/components/layout/notFound";
+import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const slug: any = await params;
@@ -38,10 +39,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 }
 
 const BlogHeader: React.FC<{ data: any }> = ({ data }) => {
-  const date = data.date.split("-").join("/");
-  const today = new Date().toISOString().split("T")[0];
-  const diff = Math.floor((new Date(today).getTime() - new Date(data.date).getTime()) / 1000 / 60 / 60 / 24);
-
   return (
     <div className="w-full pt-8 pb-4 px-2 md:px-20">
       {data.thumbnail && <img src={data.thumbnail} className="w-full mb-5" />}
@@ -49,7 +46,8 @@ const BlogHeader: React.FC<{ data: any }> = ({ data }) => {
         {data.title}
       </div>
       <div className="text-sm text-secondary-foreground/70">
-        投稿日 {date} ・ {diff}日前
+        投稿日
+        <FormattedDate isoDate={data.date} />・<DiffDate isoDate={data.date} />
       </div>
       <div className="flex flex-wrap gap-2 mt-5">
         {data.tags &&

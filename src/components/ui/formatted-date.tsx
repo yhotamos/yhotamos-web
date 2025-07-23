@@ -1,14 +1,18 @@
-function FormattedDate({ isoDate }: { isoDate: string }) {
+export function FormattedDate({ isoDate, isTime = false }: { isoDate: string | Date | number; isTime?: boolean }) {
   const date = new Date(isoDate);
 
-  const formatted = `${date.getFullYear()}/${
-    date.getMonth() + 1
-  }/${date.getDate()} ${date.getHours().toString().padStart(2, "0")}:${date
-    .getMinutes()
-    .toString()
-    .padStart(2, "0")}`;
+  const formatted = date.toLocaleString();
 
-  return <span>{formatted}</span>;
+  if (isTime) {
+    return <span>{formatted}</span>;
+  }
+
+  return <span>{formatted.split(" ")[0]}</span>;
 }
 
-export default FormattedDate;
+export function DiffDate({ isoDate }: { isoDate: string | Date | number }) {
+  const date = new Date(isoDate);
+  const diff = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000 / 60 / 60 / 24);
+
+  return <span>{diff}日前</span>;
+}
