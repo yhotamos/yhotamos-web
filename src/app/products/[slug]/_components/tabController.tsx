@@ -81,7 +81,7 @@ export default function TabController({ item, className }: { item: Product; clas
         </TabsContent>
         {/* 詳細情報 */}
         <TabsContent value="info" className="grid md:grid-cols-5 pt-5">
-          <DetailInfo item={item} className="p-3 lg:p-5 col-span-3 md:col-start-2 bg-white rounded-xl " />
+          <DetailInfo item={item} className="p-3 lg:p-5 col-span-3 md:col-start-2 bg-white dark:bg-secondary rounded-xl " />
         </TabsContent>
       </div>
     </Tabs>

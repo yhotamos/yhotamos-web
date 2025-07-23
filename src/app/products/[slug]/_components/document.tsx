@@ -16,7 +16,7 @@ import NotFoundPage from "@/components/layout/notFound";
 export function Document({ item, className }: { item: Product; className?: string }) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const top = useTopOffset();
-
+  console.log("tocItems", tocItems);
   return (
     <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
       <TabsList
@@ -34,19 +34,21 @@ export function Document({ item, className }: { item: Product; className?: strin
         value="usage"
         className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-white dark:bg-secondary rounded-none rounded-tr-xl rounded-b-xl"
       >
-        <div className="border-1 rounded-xl border-gray-200 dark:border-gray-700 lg:border-none m-2 lg:m-0 lg:sticky lg:top-20 h-fit py-5 px-3 lg:ps-0 col-span-3 lg:col-span-1">
-          目次
-          <Hr />
-          <div className="flex flex-col gap-4 pt-5">
-            {tocItems.map((item, index) => (
-              <div key={index}>
-                <a className={`${item.depth === 3 && "pl-3 "}  text-secondary-foreground/70 hover:underline`} href={`#${item.id}`}>
-                  {item.text}
-                </a>
-              </div>
-            ))}
+        {tocItems.length > 0 && (
+          <div className="border-1 rounded-xl border-gray-200 dark:border-gray-700 lg:border-none m-2 lg:m-0 lg:sticky lg:top-20 h-fit py-5 px-3 lg:ps-0 col-span-3 lg:col-span-1">
+            目次
+            <Hr />
+            <div className="flex flex-col gap-4 pt-5">
+              {tocItems.map((item, index) => (
+                <div key={index}>
+                  <a className={`${item.depth === 3 && "pl-3 "}  text-secondary-foreground/70 hover:underline`} href={`#${item.id}`}>
+                    {item.text}
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <DocHtml src={item.usage} className="p-3 lg:p-5 col-span-3 lg:order-first" onTocGenerated={setTocItems} top={top} />
       </TabsContent>
     </Tabs>
@@ -87,7 +89,7 @@ export function DocHtml({
   }
 
   if (!markdown) {
-    return <Loading />;
+    return <Loading className={`${className} text-center`}/>;
   }
 
   return (

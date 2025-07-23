@@ -94,19 +94,19 @@ export function Blogs({
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
       <Tabs defaultValue={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">
-          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="all">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="all">
             すべて
           </TabsTrigger>
-          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="user">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="user">
             ユーザー向け
           </TabsTrigger>
-          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2")} value="dev">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="dev">
             開発者向け
           </TabsTrigger>
-          <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="external">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="external">
             外部の記事
           </TabsTrigger>
-          <TabsTrigger className={`h-fit px-0 py-2 ${trigger} ${triggerText}`} value="update">
+          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="update">
             更新情報
           </TabsTrigger>
         </TabsList>
@@ -152,7 +152,7 @@ export function Blogs({
         <TabsContent value="external">
           <div>
             <div className="text-xl font-bold my-5"> 外部の記事 </div>
-            <BlogList className="bg-white" qittaBlogs={qittaBlogs} />
+            <BlogList className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
           </div>
         </TabsContent>
         {/* 更新情報 */}
@@ -432,7 +432,7 @@ function ChangeLog({ className, changelogs }: { className?: string; changelogs: 
             <div className="flex gap-3">
               <div>{log.title}</div>
               <div>・</div>
-              <div>{log.date}</div>
+              <FormattedDate isoDate={log.date} />
             </div>
             <div
               className={cn(

@@ -41,7 +41,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
         <Image
           src={item.src}
           alt={item.title}
-          className="object-cover rounded-sm border-solid w-full"
+          className="object-cover rounded-sm border-solid w-full h-44 md:h-fit"
           title={item.title}
           width={300}
           height={300}
@@ -51,9 +51,16 @@ function ProductItem({ item, className }: { item: Product; className?: string })
             <Link href={item.url} className="hover:underline" target="_blank">
               {item.title}
             </Link>
-            <div className="flex flex-wrap gap-x-1 mt-1">
-              <Badge>{item.category}</Badge>
-              {item.tags && item.tags.map((tag: string) => <Badge key={tag}>{tag}</Badge>)}
+            <div className="flex flex-wrap gap-x-2 mt-1">
+              <Link href={`/products?tab=${item.type}&category=${item.category}`}>
+                <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-4 py-1 rounded-full">{item.category}</Badge>
+              </Link>
+              {item.tags &&
+                item.tags.map((tag: string) => (
+                  <Link key={tag} href={`/products?tab=${item.type}&category=${tag}`}>
+                    <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-4 py-1 rounded-full">{tag}</Badge>
+                  </Link>
+                ))}
             </div>
           </div>
           <div className="flex flex-wrap gap-x-3 text-base ps-3">
@@ -65,7 +72,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
             <span className="after:content-['|']"></span>
             <span className="">作成者 : {item.author || "yhotta240"}</span>
           </div>
-          <div>{item.description}</div>
+          <div className="text-base text-muted-foreground ps-3">{item.description}</div>
           <Button
             asChild
             variant="outline"
