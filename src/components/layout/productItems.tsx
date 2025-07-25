@@ -98,12 +98,13 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: any
       <p className="font-medium">カテゴリーから絞り込む</p>
       <div className="flex flex-wrap gap-2">
         {categories.map((category: string) => {
+          category = category.trim();
           const isActive = selectedCategories.includes(category);
           return (
             <Badge
               key={category}
               variant={isActive ? undefined : "outline"}
-              className={`${isActive ? "bg-yellow-300 " : "bg-white "} text-black cursor-pointer`}
+              className={`${isActive ? "bg-yellow-300 " : "bg-white hover:bg-white/80"} text-black cursor-pointer  rounded-full`}
               onClick={() => handleCategory(category)} // クリックしたらhandleCategoryを呼び出す
             >
               {category} {isActive && "✕"}
