@@ -198,13 +198,13 @@ type Filter = {
   limit?: number;
 };
 
-function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
+function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
   const [open, setOpen] = useState(false);
   const filteredItems = filterItems({
     items,
     filter,
     sort,
-    limit: open ? 9 : limit,
+    limit: isOpen ? limit : 9,
   });
 
   const scrollView = (id: string) => {
@@ -217,7 +217,7 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
       <div
         className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 transition-all duration-500 ease-in px-3 pb-5 ${
-          isOpen && (open ? "max-h-full" : "max-h-[600px]")
+          isOpen && (open ? "max-h-full" : "max-h-[460px]")
         }  overflow-hidden`}
       >
         {filteredItems.map((item: any, index: number) => (
@@ -284,6 +284,13 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
             閉じる
           </Button>
         ))}
+      {isOpen && (
+        <div className="text-right me-3">
+          <Link href="/products" className="text-blue-600 dark:text-blue-400 hover:underline">
+            すべてのプロダクトを見る ＞
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

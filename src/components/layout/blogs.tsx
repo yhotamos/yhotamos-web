@@ -15,7 +15,8 @@ import { filterItems, SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import Loading from "./loading";
+import Loading from "@/components/layout/loading";
+import { Blog } from "@/components/types/blog";
 
 export function Blogs({
   title,
@@ -110,31 +111,16 @@ export function Blogs({
             更新情報
           </TabsTrigger>
         </TabsList>
-        <TabsContent className="grid space-y-3" value="all">
-          <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=user">
-            ユーザー向け &gt;
-          </a>
-          {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredBlogs} />}
-          {/* <BlogCards blogs={filteredBlogs} /> */}
-          <a className="text-lg font-bold mx-3 hover:underline w-fit" href="?tab=dev">
-            開発者向け &gt;
-          </a>
-          {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredDevBlogs} />}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2 mt-4">
-              <a className="text-lg font-bold p-3 hover:underline block" href="?tab=external">
-                外部の記事 &gt;
-              </a>
-              <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
-            </div>
-            <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4 mt-4">
-              <a className="text-lg font-bold hover:underline block w-fit pb-3" href="?tab=update">
-                更新情報 &gt;
-              </a>
-              <h3 className="text-lg font-bold block ">▼ 本サイトの更新情報</h3>
-              <ChangeLog changelogs={changelogs} />
-            </div>
-          </div>
+        <TabsContent value="all">
+          <BlogAll
+            tab={tab}
+            filteredBlogs={filteredBlogs}
+            filteredDevBlogs={filteredDevBlogs}
+            blogs={blogs}
+            qittaBlogs={qittaBlogs}
+            changelogs={changelogs}
+            more={false}
+          />
         </TabsContent>
         {/* ユーザー向けのコンテンツ */}
         <TabsContent className="space-y-5" value="user">
@@ -182,6 +168,64 @@ export function BlogSearch({ tags, className = "" }: { tags: string[]; className
         placeholder="記事を検索"
         className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
       />
+    </div>
+  );
+}
+
+export function BlogAll({
+  className,
+  tab = "all",
+  filteredBlogs,
+  filteredDevBlogs,
+  blogs,
+  qittaBlogs,
+  changelogs,
+  more = false,
+}: {
+  className?: string;
+  tab?: string;
+  filteredBlogs: Blog[];
+  filteredDevBlogs: Blog[];
+  blogs?: Blog[];
+  qittaBlogs?: string[];
+  changelogs?: string[];
+  more: boolean;
+}) {
+  return (
+    <div className={cn(className, "space-y-5")}>
+      <a className="block text-lg font-bold mx-3 hover:underline w-fit" href="?tab=user">
+        ユーザー向け &gt;
+      </a>
+      {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredBlogs} />}
+      <a className="block text-lg font-bold mx-3 hover:underline w-fit" href="?tab=dev">
+        開発者向け &gt;
+      </a>
+      {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredDevBlogs} />}
+      {more && (
+        <div className="text-right mt-4 me-3">
+          <a href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline">
+            ブログを見る ＞
+          </a>
+        </div>
+      )}
+      {qittaBlogs && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2 mt-4">
+            <a className="text-lg font-bold p-3 hover:underline block" href="?tab=external">
+              外部の記事 &gt;
+            </a>
+            <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
+          </div>
+          <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4 mt-4">
+            <a className="text-lg font-bold hover:underline block w-fit pb-3" href="?tab=update">
+              更新情報 &gt;
+            </a>
+            <h3 className="text-lg font-bold block ">▼ 本サイトの更新情報</h3>
+            <ChangeLog changelogs={changelogs} />
+          </div>
+        </div>
+      )}
+      {!more && <BlogCards title="すべて" className="border border-muted-foreground/50 rounded-lg p-2" blogs={blogs} />}
     </div>
   );
 }
@@ -290,47 +334,61 @@ export function BlogSectionHeader({
   );
 }
 
-export function BlogCards({ className, blogs, currentTab }: { className?: string; blogs: any[]; currentTab?: string }) {
+export function BlogCards({
+  title,
+  className,
+  blogs,
+  currentTab,
+}: {
+  title?: string;
+  className?: string;
+  blogs?: Blog[];
+  currentTab?: string;
+}) {
   const allClassName =
     currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
 
   return (
-    <div className={cn(className, allClassName)}>
-      {blogs.map((blog: any, index) => (
-        <a
-          href={"/blog/" + blog.id}
-          target="_self"
-          key={index}
-          className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
-        >
-          {/* サムネイル */}
-          {blog.thumbnail && (
-            <img src={blog.thumbnail} alt={blog.title} className={`w-full ${blog.type === "dev" ? "h-32" : "h-48"} object-cover`} />
-          )}
+    <div className={cn(className)}>
+      {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
+      <div className={allClassName}>
+        {blogs &&
+          blogs.map((blog: any, index) => (
+            <a
+              href={"/blog/" + blog.id}
+              target="_self"
+              key={index}
+              className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
+            >
+              {/* サムネイル */}
+              {blog.thumbnail && (
+                <img src={blog.thumbnail} alt={blog.title} className={`w-full ${blog.type === "dev" ? "h-32" : "h-48"} object-cover`} />
+              )}
 
-          {/* 本文 */}
-          <div className="flex flex-col justify-between p-4 h-full ">
-            <h2 className="text-lg font-semibold mb-2">{blog.title}</h2>
+              {/* 本文 */}
+              <div className="flex flex-col justify-between p-4 h-full ">
+                <h2 className="text-lg font-semibold mb-2">{blog.title}</h2>
 
-            {/* 開発者向けなら抜粋を表示 */}
-            {blog.type === "dev" && blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
+                {/* 開発者向けなら抜粋を表示 */}
+                {blog.type === "dev" && blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
 
-            <div>
-              <p className="text-sm text-secondary-foreground/70 mb-2">
-                <FormattedDate isoDate={blog.date} isTime={false} /> ・ <DiffDate isoDate={blog.date} />
-              </p>
-              {/* タグ */}
-              <div className="flex flex-wrap gap-2">
-                {blog.tags?.map((tag: string) => (
-                  <span key={tag} className="text-xs text-secondary-foreground/80 bg-secondary-foreground/10 px-2 py-1 rounded-full">
-                    {tag}
-                  </span>
-                ))}
+                <div>
+                  <p className="text-sm text-secondary-foreground/70 mb-2">
+                    <FormattedDate isoDate={blog.date} isTime={false} /> ・ <DiffDate isoDate={blog.date} />
+                  </p>
+                  {/* タグ */}
+                  <div className="flex flex-wrap gap-2">
+                    {blog.tags?.map((tag: string) => (
+                      <span key={tag} className="text-xs text-secondary-foreground/80 bg-secondary-foreground/10 px-2 py-1 rounded-full">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </a>
-      ))}
+            </a>
+          ))}
+      </div>
     </div>
   );
 }
@@ -342,7 +400,7 @@ export function BlogList({
   limit,
 }: {
   className?: string;
-  qittaBlogs: any[];
+  qittaBlogs: string[];
   currentTab?: string;
   limit?: number;
 }) {

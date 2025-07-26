@@ -41,7 +41,7 @@ export function getUserBlogTags() {
   const tagsSet = new Set(tags.flat());
   const tag = [...tagsSet];
 
-  return tag;
+  return tag as string[];
 }
 
 export function getDevBlogTags() {
@@ -51,7 +51,8 @@ export function getDevBlogTags() {
   // 冗長なタグは除く
   const tagsSet = new Set(devTags.flat());
   const devTagSet = [...tagsSet];
-  return devTagSet;
+
+  return devTagSet as string[];
 }
 
 const changelogPath = path.join(process.cwd(), "content/changelog");
