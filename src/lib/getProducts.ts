@@ -1,4 +1,4 @@
-import { getChromeWebStoreItems } from "@/api";
+import { getChromeWebStoreItems } from "@/lib/googleSheets";
 import { Product } from "@/components/types/product";
 
 export const getProductCategoriesByItems = async (items: Product[], setItem: string) => {

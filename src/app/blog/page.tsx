@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Blogs } from "@/components/layout/blogs";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
-import { getQiitaList } from "@/api";
+import { getQiitaList } from "@/lib/googleSheets";
 import { getBlogData, getUserBlogTags, getChangelog, getDevBlogTags } from "@/lib/getBlog";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Blog", href: "/blog" }];

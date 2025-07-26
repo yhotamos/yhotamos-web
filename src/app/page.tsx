@@ -3,9 +3,9 @@
 import { Theme } from "@/components/layout/theme";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
-import { ProductGrid } from "@/components/layout/productItems";
-import { getChromeWebStoreItems, getRepos } from "@/api";
-import { ProjectRepos, ProjectPickup } from "@/components/layout/project";
+import { ProductGrid } from "@/components/layout/product";
+import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { ProjectPickup } from "@/components/layout/project";
 import { TwitterEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
 import { getBlogData, getDevBlogTags, getUserBlogTags } from "@/lib/getBlog";

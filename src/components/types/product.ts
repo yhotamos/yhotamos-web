@@ -4,7 +4,7 @@ export type Product = {
   category: string;
   releaseDate: string;
   updateDate: string;
-  rate: number;
+  rate: string;
   users: number;
   status: string;
   url: string;

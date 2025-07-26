@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getChromeWebStoreItems } from "@/api";
+import { getChromeWebStoreItems } from "@/lib/googleSheets";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import NotFoundPage from "@/components/layout/notFound";
 import React from "react";
 import TabController from "./_components/tabController";
 import Image from "next/image";
+
+export const revalidate = 60;
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const slug: any = await params;

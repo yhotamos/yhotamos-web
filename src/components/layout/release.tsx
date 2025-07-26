@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { getChromeWebStoreItems } from "@/api";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { getChromeWebStoreItems } from "@/lib/googleSheets";
 
 export default async function Release({ title }: { title: string }) {
   const items = await getChromeWebStoreItems();

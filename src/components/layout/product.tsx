@@ -11,10 +11,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Product } from "@/components/types/product";
 
-export { ProductItems, ProductGrid, ProductList };
+export { ProductPage, ProductGrid, ProductList };
 
-function ProductItems({ items, userCategories, devCategories }: any) {
+function ProductPage({ items, userCategories, devCategories }: { items?: Product[]; userCategories: any; devCategories: any }) {
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
@@ -117,7 +118,7 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: any
   );
 }
 
-function ProductContents({ items, className, categories }: { items: any; className?: string; categories?: string[] }) {
+function ProductContents({ items, className, categories }: { items?: any; className?: string; categories?: string[] }) {
   const [view, setView] = useState<"list" | "grid">("grid");
   const [sort, setSort] = useState("sort-popular");
 
@@ -360,8 +361,8 @@ function filterItems({ items, categories = [], filter, sort, limit }: Filter & {
   // 人気順
   if (sort === "users-desc" || sort === "sort-popular") {
     filtered = filtered.sort((a, b) => {
-      const aUsers = parseInt(a.users.replace(/,/g, "")) || 0;
-      const bUsers = parseInt(b.users.replace(/,/g, "")) || 0;
+      const aUsers = parseInt(a.users || 0);
+      const bUsers = parseInt(b.users || 0);
       return bUsers - aUsers;
     });
   }
