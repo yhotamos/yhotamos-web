@@ -5,7 +5,7 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/productItems";
 import { getChromeWebStoreItems, getRepos } from "@/api";
-import { Project } from "@/components/layout/project";
+import { ProjectRepos } from "@/components/layout/project";
 import { TwitterEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
 
@@ -22,7 +22,7 @@ export default async function Home() {
       <Hr />
       <ProductGrid items={items} title="Chrome 拡張機能" sort={"users-desc"} limit={8} isOpen={true} />
       <Hr />
-      <Project title="プロジェクト" repos={repos} limit={2} />
+      <ProjectRepos title="プロジェクト" limit={2} />
       <Hr />
       <TwitterEmbed username="yhotta240" theme={theme} height={600} />
     </main>

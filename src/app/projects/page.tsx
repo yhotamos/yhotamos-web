@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getRepos } from "@/api";
-import { Project } from "@/components/layout/project";
+import { ProjectPage } from "@/components/layout/project";
 
-const pathnames: BreadcrumbsProps["paths"] = [
-  { name: "Projects", href: "/projects" },
-];
+const pathnames: BreadcrumbsProps["paths"] = [{ name: "Projects", href: "/projects" }];
 
 export const metadata: Metadata = {
   title: pathnames[0].name,
@@ -17,7 +15,7 @@ export default async function Projects() {
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <Project title="プロジェクト" repos={repos} limit={5} />
+      <ProjectPage limit={5} />
     </main>
   );
 }
