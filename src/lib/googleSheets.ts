@@ -135,7 +135,7 @@ export async function updateLikes(postId: string): Promise<number> {
 /** GET: Chrome Web Store一覧を返す（キャッシュ対応） */
 export const getChromeWebStoreItems = cache(async () => {
   const sheets = await getSheetsClient();
-  const range = "シート1!A1:V100";
+  const range = "ChromeExtension!A1:V100";
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: chromeWebStoreSheetId,
     range: range,
