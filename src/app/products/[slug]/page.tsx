@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export const revalidate = 60;
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const slug: any = params;
   const item = await getProductBySlug(slug.slug);
   const pathname: string = item ? item.title : "";
