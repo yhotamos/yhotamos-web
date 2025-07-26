@@ -400,51 +400,59 @@ export function BlogList({
   limit,
 }: {
   className?: string;
-  qittaBlogs: string[];
+  qittaBlogs?: string[];
   currentTab?: string;
   limit?: number;
 }) {
   const allClassName = currentTab === "all" ? "" : "md:pe-15";
-  qittaBlogs = qittaBlogs.slice(0, limit);
+  qittaBlogs = qittaBlogs?.slice(0, limit);
+
   return (
     <div className={className}>
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {qittaBlogs.map((blog: any, index: number) => (
-          <li key={index}>
-            <Link
-              href={blog.url}
-              target="_blank"
-              className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")}
-              title={blog.title}
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  <Image src="/imgs/qiita_icon.png" alt="icon" width={16} height={16} />
-                  <h3 className="text-lg font-semibold line-clamp-1">{blog.title}</h3>
-                </div>
-                <div className="flex flex-col flex-wrap gap-1 mt-2">
-                  <div className="flex items-center gap-5 ms-7">
-                    <time className="text-sm text-accent-foreground/50">
-                      <FormattedDate isoDate={blog.publishDate} />
-                    </time>
-                    <span className="text-sm text-accent-foreground/50">{blog.views} views</span>
-                    <span className="text-sm text-accent-foreground/50">{blog.likes} いいね</span>
-                    <span className="text-sm text-accent-foreground/50">{blog.bookmarks} ブックマーク</span>
+        {qittaBlogs &&
+          qittaBlogs.map((blog: any, index: number) => (
+            <li key={index}>
+              <Link
+                href={blog.url}
+                target="_blank"
+                className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")}
+                title={blog.title}
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Image src="/imgs/qiita_icon.png" alt="icon" width={16} height={16} />
+                    <h3 className="text-lg font-semibold line-clamp-1">{blog.title}</h3>
                   </div>
-                  <div className="flex flex-wrap gap-x-1 ms-5">
-                    {blog.tags.length > 1 &&
-                      blog.tags.map((tag: string, index: number) => (
-                        <Badge key={index} variant="outline">
-                          {tag}
-                        </Badge>
-                      ))}
+                  <div className="flex flex-col gap-1 mt-2">
+                    <div className="flex flex-wrap items-center gap-x-5 ms-6">
+                      <time className="text-sm text-accent-foreground/50">
+                        <FormattedDate isoDate={blog.publishDate} />
+                      </time>
+                      <div className="text-sm text-accent-foreground/50">
+                        <FontAwesomeIcon icon={iconMap["faEye"]} /> {blog.views}
+                      </div>
+                      <div className="text-sm text-accent-foreground/50">
+                        <FontAwesomeIcon icon={iconMap["faHeart"]} /> {blog.likes}
+                      </div>
+                      <div className="text-sm text-accent-foreground/50">
+                        <FontAwesomeIcon icon={iconMap["faBookmark"]} /> {blog.bookmarks}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-x-1 ms-5">
+                      {blog.tags.length > 1 &&
+                        blog.tags.map((tag: string, index: number) => (
+                          <Badge key={index} variant="outline">
+                            {tag}
+                          </Badge>
+                        ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <FontAwesomeIcon className="text-accent-foreground/60" icon={iconMap["faChevronRight"]} />
-            </Link>
-          </li>
-        ))}
+                <FontAwesomeIcon className="text-accent-foreground/60" icon={iconMap["faChevronRight"]} />
+              </Link>
+            </li>
+          ))}
       </ul>
     </div>
   );
@@ -454,19 +462,19 @@ function Update({ changelogs }: { changelogs: any }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-5">本サイトの更新情報</div>
+        <div className="text-lg font-semibold mb-2">本サイトの更新情報</div>
         <ChangeLog changelogs={changelogs} />
       </div>
       <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-5">プロダクト・ツールの更新履歴</div>
+        <div className="text-lg font-semibold mb-2">プロダクト・ツールの更新履歴</div>
         <NotFound />
       </div>
       <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-5">ブログ・記事の追加・更新情報</div>
+        <div className="text-lg font-semibold mb-2">ブログ・記事の追加・更新情報</div>
         <NotFound />
       </div>
       <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-5">メディア・コミュニティ活動情報</div>
+        <div className="text-lg font-semibold mb-2">メディア・コミュニティ活動情報</div>
         <NotFound />
       </div>
     </div>
@@ -487,7 +495,7 @@ function ChangeLog({ className, changelogs }: { className?: string; changelogs: 
       {changelogs ? (
         changelogs.map((log: any, index: number) => (
           <div key={index}>
-            <div className="flex gap-3">
+            <div className="flex gap-3 my-2">
               <div>{log.title}</div>
               <div>・</div>
               <FormattedDate isoDate={log.date} />
@@ -495,7 +503,7 @@ function ChangeLog({ className, changelogs }: { className?: string; changelogs: 
             <div
               className={cn(
                 "prose prose-sm prose-neutral dark:prose-invert ",
-                "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
+                "[&_p]:mb-0 [&_ul]:mt-1 md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
                 "[&_h3]:scroll-mt-20"
               )}
             >
