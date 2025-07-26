@@ -24,3 +24,9 @@ export const getDevProductCategories = async () => {
 
   return getProductCategoriesByItems(devItems, devItems[0]?.category);
 };
+
+export const getProductBySlug = async (slug: string) => {
+  const items = await getChromeWebStoreItems();
+  const item = items.find((item: Product) => item.name === slug);
+  return item;
+};

@@ -1,5 +1,6 @@
 import { Product } from "@/components/types/product";
 import { google } from "googleapis";
+import { cache } from "react";
 
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 const sheetId = process.env.GOOGLE_SPREADSHEET_ID_BLOG!;
@@ -12,23 +13,22 @@ if (!sheetId || !clientEmail || !privateKey) {
   console.warn("[googleSheets] Missing env variables．");
 }
 
-let sheetsClient: ReturnType<typeof google.sheets> | null = (globalThis as any)._sheetsClient || null;
+let sheetsClient: ReturnType<typeof google.sheets> | null = null;
 
-export async function getSheetsClient() {
-  if (sheetsClient) return sheetsClient;
-
+async function initializeSheetsClient() {
   const auth = new google.auth.JWT({
     email: clientEmail,
     key: privateKey,
     scopes,
   });
-
   await auth.authorize();
+  return google.sheets({ version: "v4", auth });
+}
 
-  sheetsClient = google.sheets({ version: "v4", auth });
-
-  (globalThis as any)._sheetsClient = sheetsClient;
-
+export async function getSheetsClient() {
+  if (!sheetsClient) {
+    sheetsClient = await initializeSheetsClient();
+  }
   return sheetsClient;
 }
 
@@ -47,6 +47,7 @@ export async function getComments(postId: string): Promise<SheetComment[]> {
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
     range: "Comments!A2:F",
+    fields: "values",
   });
 
   const rows = res.data.values || [];
@@ -131,13 +132,14 @@ export async function updateLikes(postId: string): Promise<number> {
   return newLikes;
 }
 
-/** GET: Chrome Web Store一覧を返す */
-export async function getChromeWebStoreItems() {
+/** GET: Chrome Web Store一覧を返す（キャッシュ対応） */
+export const getChromeWebStoreItems = cache(async () => {
   const sheets = await getSheetsClient();
   const range = "シート1!A1:V100";
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: chromeWebStoreSheetId,
     range: range,
+    fields: "values",
   });
   const data = res.data.values || [];
   // console.log(res.data.range);
@@ -173,15 +175,16 @@ export async function getChromeWebStoreItems() {
   });
 
   return formatted;
-};
+});
 
-/** GET: Qiita一覧を返す */
-export async function getQiitaList() {
+/** GET: Qiita一覧を返す（キャッシュ対応） */
+export const getQiitaList = cache(async () => {
   const sheets = await getSheetsClient();
   const range = "article";
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: qittaSheetId,
     range: range,
+    fields: "values",
   });
   const data = res.data.values || [];
   // console.log("apiを叩いたz",data);
@@ -200,4 +203,4 @@ export async function getQiitaList() {
   });
 
   return formatted;
-};
+});

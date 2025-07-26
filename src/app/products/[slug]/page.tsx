@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductBySlug } from "@/lib/getProducts";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,21 @@ import React from "react";
 import TabController from "./_components/tabController";
 import Image from "next/image";
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const slug: any = await params;
+  const item = await getProductBySlug(slug.slug);
+
+  return {
+    title: item?.title || "Products",
+    description: "YHOTAMOS - My Products",
+  };
+}
+
 export const revalidate = 60;
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = await params;
-  const decodedSlug = decodeURIComponent(slug.slug);
-  const items: Product[] = await getChromeWebStoreItems();
-  const item = items.find((item: Product) => item.name === decodedSlug);
+export default async function Page({ params }: { params: { slug: string } }) {
+  const slug: any = params;
+  const item = await getProductBySlug(slug.slug);
   const pathname: string = item ? item.title : "";
   const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }, { name: pathname }];
 
