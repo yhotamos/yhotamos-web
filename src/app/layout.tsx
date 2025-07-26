@@ -8,6 +8,7 @@ import Header from "@/components/layout/header";
 import { geistSans, geistMono, notosansjp } from "./fonts";
 
 import { GoogleAnalytics } from "@/components/layout/googleAnalytics";
+import { GoogleAdsense } from "@/components/layout/googleAdsense";
 
 export const metadata: Metadata = {
   title: {
@@ -30,6 +31,7 @@ export default async function RootLayout({
         className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
       >
         <GoogleAnalytics />
+        <GoogleAdsense />
         <Header initialTheme={theme} />
         {children}
         <TopArrowIcon />
