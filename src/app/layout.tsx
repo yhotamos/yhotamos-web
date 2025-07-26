@@ -7,6 +7,8 @@ import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { geistSans, geistMono, notosansjp } from "./fonts";
 
+import { GoogleAnalytics } from "@/components/layout/googleAnalytics";
+
 export const metadata: Metadata = {
   title: {
     default: "YHOTAMOS",
@@ -27,6 +29,7 @@ export default async function RootLayout({
       <body
         className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
       >
+        <GoogleAnalytics />
         <Header initialTheme={theme} />
         {children}
         <TopArrowIcon />
@@ -35,3 +38,4 @@ export default async function RootLayout({
     </html>
   );
 }
+
