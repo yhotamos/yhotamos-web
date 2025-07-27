@@ -13,6 +13,8 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
 import { Issue, Project } from "@/components/types/project";
+import { getNotion } from "@/lib/getNotion";
+import getProjects from "@/lib/getProjects";
 
 export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: number }) {
   return (
@@ -28,7 +30,7 @@ export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: numb
         <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
-      <ProjectRepos limit={10} />
+      {/* <ProjectRepos limit={10} /> */}
       <ProjectFooter />
     </div>
   );
@@ -45,26 +47,16 @@ export function ProjectHero({ title, description, className = "" }: { title: str
   );
 }
 
-const projects: Project[] = [
-  {
-    title: "Readtime CLI",
-    description: "Markdownやブログ記事の読み時間をCLIで計算するツール．Node.js製でWIP．",
-    tags: ["CLI", "Node.js", "Markdown"],
-    githubUrl: "https://github.com/yhotta240/example",
-    progress: "開発中",
-    updated: "2025-07-20",
-  },
-  {
-    title: "tab-history-replay",
-    description: "Chromeタブの履歴を時系列で再現できる拡張機能の試作版．",
-    tags: ["Chrome Extension", "History API"],
-    githubUrl: "https://github.com/yhotta240/example",
-    progress: "試作中",
-    updated: "2025-07-15",
-  },
-];
-
 export function ProjectPickup({ className = "", open = false }: { className?: string; open?: boolean }) {
+  const [projects, setProjectRepos] = useState([] as Project[]);
+
+  useEffect(() => {
+    getProjects().then((res: Project[]) => {
+      console.log("res", res);
+      setProjectRepos(res);
+    });
+  }, []);
+
   return (
     <section className={cn(className)}>
       <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
