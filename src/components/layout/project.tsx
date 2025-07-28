@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { HatenaEmbed } from "./embed";
+import { OpenGraphEmbed } from "./embed";
 import { Hr } from "./hr";
 import { getRepos } from "@/api";
 import Loading from "./loading";
@@ -30,7 +30,7 @@ export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: numb
         <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
-      {/* <ProjectRepos limit={10} /> */}
+      <ProjectRepos limit={10} />
       <ProjectFooter />
     </div>
   );
@@ -52,7 +52,6 @@ export function ProjectPickup({ className = "", open = false }: { className?: st
 
   useEffect(() => {
     getProjects().then((res: Project[]) => {
-      console.log("res", res);
       setProjectRepos(res);
     });
   }, []);
@@ -60,6 +59,7 @@ export function ProjectPickup({ className = "", open = false }: { className?: st
   return (
     <section className={cn(className)}>
       <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
+      {projects.length === 0 && <Loading className="w-full mt-10" />}
       <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project) => (
           <Card key={project.title} className="justify-between gap-3 rounded-2xl shadow hover:shadow-md transition">
@@ -219,11 +219,11 @@ export function ProjectRepos({ className, title, limit = 5 }: { className?: stri
   return (
     <div className={cn(className, "space-y-3")}>
       <h1 className="font-bold text-xl mb-3">{title || "Githubリポジトリ一覧"}</h1>
-      <div className="flex justify-between flex-wrap gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {repos.length > 0 &&
           repos.map((repo: any, index) => {
             if (index < limit) {
-              return <HatenaEmbed url={repo.html_url} key={index} />;
+              return <ProjectCard repo={repo} key={index} />;
             }
           })}
       </div>
@@ -231,7 +231,43 @@ export function ProjectRepos({ className, title, limit = 5 }: { className?: stri
   );
 }
 
-export function ProductCard() {}
+function ProjectCard({ className = "", repo }: { className?: string; repo: any }) {
+  return (
+    <div className={cn(className, "")}>
+      <Card className="h-full grid grid-cols-3 gap-3 rounded-2xl shadow hover:shadow-md transition">
+        <CardContent className="pt-4 pe-0 space-y-4 col-span-2">
+          <div className="flex gap-2 items-center">
+            <h3 className="text-xl font-semibold">{repo.full_name}</h3>
+          </div>
+
+          <p className="text-sm text-muted-foreground">{repo.description}</p>
+
+          <div className="flex flex-wrap gap-2">
+            {repo.topics.map((tag: string, index: number) => {
+              if (index > 2) return null;
+              return (
+                <Badge key={tag} variant="outline" className="rounded-full">
+                  {tag}
+                </Badge>
+              );
+            })}
+          </div>
+
+          <p className="text-xs text-muted-foreground">最終更新: {repo.updated_at}</p>
+        </CardContent>
+        <CardFooter className="flex flex-col justify-between">
+          <OpenGraphEmbed repo_name={repo.full_name} className="" />
+          <Link href={repo.html_url} target="_blank" rel="noopener noreferrer">
+            <Button className="cursor-pointer" variant="link">
+              <FontAwesomeIcon icon={iconMap["faGithub"]} />
+              GitHubで見る →
+            </Button>
+          </Link>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
 
 export function ProjectFooter() {
   return (

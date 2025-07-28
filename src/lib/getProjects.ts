@@ -5,11 +5,10 @@ import { getNotion } from "./getNotion";
 
 export default async function getProjects(): Promise<Project[]> {
   const results = await getNotion();
-  
+
   const projects = results.map((result) => {
     if ('properties' in result) {
       const properties: any = result.properties;
-      console.log(properties);
 
       return {
         title: properties["プロジェクト名"].title[0].plain_text,

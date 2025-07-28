@@ -48,8 +48,11 @@ export const getChromeWebStoreItems = async () => {
 export const getRepos = async (sort?: SortType, limit?: number) => {
   const response = await fetch(`https://api.github.com/users/yhotta240/repos?sort=${sort}&per_page=${limit}`);
   const repos = await response.json();
+  const responseOrg = await fetch(`https://api.github.com/users/yhotamos/repos?sort=${sort}&per_page=${limit}`);
+  const orgRepos = await responseOrg.json();
+  orgRepos.push(...repos);
 
-  return repos;
+  return orgRepos;
 };
 
 export const getMarkdown = async (url: string) => {

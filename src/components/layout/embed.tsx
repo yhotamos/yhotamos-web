@@ -1,5 +1,6 @@
 import Iframe from "react-iframe";
 import Script from "next/script";
+import Link from "next/link";
 
 export const HatenaEmbed = ({ url }: { url: string }) => {
   const hatenaUrl = "https://hatenablog-parts.com/embed?url=" + url;
@@ -14,6 +15,17 @@ export const TwitterEmbed = ({ username, theme, height }: { username: string; th
         Tweets by {username}
       </a>
       <Script src="https://platform.twitter.com/widgets.js" strategy="lazyOnload" />
+    </div>
+  );
+};
+
+export const OpenGraphEmbed = ({ repo_name, className }: { repo_name: string; className?: string }) => {
+  const ogImageUrl = `https://opengraph.githubassets.com/1/${repo_name}`;
+  return (
+    <div className={className}>
+      <Link href={`https://github.com/${repo_name}`} target="_blank" rel="noopener noreferrer">
+        <img src={ogImageUrl} alt={repo_name} title={repo_name} />
+      </Link>
     </div>
   );
 };
