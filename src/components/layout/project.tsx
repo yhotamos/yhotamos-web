@@ -61,38 +61,46 @@ export function ProjectPickup({ className = "", open = false }: { className?: st
       <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
       {projects.length === 0 && <Loading className="w-full mt-10" />}
       <div className="grid gap-6 md:grid-cols-2">
-        {projects.map((project) => (
-          <Card key={project.title} className="justify-between gap-3 rounded-2xl shadow hover:shadow-md transition">
-            <CardContent className="pt-4 space-y-4">
-              <div className="flex gap-2 items-center">
-                <h3 className="text-xl font-semibold">{project.title}</h3>
-              </div>
+        {projects.map((project, index) => {
+          if (
+            !project ||
+            [project.title, project.description, project.githubUrl, project.progress, project.updated].some((v) => v === "")
+          ) {
+            return null;
+          }
+          return (
+            <Card key={index} className="justify-between gap-3 rounded-2xl shadow hover:shadow-md transition">
+              <CardContent className="pt-4 space-y-4">
+                <div className="flex gap-2 items-center">
+                  <h3 className="text-xl font-semibold">{project.title}</h3>
+                </div>
 
-              <p className="text-sm text-muted-foreground">{project.description}</p>
+                <p className="text-sm text-muted-foreground">{project.description}</p>
 
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="rounded-full">
-                    {tag}
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <Badge key={tag} variant="outline" className="rounded-full">
+                      {tag}
+                    </Badge>
+                  ))}
+                  <Badge className="bg-yellow-100 text-yellow-800" variant="secondary">
+                    {project.progress}
                   </Badge>
-                ))}
-                <Badge className="bg-yellow-100 text-yellow-800" variant="secondary">
-                  {project.progress}
-                </Badge>
-              </div>
+                </div>
 
-              <p className="text-xs text-muted-foreground">最終更新: {project.updated}</p>
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                <Button className="" variant="link">
-                  <FontAwesomeIcon icon={iconMap["faGithub"]} />
-                  GitHubで見る →
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+                <p className="text-xs text-muted-foreground">最終更新: {project.updated}</p>
+              </CardContent>
+              <CardFooter className="flex justify-end">
+                <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                  <Button className="" variant="link">
+                    <FontAwesomeIcon icon={iconMap["faGithub"]} />
+                    GitHubで見る →
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
       {open && (
         <div className="text-right mt-4 me-3">
@@ -234,32 +242,31 @@ export function ProjectRepos({ className, title, limit = 5 }: { className?: stri
 function ProjectCard({ className = "", repo }: { className?: string; repo: any }) {
   return (
     <div className={cn(className, "")}>
-      <Card className="h-full grid grid-cols-3 gap-3 rounded-2xl shadow hover:shadow-md transition">
-        <CardContent className="pt-4 pe-0 space-y-4 col-span-2">
-          <div className="flex gap-2 items-center">
-            <h3 className="text-xl font-semibold">{repo.full_name}</h3>
+      <Card className="h-full gap-3 rounded-2xl shadow hover:shadow-md transition">
+        <CardContent className="grid grid-cols-3  pt-4 pe-0 ps-2">
+          <div className="col-span-2 space-y-3">
+            <div className="flex gap-2 items-center">
+              <h3 className="text-xl font-semibold">{repo.full_name}</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">{repo.description}</p>
+            <div className="flex flex-wrap gap-2">
+              {repo.topics.map((tag: string, index: number) => {
+                if (index > 2) return null;
+                return (
+                  <Badge key={tag} variant="outline" className="rounded-full">
+                    {tag}
+                  </Badge>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground">最終更新: {repo.updated_at}</p>
           </div>
-
-          <p className="text-sm text-muted-foreground">{repo.description}</p>
-
-          <div className="flex flex-wrap gap-2">
-            {repo.topics.map((tag: string, index: number) => {
-              if (index > 2) return null;
-              return (
-                <Badge key={tag} variant="outline" className="rounded-full">
-                  {tag}
-                </Badge>
-              );
-            })}
-          </div>
-
-          <p className="text-xs text-muted-foreground">最終更新: {repo.updated_at}</p>
+          <OpenGraphEmbed repo_name={repo.full_name} className="ps-0 pe-2" />
         </CardContent>
-        <CardFooter className="flex flex-col justify-between">
-          <OpenGraphEmbed repo_name={repo.full_name} className="" />
-          <Link href={repo.html_url} target="_blank" rel="noopener noreferrer">
-            <Button className="cursor-pointer" variant="link">
-              <FontAwesomeIcon icon={iconMap["faGithub"]} />
+        <CardFooter className="flex justify-center sm:justify-end">
+          <Link href={repo.html_url} className=" p-0 text-sm" target="_blank" rel="noopener noreferrer">
+            <Button className="cursor-pointer " variant="link">
+              <FontAwesomeIcon className="p-0" icon={iconMap["faGithub"]} />
               GitHubで見る →
             </Button>
           </Link>

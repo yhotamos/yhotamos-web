@@ -11,12 +11,12 @@ export default async function getProjects(): Promise<Project[]> {
       const properties: any = result.properties;
 
       return {
-        title: properties["プロジェクト名"].title[0].plain_text,
-        description: properties["概要"].rich_text[0].plain_text,
-        tags: properties["タグ"].multi_select.map((tag: any) => tag.name),
-        githubUrl: properties["URL"].url,
-        progress: properties["ステータス"].status.name,
-        updated: properties["開始日"].date.start,
+        title: properties["プロジェクト名"].title?.[0]?.plain_text ?? "",
+        description: properties["概要"].rich_text?.[0]?.plain_text ?? "",
+        tags: properties["タグ"].multi_select?.map((tag: any) => tag.name) ?? [],
+        githubUrl: properties["URL"]?.url ?? "",
+        progress: properties["ステータス"]?.status?.name ?? "構想中",
+        updated: properties["開始日"]?.date?.start ?? "",
       }
     }
   });
