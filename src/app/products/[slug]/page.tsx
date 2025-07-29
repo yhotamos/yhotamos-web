@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export const revalidate = 60;
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = params;
+  const slug: any = await params;
   const item = await getProductBySlug(slug.slug);
   const pathname: string = item ? item.title : "";
   const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }, { name: pathname }];
@@ -55,6 +55,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
           title={item.title}
           width={300}
           height={300}
+          priority
         ></Image>
         <div className="md:col-span-4 grid gap-1">
           <div className="font-bold text-xl">
