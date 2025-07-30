@@ -16,7 +16,7 @@ import NotFoundPage from "@/components/layout/notFound";
 export function Document({ item, className }: { item: Product; className?: string }) {
   const [tocItems, setTocItems] = useState<TocItem[]>([]);
   const top = useTopOffset();
-  console.log("tocItems", tocItems);
+  // console.log("tocItems", tocItems);
   return (
     <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
       <TabsList
@@ -76,7 +76,7 @@ export function DocHtml({
       if (!statusCode) {
         setMarkdown(markdown);
         toc = getTocFromMarkdown(markdown);
-        console.log("toc", toc);
+        // console.log("toc", toc);
         onTocGenerated?.(toc);
       } else {
         setNotFound(true);

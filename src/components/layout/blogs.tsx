@@ -57,7 +57,8 @@ export function Blogs({
     if (tabParams != "all") {
       setLimit(25); // ユーザー向け，開発者向けの記事は25件表示
     }
-  }, [searchParams]);
+    setTab(tabParams || "all");
+  }, [searchParams, router]);
 
   const handleTabChange = (tab: string) => {
     setSelectedTags([]); // 選択したタグをリセット
@@ -93,7 +94,7 @@ export function Blogs({
     <div className={`${className} w-full min-h-screen`}>
       <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
-      <Tabs defaultValue={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
+      <Tabs defaultValue={tab} value={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">
           <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="all">
             すべて

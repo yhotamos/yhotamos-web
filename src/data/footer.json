@@ -52,22 +52,22 @@
     "items": [
       {
         "title": "ブログ",
-        "path": "/blog/users",
+        "path": "/blog",
         "external": false
       },
       {
         "title": "技術メモ",
-        "path": "/blog/dev",
+        "path": "/blog?tab=dev",
         "external": false
       },
       {
-        "title": "その他",
-        "path": "/blog/others",
+        "title": "外部の記事",
+        "path": "/blog?tab=external",
         "external": false
       },
       {
         "title": "更新情報",
-        "path": "/blog/updates",
+        "path": "/blog?tab=update",
         "external": false
       }
     ]

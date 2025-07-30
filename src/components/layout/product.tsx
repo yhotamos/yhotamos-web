@@ -26,8 +26,10 @@ function ProductPage({ items, userCategories, devCategories }: { items?: Product
   };
 
   useEffect(() => {
-    setTab("user");
-  }, [searchParams]);
+    const tabParams = searchParams.get("tab")?.split("?")[0];
+    setTab(tabParams || "user");
+    setSelectedCategories(() => searchParams.get("category")?.split(",") || []);
+  }, [searchParams, router]);
 
   const handleTabChange = (tab: string) => {
     setTab(tab); // UI即時更新
@@ -62,7 +64,7 @@ function ProductPage({ items, userCategories, devCategories }: { items?: Product
     <div className="max-w-full my-3">
       <ProductHero className="mb-6" title={"Product"} description="開発したツールやWEBサービスなどをまとめています．" />
 
-      <Tabs defaultValue={tab} className="flex items-center md:items-start" onValueChange={(value) => handleTabChange(value)}>
+      <Tabs defaultValue={tab} value={tab} className="flex items-center md:items-start" onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex gap-3 h-10">
           <TabsTrigger className="h-fit cursor-pointer" value="user">
             ユーザー向け
