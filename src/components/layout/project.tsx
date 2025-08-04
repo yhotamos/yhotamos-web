@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { OpenGraphEmbed } from "./embed";
 import { Hr } from "./hr";
-import { getRepos } from "@/api";
 import Loading from "./loading";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -13,10 +12,49 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
 import { Issue, Project } from "@/components/types/project";
-import { getNotion } from "@/lib/getNotion";
 import getProjects from "@/lib/getProjects";
+import { getRepos, getIssues } from "@/lib/getRepository";
 
 export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: number }) {
+  const [repos, setRepos] = useState([]);
+  const [issues, setIssues] = useState([]);
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      try {
+        const repos: any = await getRepos("updated", limit);
+        setRepos(repos);
+
+        const allIssuesNested = await Promise.all(
+          repos.map(async (repo: any) => {
+            try {
+              const issuesRes = await getIssues(repo, 10);
+              if (issuesRes.length === 0) return [];
+
+              const issue: Issue = {
+                title: issuesRes[0].title,
+                url: issuesRes[0].html_url,
+                labels: issuesRes[0].labels.map((label: any) => label.name),
+                updated: issuesRes[0].updated_at,
+              };
+
+              return issue;
+            } catch (e) {
+              console.warn(`スキップ: ${repo.name} の issue 取得失敗`, e);
+              return [];
+            }
+          })
+        );
+        const allIssues: Issue[] = allIssuesNested.flat();
+
+        setIssues(allIssues as never[]);
+      } catch (e) {
+        console.error("Issue fetch error", e);
+      }
+    };
+    fetchRepos();
+  }, []);
+
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title || "Projects"} className="" />
@@ -25,12 +63,12 @@ export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: numb
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <ProjectIdea className="rounded-2xl border border-muted-foreground/50 p-4" />
-        <IssuePick className="rounded-2xl border border-muted-foreground/50 p-4" />
+        <IssuePickup issues={issues} className="rounded-2xl border border-muted-foreground/50 p-4" />
         <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
         <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
-      <ProjectRepos limit={10} />
+      <ProjectRepos repos={repos} limit={10} />
       <ProjectFooter />
     </div>
   );
@@ -133,41 +171,30 @@ export function ProjectIdea({ className = "" }: { className?: string }) {
   );
 }
 
-const issues: Issue[] = [
-  {
-    title: "Readtime CLI にグラフ表示機能を追加したい",
-    url: "https://github.com/yhotta240/example/issues/12",
-    labels: ["enhancement", "help wanted"],
-    updated: "2025-07-20",
-  },
-  {
-    title: "OAuth2トークンをESP32で更新する処理の改善",
-    url: "https://github.com/yhotta240/example/issues/5",
-    labels: ["bug", "WIP"],
-    updated: "2025-07-19",
-  },
-];
-
-export function IssuePick({ className = "" }: { className?: string }) {
+export function IssuePickup({ className = "", issues = [] }: { className?: string; issues?: Issue[] }) {
   return (
     <section className={cn(className, "py-10")}>
       <h2 className="text-2xl font-bold mb-4">🐛 Picked Issues</h2>
       <ul className="space-y-3">
-        {issues.map((issue) => (
-          <li key={issue.url} className="text-sm">
-            <a href={issue.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-              {issue.title}
-            </a>
-            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
-              {issue.labels.map((label) => (
-                <span key={label} className="bg-gray-100 px-2 py-0.5 rounded">
-                  {label}
-                </span>
-              ))}
-              <span>更新日: {issue.updated}</span>
-            </div>
-          </li>
-        ))}
+        {issues.length === 0 && <Loading className="w-full mt-10" />}
+        {issues &&
+          issues.map((issue) => {
+            return (
+              <li key={issue.url} className="text-sm">
+                <a href={issue.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  {issue.title}
+                </a>
+                <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
+                  {issue.labels.map((label) => (
+                    <span key={label} className="bg-gray-100 px-2 py-0.5 rounded">
+                      {label}
+                    </span>
+                  ))}
+                  <span>更新日: {issue.updated}</span>
+                </div>
+              </li>
+            );
+          })}
       </ul>
     </section>
   );
@@ -211,15 +238,7 @@ export function Contribute({ className = "" }: { className?: string }) {
   );
 }
 
-export function ProjectRepos({ className, title, limit = 5 }: { className?: string; title?: string; limit?: number }) {
-  const [repos, setRepos] = useState([]);
-
-  useEffect(() => {
-    getRepos("updated", limit).then((res) => {
-      setRepos(res);
-    });
-  }, []);
-
+export function ProjectRepos({ className, title, repos, limit = 5 }: { className?: string; title?: string; repos?: any; limit?: number }) {
   if (repos.length === 0) {
     return <Loading className="mt-10" />;
   }
@@ -229,7 +248,7 @@ export function ProjectRepos({ className, title, limit = 5 }: { className?: stri
       <h1 className="font-bold text-xl mb-3">{title || "Githubリポジトリ一覧"}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {repos.length > 0 &&
-          repos.map((repo: any, index) => {
+          repos.map((repo: any, index: number) => {
             if (index < limit) {
               return <ProjectCard repo={repo} key={index} />;
             }
