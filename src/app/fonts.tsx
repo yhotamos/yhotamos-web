@@ -1,8 +1,4 @@
-import {
-  Geist,
-  Geist_Mono,
-  Noto_Sans_JP,
-} from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import localFont from "next/font/local";
 
 const geistSans = Geist({
@@ -16,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 const nicoMoji = localFont({
-  src: "../../public/fonts/nicomoji-plus_v2-5.ttf",
-  display: "swap",
+  src: "../../public/fonts/nicomoji-subset.woff2",
+  display: "block",
   fallback: ["sans-serif"],
   variable: "--font-nicomoji",
 });

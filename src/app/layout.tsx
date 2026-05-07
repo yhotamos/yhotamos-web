@@ -15,8 +15,7 @@ export const metadata: Metadata = {
     default: "YHOTAMOS",
     template: "%s | YHOTAMOS",
   },
-  description:
-    "YHOTAMOS - My Personal Blog and Portfolio and Open Source Projects",
+  description: "YHOTAMOS - My Personal Blog and Portfolio and Open Source Projects",
 };
 
 export default async function RootLayout({
@@ -27,9 +26,7 @@ export default async function RootLayout({
   const theme = await Theme();
   return (
     <html lang="ja" className={theme}>
-      <body
-        className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable}  min-h-screen antialiased font-(family-name:--font-nicomoji)`}
-      >
+      <body className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}>
         <GoogleAnalytics />
         <GoogleAdsense />
         <Header initialTheme={theme} />
@@ -40,4 +37,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
