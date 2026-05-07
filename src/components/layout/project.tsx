@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { OpenGraphEmbed } from "./embed";
 import { Hr } from "./hr";
 import Loading from "./loading";
@@ -12,54 +9,13 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
 import { Issue, Project } from "@/components/types/project";
-import getProjects from "@/lib/getProjects";
-import { getRepos, getIssues } from "@/lib/getRepository";
 
-export function ProjectPage({ title, limit = 5 }: { title?: string; limit?: number }) {
-  const [repos, setRepos] = useState([]);
-  const [issues, setIssues] = useState([]);
-
-  useEffect(() => {
-    const fetchRepos = async () => {
-      try {
-        const repos: any = await getRepos("updated", limit);
-        setRepos(repos);
-
-        const allIssuesNested = await Promise.all(
-          repos.map(async (repo: any) => {
-            try {
-              const issuesRes = await getIssues(repo, 10);
-              if (issuesRes.length === 0) return [];
-
-              const issue: Issue = {
-                title: issuesRes[0].title,
-                url: issuesRes[0].html_url,
-                labels: issuesRes[0].labels.map((label: any) => label.name),
-                updated: issuesRes[0].updated_at,
-              };
-
-              return issue;
-            } catch (e) {
-              console.warn(`スキップ: ${repo.name} の issue 取得失敗`, e);
-              return [];
-            }
-          })
-        );
-        const allIssues: Issue[] = allIssuesNested.flat();
-
-        setIssues(allIssues as never[]);
-      } catch (e) {
-        console.error("Issue fetch error", e);
-      }
-    };
-    fetchRepos();
-  }, []);
-
+export function ProjectPage({ title, repos, issues, projects }: { title?: string; repos: any[]; issues: Issue[]; projects: Project[] }) {
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title || "Projects"} className="" />
       <Hr />
-      <ProjectPickup />
+      <ProjectPickup projects={projects} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <ProjectIdea className="rounded-2xl border border-muted-foreground/50 p-4" />
@@ -85,19 +41,10 @@ export function ProjectHero({ title, description, className = "" }: { title: str
   );
 }
 
-export function ProjectPickup({ className = "", open = false }: { className?: string; open?: boolean }) {
-  const [projects, setProjectRepos] = useState([] as Project[]);
-
-  useEffect(() => {
-    getProjects().then((res: Project[]) => {
-      setProjectRepos(res);
-    });
-  }, []);
-
+export function ProjectPickup({ className = "", open = false, projects }: { className?: string; open?: boolean; projects: Project[] }) {
   return (
     <section className={cn(className)}>
       <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
-      {projects.length === 0 && <Loading className="w-full mt-10" />}
       <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project, index) => {
           if (
@@ -176,7 +123,6 @@ export function IssuePickup({ className = "", issues = [] }: { className?: strin
     <section className={cn(className, "py-10")}>
       <h2 className="text-2xl font-bold mb-4">🐛 Picked Issues</h2>
       <ul className="space-y-3">
-        {issues.length === 0 && <Loading className="w-full mt-10" />}
         {issues &&
           issues.map((issue) => {
             return (
@@ -239,8 +185,8 @@ export function Contribute({ className = "" }: { className?: string }) {
 }
 
 export function ProjectRepos({ className, title, repos, limit = 5 }: { className?: string; title?: string; repos?: any; limit?: number }) {
-  if (repos.length === 0) {
-    return <Loading className="mt-10" />;
+  if (!repos || repos.length === 0) {
+    return null;
   }
 
   return (

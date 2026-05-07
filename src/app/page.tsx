@@ -10,10 +10,14 @@ import { Hr } from "@/components/layout/hr";
 import { getBlogData, getDevBlogTags, getUserBlogTags } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
 import { BlogAll } from "@/components/layout/blogs";
+import getProjects from "@/lib/getProjects";
 
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
-  const items = await getChromeWebStoreItems();
+  const [items, projects] = await Promise.all([
+    getChromeWebStoreItems(),
+    getProjects().catch(() => []),
+  ]);
   const blogs = getBlogData();
   const filteredBlogs = filterItems({ items: blogs, tags: getUserBlogTags(), limit: 3 });
   const filteredDevBlogs = filterItems({ items: blogs, tags: getDevBlogTags(), limit: 3 });
@@ -27,7 +31,7 @@ export default async function Home() {
       <Hr />
       <BlogAll className="space-y-5 my-3" tab="all" filteredBlogs={filteredBlogs} filteredDevBlogs={filteredDevBlogs} more={true} />
       <Hr />
-      <ProjectPickup open={true} />
+      <ProjectPickup open={true} projects={projects} />
       <Hr />
       <TwitterEmbed username="yhotta240" height={600} />
     </main>
