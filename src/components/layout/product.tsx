@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { Suspense, use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ import { Product } from "@/components/types/product";
 
 export { ProductPage, ProductGrid, ProductList };
 
-function ProductPage({ items, userCategories, devCategories }: { items?: Product[]; userCategories: any; devCategories: any }) {
+function ProductPageInner({ items, userCategories, devCategories }: { items?: Product[]; userCategories: any; devCategories: any }) {
   const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
@@ -83,6 +83,14 @@ function ProductPage({ items, userCategories, devCategories }: { items?: Product
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function ProductPage(props: Parameters<typeof ProductPageInner>[0]) {
+  return (
+    <Suspense fallback={null}>
+      <ProductPageInner {...props} />
+    </Suspense>
   );
 }
 

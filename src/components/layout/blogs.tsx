@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { filterItems, SortType } from "@/utils/filterItems";
@@ -18,7 +18,7 @@ import rehypeRaw from "rehype-raw";
 import Loading from "@/components/layout/loading";
 import { Blog } from "@/components/types/blog";
 
-export function Blogs({
+function BlogsInner({
   title,
   className,
   qittaBlogs,
@@ -148,6 +148,14 @@ export function Blogs({
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export function Blogs(props: Parameters<typeof BlogsInner>[0]) {
+  return (
+    <Suspense fallback={null}>
+      <BlogsInner {...props} />
+    </Suspense>
   );
 }
 

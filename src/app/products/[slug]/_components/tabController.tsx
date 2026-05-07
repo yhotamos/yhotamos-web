@@ -3,7 +3,7 @@
 import { Product } from "@/components/types/product";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocHtml, Document } from "./document";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,7 @@ const tabs: { name: string; value: string }[] = [
   { name: "情報", value: "info" },
 ];
 
-export default function TabController({ item, className }: { item: Product; className?: React.ComponentProps<typeof Tabs>["className"] }) {
+function TabControllerInner({ item, className }: { item: Product; className?: React.ComponentProps<typeof Tabs>["className"] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("description");
@@ -85,6 +85,14 @@ export default function TabController({ item, className }: { item: Product; clas
         </TabsContent>
       </div>
     </Tabs>
+  );
+}
+
+export default function TabController(props: Parameters<typeof TabControllerInner>[0]) {
+  return (
+    <Suspense fallback={null}>
+      <TabControllerInner {...props} />
+    </Suspense>
   );
 }
 
