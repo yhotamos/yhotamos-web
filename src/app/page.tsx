@@ -1,6 +1,5 @@
 // "use server";
 
-import { Theme } from "@/components/layout/theme";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/product";
@@ -13,7 +12,6 @@ import { filterItems } from "@/utils/filterItems";
 import { BlogAll } from "@/components/layout/blogs";
 
 export default async function Home() {
-  const theme = await Theme();
   const urls: BreadcrumbsProps["paths"] = [];
   const items = await getChromeWebStoreItems();
   const blogs = getBlogData();
@@ -31,7 +29,7 @@ export default async function Home() {
       <Hr />
       <ProjectPickup open={true} />
       <Hr />
-      <TwitterEmbed username="yhotta240" theme={theme} height={600} />
+      <TwitterEmbed username="yhotta240" height={600} />
     </main>
   );
 }

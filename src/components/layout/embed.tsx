@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import Script from "next/script";
 import Link from "next/link";
@@ -7,7 +10,13 @@ export const HatenaEmbed = ({ url }: { url: string }) => {
   return <Iframe url={hatenaUrl} className="w-full sm:w-xl border-solid rounded-md shadow hover:shadow-md transition" />;
 };
 
-export const TwitterEmbed = ({ username, theme, height }: { username: string; theme: string; height: number }) => {
+export const TwitterEmbed = ({ username, height }: { username: string; height: number }) => {
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+  }, []);
+
   return (
     <div className="not-italic w-full sm:w-1/2 mx-auto">
       <h2 className="font-bold text-xl mb-3">Twitter</h2>

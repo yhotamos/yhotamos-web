@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Theme } from "@/components/layout/theme";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import TopArrowIcon from "@/components/layout/topArrowIcon";
 import Footer from "@/components/layout/footer";
@@ -18,18 +17,24 @@ export const metadata: Metadata = {
   description: "YHOTAMOS - My Personal Blog and Portfolio and Open Source Projects",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = await Theme();
   return (
-    <html lang="ja" className={theme}>
+    <html lang="ja" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=document.cookie.match(/(?:^|;\\s*)theme=([^;]*)/);if(t&&t[1]==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}>
         <GoogleAnalytics />
         <GoogleAdsense />
-        <Header initialTheme={theme} />
+        <Header />
         {children}
         <TopArrowIcon />
         <Footer />

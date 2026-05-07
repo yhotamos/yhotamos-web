@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useSetTheme } from "./theme";
@@ -22,15 +22,15 @@ import { navigationItems as navItems } from "@/components/config/navigation";
 import { iconMap } from "@/components/config/iconMap";
 import { nicoMoji } from "@/app/fonts";
 
-export default function Header({ initialTheme }: { initialTheme: string }) {
-  const [theme, setTheme] = useState<string>(initialTheme);
+export default function Header() {
   const pathname = usePathname();
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    // console.log("theme", theme);
-    useSetTheme(theme);
-  }, [theme]);
+  const toggleTheme = useCallback(() => {
+    const isDark = document.documentElement.classList.contains("dark");
+    const newTheme = isDark ? "light" : "dark";
+    document.documentElement.classList.toggle("dark", !isDark);
+    useSetTheme(newTheme);
+  }, []);
 
   return (
     <header className="py-2 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">
@@ -47,10 +47,11 @@ export default function Header({ initialTheme }: { initialTheme: string }) {
             size="icon"
             id="switch-theme"
             className="switch-theme cursor-pointer rounded-full"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            onClick={toggleTheme}
             aria-label="テーマ切り替え"
           >
-            <FontAwesomeIcon icon={theme === "light" ? faSun : faMoon} />
+            <span className="block dark:hidden"><FontAwesomeIcon icon={faSun} /></span>
+            <span className="hidden dark:block"><FontAwesomeIcon icon={faMoon} /></span>
           </Button>
           <div className="block md:hidden">
             <MobileMenu pathname={pathname} />
