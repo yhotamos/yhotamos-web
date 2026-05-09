@@ -205,7 +205,7 @@ function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: 
         {filteredItems.map((item: Product, index: number) => (
           <Card
             key={index}
-            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${!open ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]" : "delay-[" + index * 1000 + "ms]"}
+            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${!open ? "opacity-100 translate-y-0 delay-[" + index * 50 + "ms]" : "delay-[" + index * 50 + "ms]"}
             translate-y-4 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer`}
             title={item.name}
           >

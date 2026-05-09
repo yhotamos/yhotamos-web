@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProductBySlug } from "@/lib/getProducts";
+import { getChromeWebStoreItems } from "@/lib/googleSheets";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import { Button } from "@/components/ui/button";
@@ -7,35 +8,40 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import NotFoundPage from "@/components/layout/notFound";
-import React from "react";
 import TabController from "./_components/tabController";
 import Image from "next/image";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = await params;
-  const item = await getProductBySlug(slug.slug);
+type Params = Promise<{ slug: string }>;
 
+export async function generateStaticParams() {
+  const items = await getChromeWebStoreItems().catch(() => []);
+  return items.map((item) => ({ slug: item.repo_name }));
+}
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const { slug } = await params;
+  const item = await getProductBySlug(slug);
   return {
-    title: item?.name || "Products",
+    title: item?.name ?? "Products",
     description: "YHOTAMOS - My Products",
   };
 }
 
 export const revalidate = 60;
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = await params;
-  const item = await getProductBySlug(slug.slug);
-  const pathname: string = item ? item.repo_name : "";
-  const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }, { name: pathname }];
+export default async function Page({ params }: { params: Params }) {
+  const { slug } = await params;
+  const item = await getProductBySlug(slug);
 
   if (!item) {
-    return <NotFoundPage className={`min-h-screen mt-20 text-center font-bold`} backTop={true} />;
+    return <NotFoundPage className="min-h-screen mt-20 text-center font-bold" backTop={true} />;
   }
+
+  const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }, { name: item.repo_name }];
 
   return (
     <main>
-      <div className="bg-background pt-5 ">
+      <div className="bg-background pt-5">
         <Breadcrumbs paths={pathnames} className="max-w-7xl mx-auto px-5 pb-3" />
         <ProductItem item={item} className="px-5 max-w-7xl mx-auto pb-3" />
       </div>
