@@ -120,8 +120,7 @@ export async function updateLikes(postId: string): Promise<number> {
       valueInputOption: "USER_ENTERED",
       requestBody: { values: [[newLikes]] },
     });
-  }
-  else {
+  } else {
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
       range: "Likes!A:B",
@@ -135,7 +134,7 @@ export async function updateLikes(postId: string): Promise<number> {
 /** GET: Chrome Web Store一覧を返す（キャッシュ対応） */
 export const getChromeWebStoreItems = cache(async () => {
   const sheets = await getSheetsClient();
-  const range = "ChromeExtension!A1:V100";
+  const range = "Main!A1:AM100";
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: chromeWebStoreSheetId,
     range: range,
@@ -144,33 +143,33 @@ export const getChromeWebStoreItems = cache(async () => {
   const data = res.data.values || [];
   // console.log(res.data.range);
   const formatted: Product[] = data.slice(1).map((item: string[]) => {
-    const [title, version] = item[0].split("\n");
-    // "バージョン 1.0.3" => ["バージョン", "1.0.3"]　に変換
-    const versionSplit = version.split(" ");
-
     return {
-      title,
-      version: versionSplit[1],
-      category: "Chrome " + item[1],
-      releaseDate: item[2],
-      updateDate: item[3],
-      rate: item[4],
-      users: Number(item[5]),
-      status: item[6],
-      url: item[7],
-      src: item[8],
-      description: item[9],
-      tags: item[10].split(","),
-      github: item[11],
-      author: item[12],
-      doc: item[13],
-      usage: item[14],
-      language: item[15],
-      price: item[16],
-      id: item[17],
-      name: item[18],
-      icon: item[19],
-      type: "user",
+      repo_name: item[1],
+      repo_full_name: item[2],
+      repo_html_url: item[3],
+      repo_doc: item[15],
+      repo_usage: item[16],
+      extension_id: item[17],
+      icon_url: item[18],
+      name: item[19],
+      rating: Number(item[20]),
+      review_count: Number(item[21]),
+      thumbnail: item[22],
+      description: item[23],
+      category: item[24],
+      users: Number(item[25]),
+      promotion_image: item[26],
+      screenshot_url: item[27],
+      overview: item[28],
+      developer: item[29],
+      version: item[30],
+      size: item[31],
+      languages: item[32] ? JSON.parse(item[32]) : [], // [["日本語", "英語"]]のような形式
+      store_url: item[33],
+      created_at: item[34],
+      updated_at: item[35],
+      provider: item[36],
+      tags: item[37].split(","),
     };
   });
 

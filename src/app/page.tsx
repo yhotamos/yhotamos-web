@@ -15,7 +15,7 @@ import getProjects from "@/lib/getProjects";
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
   const [items, projects] = await Promise.all([
-    getChromeWebStoreItems(),
+    getChromeWebStoreItems().catch(() => []),
     getProjects().catch(() => []),
   ]);
   const blogs = getBlogData();

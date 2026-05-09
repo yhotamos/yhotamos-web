@@ -8,19 +8,11 @@ import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
 import { useSetTheme } from "./theme";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { navigationItems as navItems } from "@/components/config/navigation";
 import { iconMap } from "@/components/config/iconMap";
 import { nicoMoji } from "@/app/fonts";
+import { NavigationItem } from "../types/navigationItem";
 
 export default function Header() {
   const pathname = usePathname();
@@ -42,16 +34,13 @@ export default function Header() {
           <div className="hidden md:block">
             <DesktopMenu pathname={pathname} />
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            id="switch-theme"
-            className="switch-theme cursor-pointer rounded-full"
-            onClick={toggleTheme}
-            aria-label="テーマ切り替え"
-          >
-            <span className="block dark:hidden"><FontAwesomeIcon icon={faSun} /></span>
-            <span className="hidden dark:block"><FontAwesomeIcon icon={faMoon} /></span>
+          <Button variant="ghost" size="icon" id="switch-theme" className="switch-theme cursor-pointer rounded-full" onClick={toggleTheme} aria-label="テーマ切り替え">
+            <span className="block dark:hidden">
+              <FontAwesomeIcon icon={faSun} />
+            </span>
+            <span className="hidden dark:block">
+              <FontAwesomeIcon icon={faMoon} />
+            </span>
           </Button>
           <div className="block md:hidden">
             <MobileMenu pathname={pathname} />
@@ -66,14 +55,10 @@ function DesktopMenu({ pathname }: { pathname: string }) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {navItems.map((item: any) => (
+        {navItems.map((item: NavigationItem) => (
           <NavigationMenuItem key={item.name}>
-            <NavigationMenuLink
-              className={`flex flex-row items-center gap-1 ${pathname === item.href ? "underline bg-accent" : ""}`}
-              title={item.ja + " - " + item.description}
-              href={item.href}
-            >
-              <FontAwesomeIcon icon={iconMap[item.icon]} />
+            <NavigationMenuLink className={`flex flex-row items-center gap-1 ${pathname === item.href ? "underline bg-accent" : ""}`} title={item.ja + " - " + item.description} href={item.href}>
+              <FontAwesomeIcon icon={iconMap[item.icon ?? "defaultIcon"]} />
               {item.name}
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -84,7 +69,7 @@ function DesktopMenu({ pathname }: { pathname: string }) {
 }
 
 function MobileMenu({ pathname }: { pathname: string }) {
-  const currentItem = navItems.find((item) => pathname === item.href);
+  const currentItem = navItems.find((item: NavigationItem) => pathname === item.href);
   return (
     <div className="flex items-center gap-4">
       <Drawer direction="right">
@@ -99,14 +84,9 @@ function MobileMenu({ pathname }: { pathname: string }) {
             <DrawerDescription>{currentItem?.description}</DrawerDescription>
           </DrawerHeader>
           <div className="flex flex-col gap-2 px-4">
-            {navItems.map((item: any) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`block ${pathname === item.href ? "underline bg-accent" : ""} flex items-center gap-2 py-1`}
-                title={item.description}
-              >
-                <FontAwesomeIcon icon={iconMap[item.icon]} />
+            {navItems.map((item: NavigationItem) => (
+              <Link key={item.href} href={item.href} className={`block ${pathname === item.href ? "underline bg-accent" : ""} flex items-center gap-2 py-1`} title={item.description}>
+                <FontAwesomeIcon icon={iconMap[item.icon ?? "defaultIcon"]} />
                 {item.name} - {item.ja}
               </Link>
             ))}

@@ -1,54 +1,40 @@
 "use client";
 
-import React, { Suspense, use, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faGrip } from "@fortawesome/free-solid-svg-icons";
+import { faList, faGrip, faStar } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 
 export { ProductPage, ProductGrid, ProductList };
 
-function ProductPageInner({ items, userCategories, devCategories }: { items?: Product[]; userCategories: any; devCategories: any }) {
-  const router = useRouter(); // ルーター(urlに書き込む用)
+function ProductPageInner({ items, categories }: { items?: Product[]; categories: any }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
-  const [tab, setTab] = useState(searchParams.get("tab") || "user");
 
   const updateURL = (params: URLSearchParams) => {
     router.replace(`/products?${params.toString()}`, { scroll: false });
   };
 
   useEffect(() => {
-    const tabParams = searchParams.get("tab")?.split("?")[0];
-    setTab(tabParams || "user");
     setSelectedCategories(() => searchParams.get("category")?.split(",") || []);
   }, [searchParams, router]);
-
-  const handleTabChange = (tab: string) => {
-    setTab(tab); // UI即時更新
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", tab);
-    params.delete("category"); // タブ切り替え時にカテゴリをリセット
-    updateURL(params);
-  };
 
   const handleCategory = (key: string) => {
     let newCategories = [...selectedCategories];
     if (selectedCategories.includes(key)) {
-      // 選択済み → 削除
       newCategories = selectedCategories.filter((c) => c !== key);
     } else {
-      // 未選択 → 追加
       newCategories.push(key);
     }
-    setSelectedCategories(newCategories); // UI即時更新
+    setSelectedCategories(newCategories);
 
     const params = new URLSearchParams(searchParams.toString());
     if (newCategories.length > 0) {
@@ -57,31 +43,17 @@ function ProductPageInner({ items, userCategories, devCategories }: { items?: Pr
       params.delete("category");
     }
 
-    updateURL(params); // URL更新
+    updateURL(params);
   };
 
   return (
     <div className="max-w-full my-3">
       <ProductHero className="mb-6" title={"Product"} description="開発したツールやWEBサービスなどをまとめています．" />
 
-      <Tabs defaultValue={tab} value={tab} className="flex items-center md:items-start" onValueChange={(value) => handleTabChange(value)}>
-        <TabsList className="flex gap-3 h-10">
-          <TabsTrigger className="h-fit cursor-pointer" value="user">
-            ユーザー向け
-          </TabsTrigger>
-          <TabsTrigger className="h-fit cursor-pointer" value="developer">
-            開発者向け
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent className="flex flex-col gap-5 w-full" value="user">
-          <ProductCategory categories={userCategories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
-          <ProductContents items={items} categories={selectedCategories} />
-        </TabsContent>
-        <TabsContent className="flex flex-col gap-5 w-full" value="developer">
-          <ProductCategory categories={devCategories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
-        </TabsContent>
-      </Tabs>
+      <div className="flex flex-col gap-5">
+        <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
+        <ProductContents items={items} categories={selectedCategories} />
+      </div>
     </div>
   );
 }
@@ -128,7 +100,7 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: any
   );
 }
 
-function ProductContents({ items, className, categories }: { items?: any; className?: string; categories?: string[] }) {
+function ProductContents({ items, className, categories }: { items?: Product[]; className?: string; categories?: string[] }) {
   const [view, setView] = useState<"list" | "grid">("grid");
   const [sort, setSort] = useState("sort-popular");
 
@@ -143,7 +115,7 @@ function ProductContents({ items, className, categories }: { items?: any; classN
     grid: faGrip,
   };
 
-  const ViewMap = ({ view, items }: any) => {
+  const ViewMap = ({ view, items }: { view: "list" | "grid"; items?: Product[] }) => {
     switch (view) {
       case "list":
         return ProductList({ items });
@@ -166,13 +138,7 @@ function ProductContents({ items, className, categories }: { items?: any; classN
           <div className="flex items-center gap-2 text-sm text-gray-500">
             {sortData.map(({ value, label }, index) => (
               <React.Fragment key={value}>
-                <button
-                  id={value}
-                  className={`${
-                    sort === value ? "text-black underline dark:text-white" : ""
-                  } cursor-pointer hover:text-black dark:hover:text-white`}
-                  onClick={() => setSort(value)}
-                >
+                <button id={value} className={`${sort === value ? "text-black underline dark:text-white" : ""} cursor-pointer hover:text-black dark:hover:text-white`} onClick={() => setSort(value)}>
                   {label}
                 </button>
                 {index < sortData.length - 1 && <span>|</span>}
@@ -198,7 +164,7 @@ function ProductContents({ items, className, categories }: { items?: any; classN
         </div>
       </div>
 
-      <ViewMap view={view} items={filteredItems} className="my-3" />
+      <ViewMap view={view} items={filteredItems} />
     </div>
   );
 }
@@ -223,6 +189,11 @@ function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: 
     el?.previousElementSibling?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const rating = (item: Product) => {
+    const roundedRating = Math.round(item.rating * 2) / 2;
+    return `★ ${roundedRating}`;
+  };
+
   return (
     <div id="product-grid" className="w-full">
       {title && <h1 className="font-bold text-xl mb-3">{title}</h1>}
@@ -231,34 +202,30 @@ function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: 
           isOpen && (open ? "max-h-full" : "max-h-[460px]")
         }  overflow-hidden`}
       >
-        {filteredItems.map((item: any, index: number) => (
+        {filteredItems.map((item: Product, index: number) => (
           <Card
             key={index}
-            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${
-              !open ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]" : "delay-[" + index * 1000 + "ms]"
-            }
+            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${!open ? "opacity-100 translate-y-0 delay-[" + index * 1000 + "ms]" : "delay-[" + index * 1000 + "ms]"}
             translate-y-4 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer`}
-            title={item.title}
+            title={item.name}
           >
             <div className="relative">
-              {item.rate !== "—" && (
-                <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">{item.rate}</div>
-              )}
-              <img src={item.src} alt={item.title} />
+              {item.rating != 0 && <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">{rating(item)}</div>}
+              <img src={item.thumbnail} alt={item.name} />
             </div>
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-2">
                 <CardTitle className="leading-none font-semibold flex items-start gap-2 whitespace-normal break-words">
-                  <img src={item.icon} alt="" className="w-6 h-6" />
-                  <a href={item.url} className="hover:underline line-clamp-2" rel="noopener noreferrer" target="_blank">
-                    {item.title}
+                  <img src={item.icon_url} alt={item.name} className="w-6 h-6" />
+                  <a href={item.store_url} className="hover:underline line-clamp-2" rel="noopener noreferrer" target="_blank">
+                    {item.name}
                   </a>
                   <span className="text-sm text-end">v{item.version}</span>
                 </CardTitle>
                 <div className="">
                   <div className="text-sm flex justify-between">
-                    <div>{item.releaseDate}</div>
-                    <div>{item.users !== "—" ? item.users : 0} ユーザー</div>
+                    <div>{item.updated_at}</div>
+                    <div>{item.users ?? 0} ユーザー</div>
                   </div>
                   <div className="flex gap-1 pt-1 flex-wrap">
                     <Badge>{item.category}</Badge>
@@ -270,17 +237,13 @@ function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: 
                 <CardDescription className="line-clamp-2">{item.description}</CardDescription>
               </CardContent>
             </div>
-            <Link href={`/products/${item.name}`} className="absolute inset-0 z-10" />
+            <Link href={`/products/${item.repo_name}`} className="absolute inset-0 z-10" />
           </Card>
         ))}
       </div>
       {isOpen &&
         (!open ? (
-          <Button
-            variant="default"
-            className="w-fit flex justify-center mx-auto mt-4 hover:scale-101 hover:shadow-sm bg-violet-700 hover:bg-violet-800 text-white"
-            onClick={() => setOpen(true)}
-          >
+          <Button variant="default" className="w-fit flex justify-center mx-auto mt-4 hover:scale-101 hover:shadow-sm bg-violet-700 hover:bg-violet-800 text-white" onClick={() => setOpen(true)}>
             もっと見る
           </Button>
         ) : (
@@ -357,9 +320,7 @@ function filterItems({ items, categories = [], filter, sort, limit }: Filter & {
   let filtered = [...items];
   // カテゴリ処理
   if (categories.length > 0) {
-    filtered = filtered.filter(
-      (item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag.trim()))
-    );
+    filtered = filtered.filter((item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag.trim())));
   }
 
   // 検索処理

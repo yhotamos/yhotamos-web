@@ -99,7 +99,7 @@ export default function TabController(props: Parameters<typeof TabControllerInne
 function Description({ item, className }: { item: Product; className?: string }) {
   return (
     <div className={`${className} bg-white dark:bg-secondary rounded-md p-3 lg:p-5 `}>
-      <DocHtml src={item.doc} className="" />
+      <DocHtml src={item.repo_doc} className="" />
     </div>
   );
 }
@@ -133,17 +133,16 @@ function Review({ item, className }: { item: Product; className?: string }) {
 
 function DetailInfo({ item, className }: { item: Product; className?: string }) {
   const info = [
-    { name: "タイトル", value: item.title },
+    { name: "タイトル", value: item.name },
     { name: "カテゴリ", value: item.category },
-    { name: "ステータス", value: item.status },
     { name: "バージョン", value: item.version },
-    { name: "作成者", value: item.author },
-    { name: "評価", value: item.rate },
+    { name: "作成者", value: item.provider },
+    { name: "評価", value: item.rating },
     { name: "ユーザー", value: item.users },
-    { name: "作成日", value: item.releaseDate },
-    { name: "更新日", value: item.updateDate },
-    { name: "言語", value: item.language },
-    { name: "GitHub", value: item.github, link: true },
+    { name: "作成日", value: item.created_at },
+    { name: "更新日", value: item.updated_at },
+    { name: "言語", value: item.languages.join(", ") },
+    { name: "GitHub", value: item.repo_html_url, link: true },
   ];
 
   return (
@@ -153,7 +152,7 @@ function DetailInfo({ item, className }: { item: Product; className?: string }) 
         <li>
           <ul>
             <li>
-              <a className="underline" href={`https://chrome.google.com/webstore/detail/${item.id}`} id="store_link" target="_blank" rel="noopener noreferrer">
+              <a className="underline" href={`https://chrome.google.com/webstore/detail/${item.extension_id}`} id="store_link" target="_blank" rel="noopener noreferrer">
                 ストアページに移動 <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
               </a>
             </li>
