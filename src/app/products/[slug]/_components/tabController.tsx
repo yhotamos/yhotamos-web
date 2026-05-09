@@ -27,7 +27,7 @@ function TabControllerInner({ item, className }: { item: Product; className?: Re
     if (tab && tabs.some((t) => t.value === tab)) {
       setActiveTab(tab);
     } else {
-      handleTabChange("description"); // デフォルトに戻す
+      setActiveTab("description");
     }
   }, [searchParams]);
 
@@ -35,7 +35,7 @@ function TabControllerInner({ item, className }: { item: Product; className?: Re
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
-    router.push(`?${params.toString()}`, { scroll: false });
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
   return (
