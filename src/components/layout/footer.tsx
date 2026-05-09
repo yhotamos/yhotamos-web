@@ -16,9 +16,9 @@ export default function Footer() {
           <div className="flex flex-col gap-3 mb-5 xl:col-span-2">
             <div className="flex items-center cursor-pointer">
               <Image className="rounded-full" src="/imgs/icon.jpg" alt="icon" width={40} height={40} />
-              <a href="/" className={`ps-3 text-4xl font-bold ${nicoMoji.className}`}>
+              <Link href="/" className={`ps-3 text-4xl font-bold ${nicoMoji.className}`}>
                 YHOTAMOS
-              </a>
+              </Link>
             </div>
             <div>自作ツールや拡張機能，技術ブログをまとめた個人開発サイト</div>
             <SnsLinks className="flex gap-2 h-10" />

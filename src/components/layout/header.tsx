@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useCallback } from "react";
+import { useTheme } from "next-themes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
@@ -15,13 +15,11 @@ import { NavigationItem } from "../types/navigationItem";
 
 export default function Header() {
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
 
-  const toggleTheme = useCallback(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    const newTheme = isDark ? "light" : "dark";
-    document.documentElement.classList.toggle("dark", !isDark);
-    localStorage.setItem("theme", newTheme);
-  }, []);
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
 
   return (
     <header className="py-2 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">

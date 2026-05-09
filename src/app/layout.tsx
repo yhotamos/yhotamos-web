@@ -5,6 +5,7 @@ import TopArrowIcon from "@/components/layout/topArrowIcon";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { geistSans, geistMono, notosansjp } from "./fonts";
+import { ThemeProvider } from "next-themes";
 
 import { GoogleAnalytics } from "@/components/layout/googleAnalytics";
 import { GoogleAdsense } from "@/components/layout/googleAdsense";
@@ -24,20 +25,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`,
-          }}
-        />
-      </head>
       <body className={`bg-secondary dark:bg-background md:text-lg ${notosansjp.variable} ${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}>
-        <GoogleAnalytics />
-        <GoogleAdsense />
-        <Header />
-        {children}
-        <TopArrowIcon />
-        <Footer />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <GoogleAnalytics />
+          <GoogleAdsense />
+          <Header />
+          {children}
+          <TopArrowIcon />
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
