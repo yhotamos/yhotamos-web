@@ -175,13 +175,13 @@ type Filter = {
   limit?: number;
 };
 
-function ProductGrid({ items, title, filter, sort, limit = 9, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
+function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
   const [open, setOpen] = useState(false);
   const filteredItems = filterItems({
     items,
     filter,
     sort,
-    limit: isOpen ? limit : 9,
+    limit: isOpen ? limit : 50,
   });
 
   const scrollView = (id: string) => {
