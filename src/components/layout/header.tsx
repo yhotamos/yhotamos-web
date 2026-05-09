@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
-import { useSetTheme } from "./theme";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { navigationItems as navItems } from "@/components/config/navigation";
@@ -21,15 +20,15 @@ export default function Header() {
     const isDark = document.documentElement.classList.contains("dark");
     const newTheme = isDark ? "light" : "dark";
     document.documentElement.classList.toggle("dark", !isDark);
-    useSetTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
   }, []);
 
   return (
     <header className="py-2 bg-background z-50 sticky top-0 flex items-center justify-between w-full border-b shadow-sm border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-5 w-full flex items-center justify-between">
-        <a href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
+        <Link href="/" className={`text-2xl font-bold ${nicoMoji.className}`}>
           YHOTAMOS
-        </a>
+        </Link>
         <div className="flex items-center gap-2">
           <div className="hidden md:block">
             <DesktopMenu pathname={pathname} />
@@ -57,10 +56,10 @@ function DesktopMenu({ pathname }: { pathname: string }) {
       <NavigationMenuList>
         {navItems.map((item: NavigationItem) => (
           <NavigationMenuItem key={item.name}>
-            <NavigationMenuLink className={`flex flex-row items-center gap-1 ${pathname === item.href ? "underline bg-accent" : ""}`} title={item.ja + " - " + item.description} href={item.href}>
+            <Link className={`flex flex-row items-center gap-1 rounded-sm p-2 text-sm hover:bg-accent hover:text-accent-foreground transition-all ${pathname === item.href ? "underline bg-accent" : ""}`} title={item.ja + " - " + item.description} href={item.href}>
               <FontAwesomeIcon icon={iconMap[item.icon ?? "defaultIcon"]} />
               {item.name}
-            </NavigationMenuLink>
+            </Link>
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
