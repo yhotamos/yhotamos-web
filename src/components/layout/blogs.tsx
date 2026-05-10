@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { filterItems, SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -21,7 +21,6 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   const trigger =
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
-  const router = useRouter(); // ルーター(urlに書き込む用)
   const searchParams = useSearchParams();
   const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.get("tag")?.split(",") || []);
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
@@ -62,35 +61,30 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
     });
   };
 
-  const updateURL = (params: URLSearchParams) => {
-    router.replace(`/blog?${params.toString()}`, { scroll: false });
+  const pushURL = (params: URLSearchParams) => {
+    window.history.replaceState(null, "", `/blog?${params.toString()}`);
   };
 
-  useEffect(() => {
-    const tabParams = searchParams.get("tab")?.split("?")[0];
-    setTab(tabParams || "all");
-  }, [searchParams, router]);
-
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (newTab: string) => {
     setSelectedTags([]);
-    setTab(tab);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", tab);
-    params.delete("tag");
-    updateURL(params);
+    setTab(newTab);
+    const params = new URLSearchParams();
+    params.set("tab", newTab);
+    pushURL(params);
   };
 
   const handleTagClick = (tag: string) => {
-    const newTags = selectedTags.includes(tag) ? selectedTags.filter((t) => t !== tag) : [...selectedTags, tag];
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
     setSelectedTags(newTags);
 
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
+    params.set("tab", tab);
     if (newTags.length > 0) {
       params.set("tag", newTags.join(","));
-    } else {
-      params.delete("tag");
     }
-    updateURL(params);
+    pushURL(params);
   };
 
   return (
