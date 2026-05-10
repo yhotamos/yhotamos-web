@@ -12,6 +12,8 @@ import {
   faEye,
   faBookmark,
   faHeart,
+  faArrowDownWideShort,
+  faArrowUpWideShort,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faXTwitter, } from '@fortawesome/free-brands-svg-icons'
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -33,5 +35,7 @@ export const iconMap: { [key: string]: IconDefinition } = {
   faAngleDown,
   faEye,
   faHeart,
-  faBookmark
+  faBookmark,
+  faArrowDownWideShort,
+  faArrowUpWideShort,
 };

@@ -25,11 +25,13 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.get("tag")?.split(",") || []);
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [limit, setLimit] = useState(25);
   const [selectedExternalTags, setSelectedExternalTags] = useState<string[]>([]);
   const [externalSort, setExternalSort]: any = useState("blog-new");
+  const [externalSortOrder, setExternalSortOrder] = useState<"asc" | "desc">("desc");
 
-  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, limit: limit });
+  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder, limit: limit });
 
   const allExternalTags = useMemo<string[]>(() => {
     const blogs = (qittaBlogs as any[]) ?? [];
@@ -39,7 +41,8 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   const filteredQiitaBlogs = useMemo(() => {
     const blogs = (qittaBlogs as any[]) ?? [];
-    const dateKey = externalSort === "blog-update" ? "updateDate" : "publishDate";
+    // desc = 大きい順（デフォルト）、asc = 小さい順
+    const dir = externalSortOrder === "asc" ? -1 : 1;
 
     const filtered =
       selectedExternalTags.length === 0
@@ -49,8 +52,16 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
             return selectedExternalTags.some((t) => blogTags.includes(t));
           });
 
-    return [...filtered].sort((a: any, b: any) => new Date(b[dateKey]).getTime() - new Date(a[dateKey]).getTime());
-  }, [qittaBlogs, selectedExternalTags, externalSort]);
+    return [...filtered].sort((a: any, b: any) => {
+      if (externalSort === "blog-likes") {
+        return dir * (Number(b.likes) - Number(a.likes));
+      }
+      if (externalSort === "blog-views") {
+        return dir * (Number(b.views) - Number(a.views));
+      }
+      return dir * (new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+    });
+  }, [qittaBlogs, selectedExternalTags, externalSort, externalSortOrder]);
 
   const handleExternalTagClick = (tag: string) => {
     setSelectedExternalTags((prev) => {
@@ -74,9 +85,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   };
 
   const handleTagClick = (tag: string) => {
-    const newTags = selectedTags.includes(tag)
-      ? selectedTags.filter((t) => t !== tag)
-      : [...selectedTags, tag];
+    const newTags = selectedTags.includes(tag) ? selectedTags.filter((t) => t !== tag) : [...selectedTags, tag];
     setSelectedTags(newTags);
 
     const params = new URLSearchParams();
@@ -107,7 +116,14 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
           <div className="flex flex-col lg:flex-row gap-5 items-start">
             <div className="flex-1 min-w-0 space-y-5">
               <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
-              <BlogSectionHeader total={filteredBlogs.length} currentCategory={selectedTags.length === 1 ? selectedTags[0] : undefined} sort={sort} setSort={setSort} />
+              <BlogSectionHeader
+                total={filteredBlogs.length}
+                currentCategory={selectedTags.length === 1 ? selectedTags[0] : undefined}
+                sort={sort}
+                setSort={setSort}
+                sortOrder={sortOrder}
+                setSortOrder={setSortOrder}
+              />
               <BlogCards blogs={filteredBlogs} />
             </div>
             <div className="lg:w-72 shrink-0 space-y-4">
@@ -133,6 +149,10 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
             currentCategory={selectedExternalTags.length === 1 ? selectedExternalTags[0] : undefined}
             sort={externalSort}
             setSort={setExternalSort}
+            sortOrder={externalSortOrder}
+            setSortOrder={setExternalSortOrder}
+            hasLikes
+            hasViews
           />
           <BlogList className="bg-white dark:bg-background" qittaBlogs={filteredQiitaBlogs} />
         </TabsContent>
@@ -204,14 +224,34 @@ export function BlogTags({ className, tags, selectedTags, handleTagClick }: { cl
   );
 }
 
-export function BlogSectionHeader({ total, currentCategory, sort, setSort }: { total: number; currentCategory?: string; sort: string; setSort: any }) {
-  // const [sort, setSort] = useState("sort-popular");
-
-  const sortData: { value: SortType; label: string }[] = [
-    // { value: "blog-popular", label: "人気順" },
+export function BlogSectionHeader({
+  total,
+  currentCategory,
+  sort,
+  setSort,
+  sortOrder,
+  setSortOrder,
+  hasLikes = false,
+  hasViews = false,
+}: {
+  total: number;
+  currentCategory?: string;
+  sort: string;
+  setSort: (s: string) => void;
+  sortOrder: "asc" | "desc";
+  setSortOrder: (o: "asc" | "desc") => void;
+  hasLikes?: boolean;
+  hasViews?: boolean;
+}) {
+  const sortOptions: { value: SortType; label: string }[] = [
     { value: "blog-new", label: "新着順" },
-    { value: "blog-update", label: "更新順" },
+    ...(hasLikes ? [{ value: "blog-likes" as SortType, label: "人気順" }] : []),
+    ...(hasViews ? [{ value: "blog-views" as SortType, label: "閲覧順" }] : []),
   ];
+
+  const toggleOrder = () => {
+    setSortOrder(sortOrder === "desc" ? "asc" : "desc");
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -222,14 +262,17 @@ export function BlogSectionHeader({ total, currentCategory, sort, setSort }: { t
 
       {/* 並べ替えオプション */}
       <div className="flex items-center gap-2 text-sm text-gray-500">
-        {sortData.map(({ value, label }, index) => (
+        {sortOptions.map(({ value, label }, index) => (
           <React.Fragment key={value}>
             <button id={value} className={`${sort === value ? "text-black underline dark:text-white" : ""} cursor-pointer hover:text-black dark:hover:text-white`} onClick={() => setSort(value)}>
               {label}
             </button>
-            {index < sortData.length - 1 && <span>|</span>}
+            {index < sortOptions.length - 1 && <span>|</span>}
           </React.Fragment>
         ))}
+        <Button title={sortOrder === "desc" ? "降順" : "昇順"} variant="ghost" size="icon" className="w-7 h-7 ms-1 rounded hover:bg-gray-300" onClick={toggleOrder}>
+          <FontAwesomeIcon icon={sortOrder === "desc" ? iconMap["faArrowDownWideShort"] : iconMap["faArrowUpWideShort"]} />
+        </Button>
       </div>
     </div>
   );
