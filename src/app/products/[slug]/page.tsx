@@ -37,7 +37,10 @@ export default async function Page({ params }: { params: Params }) {
     return <NotFoundPage className="min-h-screen mt-20 text-center font-bold" backTop={true} />;
   }
 
-  const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }, { name: item.repo_name }];
+  const pathnames: BreadcrumbsProps["paths"] = [
+    { name: "Products", href: "/products" },
+    { name: item.name, href: `/products/${item.repo_name}` },
+  ];
 
   return (
     <main>
@@ -58,7 +61,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
         <div className="md:col-span-4 grid gap-1">
           <div className="font-bold text-xl">
             <Link href={item.store_url} className="hover:underline" target="_blank">
-              {item.repo_name}
+              {item.name}
             </Link>
             <div className="flex flex-wrap gap-x-2 mt-1">
               <Link href={`/products?category=${item.category}`}>
