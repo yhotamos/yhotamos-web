@@ -150,17 +150,17 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
               />
               <BlogCards blogs={filteredBlogs} />
             </div>
-            <div className="lg:w-72 shrink-0 space-y-4">
+            <div className="lg:w-96 shrink-0 space-y-4">
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2">
-                <Link className="text-base font-bold p-3 hover:underline block" href="?tab=external">
+                <button className="text-base font-bold p-3 hover:underline block" onClick={() => handleTabChange("external")}>
                   外部の記事 &gt;
-                </Link>
+                </button>
                 <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
               </div>
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
-                <a className="text-base font-bold hover:underline block w-fit pb-3" href="?tab=update">
+                <button className="text-base font-bold hover:underline block w-fit pb-3" onClick={() => handleTabChange("update")}>
                   更新情報 &gt;
-                </a>
+                </button>
                 <ChangeLog changelogs={changelogs} />
               </div>
             </div>
