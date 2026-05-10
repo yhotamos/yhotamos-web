@@ -334,9 +334,9 @@ export function BlogCards({ title, className, blogs, currentTab }: { title?: str
 
               {/* 本文 */}
               <div className="flex flex-col justify-between p-4 h-full ">
-                <h2 className="text-lg font-semibold mb-2">{blog.title}</h2>
+                <h2 className="text-lg font-semibold mb-2 line-clamp-3">{blog.title}</h2>
 
-                {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
+                {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2 line-clamp-3">{blog.excerpt}</p>}
 
                 <div>
                   <p className="text-sm text-secondary-foreground/70 mb-2">
