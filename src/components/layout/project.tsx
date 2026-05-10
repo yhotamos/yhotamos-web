@@ -18,10 +18,11 @@ export function ProjectPage({ title, repos, issues, projects }: { title?: string
       <ProjectPickup projects={projects} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <ProjectIdea className="rounded-2xl border border-muted-foreground/50 p-4" />
+        <div className="grid gap-6">
+          <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
+          <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
+        </div>
         <IssuePickup issues={issues} className="rounded-2xl border border-muted-foreground/50 p-4" />
-        <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
-        <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
       <ProjectRepos repos={repos} limit={10} />
@@ -47,10 +48,7 @@ export function ProjectPickup({ className = "", open = false, projects }: { clas
       <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
       <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project, index) => {
-          if (
-            !project ||
-            [project.title, project.description, project.githubUrl, project.progress, project.updated].some((v) => v === "")
-          ) {
+          if (!project || [project.title, project.description, project.githubUrl, project.progress, project.updated].some((v) => v === "")) {
             return null;
           }
           return (
@@ -98,26 +96,6 @@ export function ProjectPickup({ className = "", open = false, projects }: { clas
   );
 }
 
-export function ProjectIdea({ className = "" }: { className?: string }) {
-  return (
-    <section className={cn(className, "py-10")}>
-      <h2 className="text-xl font-bold mb-2">💡 アイデアを投稿しませんか？</h2>
-      <p className="text-muted-foreground mb-4 text-base">
-        「こんなツールがあったら便利」 「こういう機能が欲しい」など，あなたのアイデアを教えてください．
-        気軽な投稿が，次のプロジェクトの種になるかもしれません．
-      </p>
-      <a
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
-      >
-        アイデアを投稿する
-      </a>
-    </section>
-  );
-}
-
 export function IssuePickup({ className = "", issues = [] }: { className?: string; issues?: Issue[] }) {
   return (
     <section className={cn(className, "py-10")}>
@@ -132,7 +110,7 @@ export function IssuePickup({ className = "", issues = [] }: { className?: strin
                 </a>
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
                   {issue.labels.map((label) => (
-                    <span key={label} className="bg-gray-100 px-2 py-0.5 rounded">
+                    <span key={label} className="text-gray-100 dark:text-gray-800 bg-gray-600 dark:bg-gray-200 px-2 py-0.5 rounded">
                       {label}
                     </span>
                   ))}
@@ -146,11 +124,7 @@ export function IssuePickup({ className = "", issues = [] }: { className?: strin
   );
 }
 
-const experiments = [
-  "CanvasにPNG画像+メタ情報を合成して再表示（.deg形式）",
-  "ブラウザ上でOAuth2のローカルテスト→ESP32連携",
-  "Vercel Functionsを使ったスプレッドシートAPI Proxy化",
-];
+const experiments = ["CanvasにPNG画像+メタ情報を合成して再表示（.deg形式）", "ブラウザ上でOAuth2のローカルテスト→ESP32連携", "Vercel Functionsを使ったスプレッドシートAPI Proxy化"];
 
 export function Labs({ className = "" }: { className?: string }) {
   return (
@@ -169,15 +143,8 @@ export function Contribute({ className = "" }: { className?: string }) {
   return (
     <section className={cn(className, "py-10")}>
       <h2 className="text-xl font-bold mb-2">🤝 貢献してみませんか？</h2>
-      <p className="text-muted-foreground text-base mb-4">
-        気になるプロジェクトがあれば，ぜひIssueのコメントやPRで参加してみてください． コードだけでなく，アイデアやレビューも大歓迎です！
-      </p>
-      <a
-        href="https://github.com/yhotta240"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-block px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition"
-      >
+      <p className="text-muted-foreground text-base mb-4">気になるプロジェクトがあれば，ぜひIssueのコメントやPRで参加してみてください． コードだけでなく，アイデアやレビューも大歓迎です！</p>
+      <a href="https://github.com/yhotta240" target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition">
         GitHubでプロジェクトを見る
       </a>
     </section>
