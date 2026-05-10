@@ -33,10 +33,34 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder, limit: limit });
 
+  const blogTagCounts = useMemo<Record<string, number>>(() => {
+    const items = (blogs as Blog[]) ?? [];
+    const counts: Record<string, number> = {};
+    items.forEach((b) => {
+      (b.tags ?? []).forEach((t) => {
+        counts[t] = (counts[t] ?? 0) + 1;
+      });
+    });
+    return counts;
+  }, [blogs]);
+
   const allExternalTags = useMemo<string[]>(() => {
     const blogs = (qittaBlogs as any[]) ?? [];
     const tags = blogs.flatMap((b: any) => b.tags.map((t: string) => t.trim()));
     return [...new Set(tags)];
+  }, [qittaBlogs]);
+
+  const externalTagCounts = useMemo<Record<string, number>>(() => {
+    const items = (qittaBlogs as any[]) ?? [];
+    const counts: Record<string, number> = {};
+    items.forEach((b: any) => {
+      (b.tags ?? [])
+        .map((t: string) => t.trim())
+        .forEach((t: string) => {
+          counts[t] = (counts[t] ?? 0) + 1;
+        });
+    });
+    return counts;
   }, [qittaBlogs]);
 
   const filteredQiitaBlogs = useMemo(() => {
@@ -115,7 +139,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
         <TabsContent className="space-y-5" value="all">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
             <div className="flex-1 min-w-0 space-y-5">
-              <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
+              <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} tagCounts={blogTagCounts} />
               <BlogSectionHeader
                 total={filteredBlogs.length}
                 currentCategory={selectedTags.length === 1 ? selectedTags[0] : undefined}
@@ -128,9 +152,9 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
             </div>
             <div className="lg:w-72 shrink-0 space-y-4">
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2">
-                <a className="text-base font-bold p-3 hover:underline block" href="?tab=external">
+                <Link className="text-base font-bold p-3 hover:underline block" href="?tab=external">
                   外部の記事 &gt;
-                </a>
+                </Link>
                 <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
               </div>
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
@@ -143,7 +167,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
           </div>
         </TabsContent>
         <TabsContent className="space-y-5" value="external">
-          <BlogTags tags={allExternalTags} selectedTags={selectedExternalTags} handleTagClick={handleExternalTagClick} />
+          <BlogTags tags={allExternalTags} selectedTags={selectedExternalTags} handleTagClick={handleExternalTagClick} tagCounts={externalTagCounts} />
           <BlogSectionHeader
             total={filteredQiitaBlogs.length}
             currentCategory={selectedExternalTags.length === 1 ? selectedExternalTags[0] : undefined}
@@ -190,7 +214,19 @@ export function BlogSearch({ tags, className = "" }: { tags: string[]; className
   );
 }
 
-export function BlogTags({ className, tags, selectedTags, handleTagClick }: { className?: string; tags: string[]; selectedTags: string[]; handleTagClick: (tag: string) => void }) {
+export function BlogTags({
+  className,
+  tags,
+  selectedTags,
+  handleTagClick,
+  tagCounts,
+}: {
+  className?: string;
+  tags: string[];
+  selectedTags: string[];
+  handleTagClick: (tag: string) => void;
+  tagCounts?: Record<string, number>;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -211,7 +247,7 @@ export function BlogTags({ className, tags, selectedTags, handleTagClick }: { cl
               onClick={() => handleTagClick(tag)}
             >
               {tag}
-              {/* <div className="text-xs text-muted-foreground">10</div> */}
+              {tagCounts?.[tag] !== undefined && <span className="text-xs opacity-50">{tagCounts[tag]}</span>}
               {isActive && " ✕"}
             </Button>
           );
