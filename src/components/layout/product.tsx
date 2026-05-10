@@ -115,14 +115,14 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
     grid: faGrip,
   };
 
-  const ViewMap = ({ view, items }: { view: "list" | "grid"; items?: Product[] }) => {
+  const ViewMap = ({ view, items }: { view: "list" | "grid"; items: Product[] }) => {
     switch (view) {
       case "list":
-        return ProductList({ items });
+        return <ProductList items={items} />;
       case "grid":
-        return ProductGrid({ items });
+        return <ProductGrid items={items} />;
       default:
-        return ProductGrid({ items });
+        return <ProductGrid items={items} />;
     }
   };
 
@@ -175,7 +175,7 @@ type Filter = {
   limit?: number;
 };
 
-function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filter & { items: any; title?: string; isOpen?: boolean }) {
+function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filter & { items: Product[]; title?: string; isOpen?: boolean }) {
   const [open, setOpen] = useState(false);
   const filteredItems = filterItems({
     items,
@@ -269,7 +269,7 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
   );
 }
 
-function ProductList({ items, title }: Filter & { items: any; title?: string }) {
+function ProductList({ items, title }: Filter & { items: Product[]; title?: string }) {
   return (
     <div className="w-full">
       <h1 className="font-bold text-xl mb-3">{title}</h1>
@@ -286,17 +286,17 @@ function ProductList({ items, title }: Filter & { items: any; title?: string }) 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((item: any, index: number) => (
+              {items.map((item: Product, index: number) => (
                 <TableRow key={index}>
                   <TableCell>
                     <div className="truncate w-50">
-                      <a href={item.url} className="hover:underline" rel="noopener noreferrer" target="_blank">
-                        {item.title}
-                      </a>
+                      <Link href={`/products/${item.repo_name}`} className="hover:underline">
+                        {item.name}
+                      </Link>
                     </div>
                   </TableCell>
                   <TableCell>v{item.version}</TableCell>
-                  <TableCell>{item.releaseDate}</TableCell>
+                  <TableCell>{item.created_at}</TableCell>
                   <TableCell>{item.users}</TableCell>
                   <TableCell>{item.description}</TableCell>
                 </TableRow>
