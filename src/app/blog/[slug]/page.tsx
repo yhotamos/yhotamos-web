@@ -5,6 +5,12 @@ import NotFoundPage from "@/components/layout/notFound";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { Blog } from "@/components/types/blog";
 import Link from "next/link";
+import { getBlogData } from "@/lib/getBlog";
+
+export async function generateStaticParams() {
+  const blogs = getBlogData() ?? [];
+  return blogs.map((blog: any) => ({ slug: blog.id }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const slug: any = await params;

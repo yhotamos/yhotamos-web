@@ -244,7 +244,7 @@ export function BlogCards({ title, className, blogs, currentTab }: { title?: str
       <div className={allClassName}>
         {blogs &&
           blogs.map((blog: any, index) => (
-            <a href={"/blog/" + blog.id} target="_self" key={index} className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition">
+            <Link href={"/blog/" + blog.id} key={index} className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition">
               {/* サムネイル */}
               {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />}
 
@@ -268,7 +268,7 @@ export function BlogCards({ title, className, blogs, currentTab }: { title?: str
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
       </div>
     </div>
