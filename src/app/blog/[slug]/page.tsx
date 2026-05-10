@@ -63,11 +63,8 @@ const BlogHeader: React.FC<{ data: Blog }> = ({ data }) => {
         {data.type === "dev" && <div className="text-sm text-secondary-foreground/70 pt-1">開発者向け ・</div>}
         {data.tags &&
           data.tags.map((tag: string) => (
-            <Link href={`/blog?tab=${data.type}&tag=${tag}`} key={tag}>
-              <span
-                key={tag}
-                className="cursor-pointer hover:bg-secondary-foreground/10 bg-white dark:bg-secondary text-xs text-secondary-foreground/80 px-4 py-1 rounded-full"
-              >
+            <Link href={`/blog?tag=${tag}`} key={tag}>
+              <span key={tag} className="cursor-pointer hover:bg-secondary-foreground/10 bg-white dark:bg-secondary text-xs text-secondary-foreground/80 px-4 py-1 rounded-full">
                 {tag}
               </span>
             </Link>

@@ -52,7 +52,7 @@
       },
       {
         "title": "技術メモ",
-        "path": "/blog?tab=dev",
+        "path": "/blog?tag=技術メモ",
         "external": false
       },
       {
