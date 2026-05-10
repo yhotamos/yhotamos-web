@@ -1,8 +1,10 @@
-import { Product } from "@/components/types/product";
+import type { ContactEntry } from "@/components/types/contact";
+import type { Product } from "@/components/types/product";
 import { google } from "googleapis";
 import { cache } from "react";
 
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
+const contactSheetId = process.env.GOOGLE_SPREADSHEET_ID_CONTACT!;
 const sheetId = process.env.GOOGLE_SPREADSHEET_ID_BLOG!;
 const chromeWebStoreSheetId = process.env.GOOGLE_SPREADSHEET_ID;
 const qittaSheetId = process.env.GOOGLE_SPREADSHEET_ID_QIITA!;
@@ -175,6 +177,21 @@ export const getChromeWebStoreItems = cache(async () => {
 
   return formatted;
 });
+
+/** POST: お問い合わせを Contacts シートに追記 */
+export async function appendContact(entry: ContactEntry) {
+  const sheets = await getSheetsClient();
+  const createdAt = new Date().toISOString();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: contactSheetId,
+    range: "Contacts!A:E",
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[createdAt, entry.name, entry.email, entry.subject, entry.message]],
+    },
+  });
+}
 
 /** GET: Qiita一覧を返す（キャッシュ対応） */
 export const getQiitaList = cache(async () => {
