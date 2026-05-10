@@ -8,31 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { filterItems, SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import Loading from "@/components/layout/loading";
 import { Blog } from "@/components/types/blog";
 
-function BlogsInner({
-  title,
-  className,
-  qittaBlogs,
-  blogs,
-  blogTags,
-  changelogs,
-}: {
-  title?: string;
-  className?: string;
-  qittaBlogs?: any;
-  blogs?: any;
-  blogTags?: any;
-  changelogs?: any;
-}) {
+function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs }: { title?: string; className?: string; qittaBlogs?: any; blogs?: any; blogTags?: any; changelogs?: any }) {
   const trigger =
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
@@ -42,8 +27,40 @@ function BlogsInner({
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
   const [limit, setLimit] = useState(25);
+  const [selectedExternalTags, setSelectedExternalTags] = useState<string[]>([]);
+  const [externalSort, setExternalSort]: any = useState("blog-new");
 
   const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, limit: limit });
+
+  const allExternalTags = useMemo<string[]>(() => {
+    const blogs = (qittaBlogs as any[]) ?? [];
+    const tags = blogs.flatMap((b: any) => b.tags.map((t: string) => t.trim()));
+    return [...new Set(tags)];
+  }, [qittaBlogs]);
+
+  const filteredQiitaBlogs = useMemo(() => {
+    const blogs = (qittaBlogs as any[]) ?? [];
+    const dateKey = externalSort === "blog-update" ? "updateDate" : "publishDate";
+
+    const filtered =
+      selectedExternalTags.length === 0
+        ? blogs
+        : blogs.filter((b: any) => {
+            const blogTags = b.tags.map((t: string) => t.trim());
+            return selectedExternalTags.some((t) => blogTags.includes(t));
+          });
+
+    return [...filtered].sort((a: any, b: any) => new Date(b[dateKey]).getTime() - new Date(a[dateKey]).getTime());
+  }, [qittaBlogs, selectedExternalTags, externalSort]);
+
+  const handleExternalTagClick = (tag: string) => {
+    setSelectedExternalTags((prev) => {
+      if (prev.includes(tag)) {
+        return prev.filter((t) => t !== tag);
+      }
+      return [...prev, tag];
+    });
+  };
 
   const updateURL = (params: URLSearchParams) => {
     router.replace(`/blog?${params.toString()}`, { scroll: false });
@@ -64,14 +81,7 @@ function BlogsInner({
   };
 
   const handleTagClick = (tag: string) => {
-    let newTags = [...selectedTags];
-    if (newTags.includes(tag)) {
-      // 選択済み → 削除
-      newTags = newTags.filter((c) => c !== tag);
-    } else {
-      // 未選択 → 追加
-      newTags.push(tag);
-    }
+    const newTags = selectedTags.includes(tag) ? selectedTags.filter((t) => t !== tag) : [...selectedTags, tag];
     setSelectedTags(newTags);
 
     const params = new URLSearchParams(searchParams.toString());
@@ -122,11 +132,15 @@ function BlogsInner({
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="external">
-          <div>
-            <div className="text-xl font-bold my-5"> 外部の記事 </div>
-            <BlogList className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
-          </div>
+        <TabsContent className="space-y-5" value="external">
+          <BlogTags tags={allExternalTags} selectedTags={selectedExternalTags} handleTagClick={handleExternalTagClick} />
+          <BlogSectionHeader
+            total={filteredQiitaBlogs.length}
+            currentCategory={selectedExternalTags.length === 1 ? selectedExternalTags[0] : undefined}
+            sort={externalSort}
+            setSort={setExternalSort}
+          />
+          <BlogList className="bg-white dark:bg-background" qittaBlogs={filteredQiitaBlogs} />
         </TabsContent>
         <TabsContent className="ms-3" value="update">
           <Update changelogs={changelogs} />
@@ -137,7 +151,6 @@ function BlogsInner({
 }
 
 export function Blogs(props: Parameters<typeof BlogsInner>[0]) {
-
   return (
     <Suspense fallback={null}>
       <BlogsInner {...props} />
@@ -158,31 +171,13 @@ export function BlogSearch({ tags, className = "" }: { tags: string[]; className
   return (
     <div className={`${className}`}>
       {/* 検索バー */}
-      <input
-        type="text"
-        placeholder="記事を検索"
-        className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
-      />
+      <input type="text" placeholder="記事を検索" className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500" />
     </div>
   );
 }
 
-export function BlogTags({
-  className,
-  tags,
-  selectedTags,
-  handleTagClick,
-}: {
-  className?: string;
-  tags: string[];
-  selectedTags: string[];
-  handleTagClick: (tag: string) => void;
-}) {
+export function BlogTags({ className, tags, selectedTags, handleTagClick }: { className?: string; tags: string[]; selectedTags: string[]; handleTagClick: (tag: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
 
   return (
     <div className={`${className} flex items-center justify-between border border-muted-foreground/50 p-2 rounded-lg`}>
@@ -197,7 +192,7 @@ export function BlogTags({
               className={cn(
                 isActive ? "!bg-violet-500 !text-white" : "",
                 "px-4 py-2 text-black dark:text-white bg-gray-200 dark:bg-secondary rounded-full",
-                "hover:bg-gray-300 text-sm whitespace-nowrap"
+                "hover:bg-gray-300 text-sm whitespace-nowrap",
               )}
               onClick={() => handleTagClick(tag)}
             >
@@ -208,33 +203,14 @@ export function BlogTags({
           );
         })}
       </div>
-      <Button
-        title={isOpen ? "開く" : "閉じる"}
-        onClick={toggleOpen}
-        variant={"ghost"}
-        size={"icon"}
-        className={cn("px-4 py-2 ms-2 rounded-full hover:bg-gray-300 text-sm ")}
-      >
-        <FontAwesomeIcon
-          className={cn(isOpen ? "" : " rotate-180", "transition-transform duration-300 ease-in-out")}
-          icon={iconMap["faAngleDown"]}
-        />
+      <Button title={isOpen ? "開く" : "閉じる"} onClick={() => setIsOpen((o) => !o)} variant={"ghost"} size={"icon"} className={cn("px-4 py-2 ms-2 rounded-full hover:bg-gray-300 text-sm ")}>
+        <FontAwesomeIcon className={cn(isOpen ? "" : " rotate-180", "transition-transform duration-300 ease-in-out")} icon={iconMap["faAngleDown"]} />
       </Button>
     </div>
   );
 }
 
-export function BlogSectionHeader({
-  total,
-  currentCategory,
-  sort,
-  setSort,
-}: {
-  total: number;
-  currentCategory?: string;
-  sort: string;
-  setSort: any;
-}) {
+export function BlogSectionHeader({ total, currentCategory, sort, setSort }: { total: number; currentCategory?: string; sort: string; setSort: any }) {
   // const [sort, setSort] = useState("sort-popular");
 
   const sortData: { value: SortType; label: string }[] = [
@@ -254,13 +230,7 @@ export function BlogSectionHeader({
       <div className="flex items-center gap-2 text-sm text-gray-500">
         {sortData.map(({ value, label }, index) => (
           <React.Fragment key={value}>
-            <button
-              id={value}
-              className={`${
-                sort === value ? "text-black underline dark:text-white" : ""
-              } cursor-pointer hover:text-black dark:hover:text-white`}
-              onClick={() => setSort(value)}
-            >
+            <button id={value} className={`${sort === value ? "text-black underline dark:text-white" : ""} cursor-pointer hover:text-black dark:hover:text-white`} onClick={() => setSort(value)}>
               {label}
             </button>
             {index < sortData.length - 1 && <span>|</span>}
@@ -271,19 +241,8 @@ export function BlogSectionHeader({
   );
 }
 
-export function BlogCards({
-  title,
-  className,
-  blogs,
-  currentTab,
-}: {
-  title?: string;
-  className?: string;
-  blogs?: Blog[];
-  currentTab?: string;
-}) {
-  const allClassName =
-    currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+export function BlogCards({ title, className, blogs, currentTab }: { title?: string; className?: string; blogs?: Blog[]; currentTab?: string }) {
+  const allClassName = currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
 
   return (
     <div className={cn(className)}>
@@ -291,16 +250,9 @@ export function BlogCards({
       <div className={allClassName}>
         {blogs &&
           blogs.map((blog: any, index) => (
-            <a
-              href={"/blog/" + blog.id}
-              target="_self"
-              key={index}
-              className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
-            >
+            <a href={"/blog/" + blog.id} target="_self" key={index} className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition">
               {/* サムネイル */}
-              {blog.thumbnail && (
-                <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />
-              )}
+              {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />}
 
               {/* 本文 */}
               <div className="flex flex-col justify-between p-4 h-full ">
@@ -329,17 +281,7 @@ export function BlogCards({
   );
 }
 
-export function BlogList({
-  className,
-  qittaBlogs,
-  currentTab,
-  limit,
-}: {
-  className?: string;
-  qittaBlogs?: string[];
-  currentTab?: string;
-  limit?: number;
-}) {
+export function BlogList({ className, qittaBlogs, currentTab, limit }: { className?: string; qittaBlogs?: string[]; currentTab?: string; limit?: number }) {
   const allClassName = currentTab === "all" ? "" : "md:pe-15";
   qittaBlogs = qittaBlogs?.slice(0, limit);
 
@@ -349,12 +291,7 @@ export function BlogList({
         {qittaBlogs &&
           qittaBlogs.map((blog: any, index: number) => (
             <li key={index}>
-              <Link
-                href={blog.url}
-                target="_blank"
-                className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")}
-                title={blog.title}
-              >
+              <Link href={blog.url} target="_blank" className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")} title={blog.title}>
                 <div>
                   <div className="flex items-center gap-2">
                     <Image src="/imgs/qiita_icon.png" alt="icon" width={16} height={16} />
@@ -440,7 +377,7 @@ function ChangeLog({ className, changelogs }: { className?: string; changelogs: 
               className={cn(
                 "prose prose-sm prose-neutral dark:prose-invert ",
                 "[&_p]:mb-0 [&_ul]:mt-1 md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
-                "[&_h3]:scroll-mt-20"
+                "[&_h3]:scroll-mt-20",
               )}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
