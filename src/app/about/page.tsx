@@ -16,23 +16,16 @@ export default function About() {
     <main className="max-w-7xl mx-auto p-5 flex flex-col gap-20">
       <Breadcrumbs paths={pathnames} />
       <div className="text-center font-bold text-3xl">About</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-5">
         {/* ブランド */}
         <div className="flex flex-col gap-5 items-center justify-center">
-          <Image
-            className="rounded-4xl border-2 border-violet-600"
-            src="/imgs/icon.jpg"
-            alt="icon"
-            width={200}
-            height={200}
-            title="ブランドロゴ"
-          />
+          <Image className="rounded-4xl border-2 border-violet-600" src="/imgs/icon.jpg" alt="icon" width={200} height={200} title="ブランドロゴ" />
           <div>
             <span className="font-bold text-2xl after:content-['_-_']">ブランド</span>
             <span className="font-bold text-2xl">YHOTAMOS</span>
           </div>
           <div className="flex flex-col max-w-lg gap-3 mx-auto">
-            <div>自作ツールや拡張機能，技術ブログをまとめた個人開発サイトです．Next.js 15 と Tailwind CSS v4 で構築しています．</div>
+            <div>自作ツールや拡張機能，技術ブログをまとめた個人開発サイトです．Next.js 16 と Tailwind CSS v4 で構築しています．</div>
             <div>気に入っていただけたら，応援やシェアも大歓迎です．</div>
           </div>
         </div>
