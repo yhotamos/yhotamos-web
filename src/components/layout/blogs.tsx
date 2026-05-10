@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Suspense, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { filterItems, SortType } from "@/utils/filterItems";
@@ -30,6 +30,11 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   const [selectedExternalTags, setSelectedExternalTags] = useState<string[]>([]);
   const [externalSort, setExternalSort]: any = useState("blog-new");
   const [externalSortOrder, setExternalSortOrder] = useState<"asc" | "desc">("desc");
+
+  useEffect(() => {
+    setTab(searchParams.get("tab") || "all");
+    setSelectedTags(searchParams.get("tag")?.split(",") || []);
+  }, [searchParams]);
 
   const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder, limit: limit });
 
