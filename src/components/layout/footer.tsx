@@ -45,7 +45,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <p className="text-end text-gray-700 dark:text-gray-400 mt-5">&copy; 2025 yhotta240. All rights reserved.</p>
+        <p className="text-end text-gray-700 dark:text-gray-400 mt-5">&copy; 2026 yhotta240. All rights reserved.</p>
       </div>
     </footer>
   );
