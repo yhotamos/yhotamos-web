@@ -22,7 +22,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
   const searchParams = useSearchParams();
-  const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.get("tag")?.split(",") || []);
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.getAll("tag"));
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -33,7 +33,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   useEffect(() => {
     setTab(searchParams.get("tab") || "all");
-    setSelectedTags(searchParams.get("tag")?.split(",") || []);
+    setSelectedTags(searchParams.getAll("tag"));
   }, [searchParams]);
 
   const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder, limit: limit });
@@ -102,7 +102,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   };
 
   const pushURL = (params: URLSearchParams) => {
-    window.history.replaceState(null, "", `/blog?${params.toString()}`);
+    window.history.replaceState(null, "", `/blog?${decodeURIComponent(params.toString())}`);
   };
 
   const handleTabChange = (newTab: string) => {
@@ -119,9 +119,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
     const params = new URLSearchParams();
     params.set("tab", tab);
-    if (newTags.length > 0) {
-      params.set("tag", newTags.join(","));
-    }
+    newTags.forEach((t) => params.append("tag", t));
     pushURL(params);
   };
 

@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faGrip, faStar } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,17 +15,16 @@ import { Product } from "@/components/types/product";
 export { ProductPage, ProductGrid, ProductList };
 
 function ProductPageInner({ items, categories }: { items?: Product[]; categories: any }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.get("category")?.split(",") || []);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.getAll("category"));
 
   const updateURL = (params: URLSearchParams) => {
-    router.replace(`/products?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, "", `/products?${decodeURIComponent(params.toString())}`);
   };
 
   useEffect(() => {
-    setSelectedCategories(() => searchParams.get("category")?.split(",") || []);
-  }, [searchParams, router]);
+    setSelectedCategories(() => searchParams.getAll("category"));
+  }, [searchParams]);
 
   const handleCategory = (key: string) => {
     let newCategories = [...selectedCategories];
@@ -36,10 +35,9 @@ function ProductPageInner({ items, categories }: { items?: Product[]; categories
     }
     setSelectedCategories(newCategories);
 
-    const params = new URLSearchParams(searchParams.toString());
-    if (newCategories.length > 0) {
-      params.set("category", newCategories.join(","));
-    } else {
+    const params = new URLSearchParams();
+    newCategories.forEach((c) => params.append("category", c));
+    if (newCategories.length === 0) {
       params.delete("category");
     }
 
