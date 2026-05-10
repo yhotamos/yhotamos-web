@@ -72,18 +72,8 @@
     "description": "Product information and features",
     "items": [
       {
-        "title": "FAQ",
-        "path": "/support/faq",
-        "external": false
-      },
-      {
         "title": "フィードバック",
         "path": "/support/feedback",
-        "external": false
-      },
-      {
-        "title": "寄付・支援",
-        "path": "/support/donate",
         "external": false
       },
       {

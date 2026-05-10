@@ -1,6 +1,7 @@
 import { Donate } from "./donate";
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
+import { checkSupportEnabled } from "@/lib/support";
 
 const pathnames: BreadcrumbsProps["paths"] = [
   { name: "Support", href: "/support" },
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default function DonatePage() {
+  checkSupportEnabled(pathnames[1].href);
+
   return (
     <main className="max-w-7xl mx-auto p-5">
       <Breadcrumbs paths={pathnames} className="mb-3" />

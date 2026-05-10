@@ -22,7 +22,7 @@ export default function Support() {
 
         {/* 概要カード（すぐに各詳細ページへ遷移可能） */}
         <SectionGrid>
-          {supportItems.map((item, index) => (
+          {supportItems.filter((i) => i.enabled !== false).map((item, index) => (
             <SupportCard key={index} {...item} />
           ))}
         </SectionGrid>
@@ -36,10 +36,10 @@ const SupportHero: React.FC = () => {
     <header className="text-center space-y-4">
       <h1 className="text-3xl font-bold tracking-tight">サポートセンター</h1>
       <p className="text-secondary-foreground/70 text-sm md:text-base">
-        {supportItems.map((item, index) => (
+        {supportItems.filter((i) => i.enabled !== false).map((item, index) => (
           <span key={index}>
             {item.title}
-            {index < supportItems.length - 1 ? "，" : ""}
+            {index < supportItems.filter((i) => i.enabled !== false).length - 1 ? "，" : ""}
           </span>
         ))}
         にアクセスできます．必要なトピックを選んでください．

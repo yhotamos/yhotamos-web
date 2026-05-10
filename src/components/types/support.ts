@@ -2,6 +2,7 @@ export type SupportItem = {
   title: string;
   description: string;
   href: string;
+  enabled?: boolean;
 };
 
 export type FAQItem = {

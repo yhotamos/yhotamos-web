@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
+import { checkSupportEnabled } from "@/lib/support";
 import Contact from "./contact";
 
 const pathnames: BreadcrumbsProps["paths"] = [
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
+  checkSupportEnabled(pathnames[1].href);
+
   return (
     <main className="max-w-7xl mx-auto p-5">
       <Breadcrumbs paths={pathnames} className="mb-3" />
