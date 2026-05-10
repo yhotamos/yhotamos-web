@@ -25,23 +25,18 @@
     "description": "Products and services",
     "items": [
       {
-        "title": "Chrome拡張機能",
-        "path": "/products?tab=user&category=Chrome+拡張機能",
+        "title": "Chrome 拡張機能",
+        "path": "/products?category=Chrome+拡張機能",
         "external": false
       },
       {
         "title": "VS Code 拡張機能",
-        "path": "/products?tab=developer&category=VS+Code+拡張機能",
+        "path": "/products?category=VS+Code+拡張機能",
         "external": false
       },
       {
         "title": "その他のサイト",
-        "path": "/products?tab=user&category=Webサイト",
-        "external": false
-      },
-      {
-        "title": "開発者向け",
-        "path": "/products?tab=developer",
+        "path": "/products?category=Webサイト",
         "external": false
       }
     ]
@@ -74,7 +69,7 @@
   },
   {
     "title": "Support",
-    "description": " Product information and features",
+    "description": "Product information and features",
     "items": [
       {
         "title": "FAQ",
@@ -82,7 +77,7 @@
         "external": false
       },
       {
-        "title": "フィードバック",
+        "title": "フィードバック",
         "path": "/support/feedback",
         "external": false
       },
