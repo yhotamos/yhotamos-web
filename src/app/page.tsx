@@ -7,9 +7,9 @@ import { getChromeWebStoreItems } from "@/lib/googleSheets";
 import { ProjectPickup } from "@/components/layout/project";
 import { TwitterEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
-import { getBlogData, getDevBlogTags, getUserBlogTags } from "@/lib/getBlog";
+import { getBlogData, getAllBlogTags } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
-import { BlogAll } from "@/components/layout/blogs";
+import { BlogCards } from "@/components/layout/blogs";
 import getProjects from "@/lib/getProjects";
 
 export default async function Home() {
@@ -19,8 +19,7 @@ export default async function Home() {
     getProjects().catch(() => []),
   ]);
   const blogs = getBlogData();
-  const filteredBlogs = filterItems({ items: blogs, tags: getUserBlogTags(), limit: 3 });
-  const filteredDevBlogs = filterItems({ items: blogs, tags: getDevBlogTags(), limit: 3 });
+  const recentBlogs = filterItems({ items: blogs, tags: [], sort: "blog-new", limit: 6 });
 
   return (
     <main className="max-w-7xl mx-auto p-5 w-full grid gap-8">
@@ -29,7 +28,13 @@ export default async function Home() {
       <Hr />
       <ProductGrid items={items} title="Chrome 拡張機能" sort={"users-desc"} limit={8} isOpen={true} />
       <Hr />
-      <BlogAll className="space-y-5 my-3" tab="all" filteredBlogs={filteredBlogs} filteredDevBlogs={filteredDevBlogs} more={true} />
+      <div className="space-y-3 my-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold">最新の記事</h2>
+          <a href="/blog" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">ブログを見る ＞</a>
+        </div>
+        <BlogCards blogs={recentBlogs} />
+      </div>
       <Hr />
       <ProjectPickup open={true} projects={projects} />
       <Hr />

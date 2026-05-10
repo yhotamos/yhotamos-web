@@ -24,7 +24,6 @@ function BlogsInner({
   qittaBlogs,
   blogs,
   blogTags,
-  devBlogTags,
   changelogs,
 }: {
   title?: string;
@@ -32,7 +31,6 @@ function BlogsInner({
   qittaBlogs?: any;
   blogs?: any;
   blogTags?: any;
-  devBlogTags?: any;
   changelogs?: any;
 }) {
   const trigger =
@@ -43,10 +41,9 @@ function BlogsInner({
   const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.get("tag")?.split(",") || []);
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
-  const [limit, setLimit] = useState(3); // 初期表示は3件
+  const [limit, setLimit] = useState(25);
 
-  const filteredBlogs = filterItems({ items: blogs, tags: blogTags, filter: "", sort: sort, limit: limit });
-  const filteredDevBlogs = filterItems({ items: blogs, tags: devBlogTags, filter: "", sort: sort, limit: limit });
+  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, limit: limit });
 
   const updateURL = (params: URLSearchParams) => {
     router.replace(`/blog?${params.toString()}`, { scroll: false });
@@ -54,19 +51,15 @@ function BlogsInner({
 
   useEffect(() => {
     const tabParams = searchParams.get("tab")?.split("?")[0];
-    if (tabParams != "all") {
-      setLimit(25); // ユーザー向け，開発者向けの記事は25件表示
-    }
     setTab(tabParams || "all");
   }, [searchParams, router]);
 
   const handleTabChange = (tab: string) => {
-    setSelectedTags([]); // 選択したタグをリセット
-    setLimit(tab === "all" ? 3 : 25); // 全ての記事は3件，他は25件表示
+    setSelectedTags([]);
     setTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
-    params.delete("tag"); // タグをリセット
+    params.delete("tag");
     updateURL(params);
   };
 
@@ -99,12 +92,6 @@ function BlogsInner({
           <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="all">
             すべて
           </TabsTrigger>
-          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="user">
-            ユーザー向け
-          </TabsTrigger>
-          <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="dev">
-            開発者向け
-          </TabsTrigger>
           <TabsTrigger className={cn(trigger, triggerText, "h-fit px-0 py-2 dark:!bg-background")} value="external">
             外部の記事
           </TabsTrigger>
@@ -112,37 +99,35 @@ function BlogsInner({
             更新情報
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="all">
-          <BlogAll
-            tab={tab}
-            filteredBlogs={filteredBlogs}
-            filteredDevBlogs={filteredDevBlogs}
-            blogs={blogs}
-            qittaBlogs={qittaBlogs}
-            changelogs={changelogs}
-            more={false}
-          />
+        <TabsContent className="space-y-5" value="all">
+          <div className="flex flex-col lg:flex-row gap-5 items-start">
+            <div className="flex-1 min-w-0 space-y-5">
+              <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
+              <BlogSectionHeader total={filteredBlogs.length} currentCategory={selectedTags.length === 1 ? selectedTags[0] : undefined} sort={sort} setSort={setSort} />
+              <BlogCards blogs={filteredBlogs} />
+            </div>
+            <div className="lg:w-72 shrink-0 space-y-4">
+              <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2">
+                <a className="text-base font-bold p-3 hover:underline block" href="?tab=external">
+                  外部の記事 &gt;
+                </a>
+                <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
+              </div>
+              <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
+                <a className="text-base font-bold hover:underline block w-fit pb-3" href="?tab=update">
+                  更新情報 &gt;
+                </a>
+                <ChangeLog changelogs={changelogs} />
+              </div>
+            </div>
+          </div>
         </TabsContent>
-        {/* ユーザー向けのコンテンツ */}
-        <TabsContent className="space-y-5" value="user">
-          <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
-          <BlogSectionHeader total={filteredBlogs.length} currentCategory={selectedTags[0]} sort={sort} setSort={setSort} />
-          <BlogCards blogs={filteredBlogs} />
-        </TabsContent>
-        {/* 開発者向けのコンテンツ */}
-        <TabsContent className="space-y-5" value="dev">
-          <BlogTags tags={devBlogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} />
-          <BlogSectionHeader total={filteredDevBlogs.length} currentCategory={selectedTags[0]} sort={sort} setSort={setSort} />
-          <BlogCards blogs={filteredDevBlogs} />
-        </TabsContent>
-        {/* 外部の記事  */}
         <TabsContent value="external">
           <div>
             <div className="text-xl font-bold my-5"> 外部の記事 </div>
             <BlogList className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
           </div>
         </TabsContent>
-        {/* 更新情報 */}
         <TabsContent className="ms-3" value="update">
           <Update changelogs={changelogs} />
         </TabsContent>
@@ -152,6 +137,7 @@ function BlogsInner({
 }
 
 export function Blogs(props: Parameters<typeof BlogsInner>[0]) {
+
   return (
     <Suspense fallback={null}>
       <BlogsInner {...props} />
@@ -177,64 +163,6 @@ export function BlogSearch({ tags, className = "" }: { tags: string[]; className
         placeholder="記事を検索"
         className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
       />
-    </div>
-  );
-}
-
-export function BlogAll({
-  className,
-  tab = "all",
-  filteredBlogs,
-  filteredDevBlogs,
-  blogs,
-  qittaBlogs,
-  changelogs,
-  more = false,
-}: {
-  className?: string;
-  tab?: string;
-  filteredBlogs: Blog[];
-  filteredDevBlogs: Blog[];
-  blogs?: Blog[];
-  qittaBlogs?: string[];
-  changelogs?: string[];
-  more: boolean;
-}) {
-  return (
-    <div className={cn(className, "space-y-5")}>
-      <a className="block text-lg font-bold mx-3 hover:underline w-fit" href="?tab=user">
-        ユーザー向け &gt;
-      </a>
-      {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredBlogs} />}
-      <a className="block text-lg font-bold mx-3 hover:underline w-fit" href="?tab=dev">
-        開発者向け &gt;
-      </a>
-      {tab != "all" ? <Loading className="w-full h-[150px]" /> : <BlogCards blogs={filteredDevBlogs} />}
-      {more && (
-        <div className="text-right mt-4 me-3">
-          <a href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline">
-            ブログを見る ＞
-          </a>
-        </div>
-      )}
-      {qittaBlogs && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2 mt-4">
-            <a className="text-lg font-bold p-3 hover:underline block" href="?tab=external">
-              外部の記事 &gt;
-            </a>
-            <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
-          </div>
-          <div className="border-1 border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4 mt-4">
-            <a className="text-lg font-bold hover:underline block w-fit pb-3" href="?tab=update">
-              更新情報 &gt;
-            </a>
-            <h3 className="text-lg font-bold block ">▼ 本サイトの更新情報</h3>
-            <ChangeLog changelogs={changelogs} />
-          </div>
-        </div>
-      )}
-      {!more && <BlogCards title="すべて" className="border border-muted-foreground/50 rounded-lg p-2" blogs={blogs} />}
     </div>
   );
 }
@@ -371,15 +299,14 @@ export function BlogCards({
             >
               {/* サムネイル */}
               {blog.thumbnail && (
-                <img src={blog.thumbnail} alt={blog.title} className={`w-full ${blog.type === "dev" ? "h-32" : "h-48"} object-cover`} />
+                <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />
               )}
 
               {/* 本文 */}
               <div className="flex flex-col justify-between p-4 h-full ">
                 <h2 className="text-lg font-semibold mb-2">{blog.title}</h2>
 
-                {/* 開発者向けなら抜粋を表示 */}
-                {blog.type === "dev" && blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
+                {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2">{blog.excerpt}</p>}
 
                 <div>
                   <p className="text-sm text-secondary-foreground/70 mb-2">

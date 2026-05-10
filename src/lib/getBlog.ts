@@ -32,27 +32,11 @@ export function getBlogBody(id: string) {
   };
 }
 
-export function getUserBlogTags() {
+export function getAllBlogTags() {
   const blogIndex = getBlogData();
-  // ユーザー向けの記事のタグを取得
-  const blogType = blogIndex.filter((blog: any) => blog.type === "user");
-  const tags = blogType.map((blog: any) => blog.tags);
-  // 冗長なタグは除く
-  const tagsSet = new Set(tags.flat());
-  const tag = [...tagsSet];
-
-  return tag as string[];
-}
-
-export function getDevBlogTags() {
-  const blogIndex = getBlogData();
-  const devType = blogIndex.filter((blog: any) => blog.type === "dev");
-  const devTags = devType.map((blog: any) => blog.tags);
-  // 冗長なタグは除く
-  const tagsSet = new Set(devTags.flat());
-  const devTagSet = [...tagsSet];
-
-  return devTagSet as string[];
+  const tags = blogIndex.map((blog: any) => blog.tags).flat();
+  const tagsSet = new Set(tags);
+  return [...tagsSet] as string[];
 }
 
 const changelogPath = path.join(process.cwd(), "content/changelog");
