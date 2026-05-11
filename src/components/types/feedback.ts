@@ -1,11 +1,16 @@
-export type FeedbackCategory = "site" | "tool";
 export type SiteFeedbackType = "typo" | "impression" | "other";
 export type ToolFeedbackType = "bug" | "suggestion" | "impression" | "other";
 
 export type FeedbackEntry = {
-  category: FeedbackCategory;
-  type: SiteFeedbackType | ToolFeedbackType;
-  toolName?: string;
+  type: SiteFeedbackType;
+  title: string;
+  detail: string;
+  contact?: string;
+};
+
+export type IssueEntry = {
+  toolName: string;
+  type: ToolFeedbackType;
   title: string;
   detail: string;
   contact?: string;

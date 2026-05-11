@@ -1,5 +1,5 @@
 import type { ContactEntry } from "@/components/types/contact";
-import type { FeedbackEntry } from "@/components/types/feedback";
+import type { FeedbackEntry, IssueEntry } from "@/components/types/feedback";
 import type { Product } from "@/components/types/product";
 import { google } from "googleapis";
 import { cache } from "react";
@@ -200,20 +200,41 @@ export async function appendFeedback(entry: FeedbackEntry) {
   const createdAt = new Date().toISOString();
   await sheets.spreadsheets.values.append({
     spreadsheetId: contactSheetId,
-    range: "Feedback!A:I",
+    range: "Feedback!A:E",
     valueInputOption: "USER_ENTERED",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
       values: [[
         createdAt,
-        entry.category,
-        entry.toolName ?? "",
+        entry.type,
+        entry.title,
+        entry.detail,
+        entry.contact ?? "",
+      ]],
+    },
+  });
+}
+
+/** POST: ツール Issue を Issues シートに追記 */
+export async function appendIssue(entry: IssueEntry) {
+  const sheets = await getSheetsClient();
+  const createdAt = new Date().toISOString();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: contactSheetId,
+    range: "Issues!A:I",
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[
+        createdAt,
+        entry.toolName,
         entry.type,
         entry.browser ?? "",
         entry.bugType ?? "",
         entry.title,
         entry.detail,
         entry.contact ?? "",
+        "",
       ]],
     },
   });

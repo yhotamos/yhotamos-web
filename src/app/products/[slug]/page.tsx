@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUpRightFromSquare, faBug } from "@fortawesome/free-solid-svg-icons";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import NotFoundPage from "@/components/layout/notFound";
 import TabController from "./_components/tabController";
@@ -85,12 +85,20 @@ function ProductItem({ item, className }: { item: Product; className?: string })
             <span className="">作成者 : {item.provider || "yhotta240"}</span>
           </div>
           <div className="text-base text-muted-foreground ps-3">{item.description}</div>
-          <Button asChild variant="outline" className="w-fit bg-violet-500 text-white hover:bg-violet-800 hover:text-white dark:bg-violet-500 dark:hover:bg-violet-800">
-            <Link href={item.store_url} target="_blank">
-              今すぐダウンロード
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </Link>
-          </Button>
+          <div className="flex gap-3 mt-3">
+            <Button asChild variant="outline" className="w-fit bg-violet-500 text-white hover:bg-violet-800 hover:text-white dark:bg-violet-500 dark:hover:bg-violet-800">
+              <Link href={item.store_url} target="_blank">
+                今すぐダウンロード
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-fit">
+              <Link href={`/support/issue?tool=${item.repo_name}`}>
+                バグを報告する
+                <FontAwesomeIcon icon={faBug} />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

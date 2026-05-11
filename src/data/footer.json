@@ -80,6 +80,11 @@
         "title": "お問い合わせ",
         "path": "/support/contact",
         "external": false
+      },
+      {
+        "title": "問題報告フォーム",
+        "path": "/support/issue",
+        "external": false
       }
     ]
   }
