@@ -25,7 +25,7 @@ export default async function IssuePage() {
       <div className="space-y-8 max-w-2xl mx-auto">
         <header className="space-y-2">
           <h1 className="text-2xl font-bold">問題報告フォーム</h1>
-          <p className="text-secondary-foreground/70 text-sm">公開ツールへのバグ報告や改善提案を受け付けています．送信内容は GitHub Issues にも登録されます．</p>
+          <p className="text-secondary-foreground/70 text-sm">公開ツールへのバグ報告や改善提案を受け付けています．バグ報告・改善提案は GitHub Issues にも自動登録されます．</p>
         </header>
         <Suspense>
           <Issue products={products} />

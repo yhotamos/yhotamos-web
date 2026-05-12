@@ -33,48 +33,52 @@ export async function POST(req: NextRequest) {
     };
     const typeLabel = TYPE_LABELS[type] ?? type;
 
-    // GitHub Issues に POST
-    const issueBodyLines = [
-      `## 概要`,
-      detail,
-      "",
-    ];
-    if (isBug) {
-      issueBodyLines.push(
-        `## 環境`,
-        `- ブラウザ: ${body.browser}`,
-        `- 問題の種類: ${body.bugType}`,
-        "",
-      );
-    }
-    if (body.attachmentName) {
-      issueBodyLines.push(`## 添付ファイル`, `${body.attachmentName}（メール添付）`, "");
-    }
-    if (body.contact) {
-      issueBodyLines.push(`## 連絡先`, body.contact);
-    }
-    const issueBody = issueBodyLines.join("\n");
-
-    const githubToken = process.env.GITHUB_TOKEN;
+    // GitHub Issues に POST（バグ報告・改善提案のみ）
+    const isGithubTarget = type === "bug" || type === "suggestion";
+    const formUrl = "https://yhotamos.com/support/issue";
     let githubIssueUrl = "";
-    if (githubToken) {
-      const githubRes = await fetch(`https://api.github.com/repos/yhotta240/${toolName}/issues`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${githubToken}`,
-          "Content-Type": "application/json",
-          Accept: "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-        body: JSON.stringify({
-          title: `[${typeLabel}] ${title}`,
-          body: issueBody,
-          labels: GITHUB_LABELS[type] ?? [],
-        }),
-      });
-      if (githubRes.ok) {
-        const data = await githubRes.json();
-        githubIssueUrl = data.html_url ?? "";
+    if (isGithubTarget) {
+      const issueBodyLines = [
+        `概要：`,
+        "",
+        detail,
+        "",
+      ];
+      if (isBug) {
+        issueBodyLines.push(
+          `問題の種類：`,
+          "",
+          `- ${body.bugType}`,
+          "",
+          `環境：`,
+          "",
+          `- ${body.browser}`,
+          "",
+        );
+      }
+      issueBodyLines.push(`> 本Issueは，問題報告フォーム（ ${formUrl} ）から自動生成されています．`);
+      const issueBody = issueBodyLines.join("\n");
+
+      const githubToken = process.env.GITHUB_TOKEN;
+      if (githubToken) {
+        const githubRes = await fetch(`https://api.github.com/repos/yhotta240/${toolName}/issues`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${githubToken}`,
+            "Content-Type": "application/json",
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+          body: JSON.stringify({
+            title: `[${typeLabel}] ${title}`,
+            body: issueBody,
+            labels: GITHUB_LABELS[type] ?? [],
+          }),
+        });
+        if (githubRes.ok) {
+          const data = await githubRes.json();
+          githubIssueUrl = data.html_url ?? "";
+        }
       }
     }
 

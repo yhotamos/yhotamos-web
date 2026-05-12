@@ -83,7 +83,7 @@ function ToolDropdown({ products, value, onSelect }: { products: ProductInfo[]; 
         </svg>
       </button>
       {open && (
-        <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto rounded-md border border-secondary-foreground/40 bg-background shadow-lg">
+        <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto rounded-md border border-secondary-foreground/40 bg-background text-foreground shadow-lg">
           {products.map((p) => (
             <li key={p.repo_name}>
               <button
@@ -120,7 +120,7 @@ function BugExtraSection({ browser, bugType, onChange }: { browser: string; bugT
         <div key={d.field}>
           <FieldLabel required>{d.label}</FieldLabel>
           <select
-            className="w-full rounded-md border border-secondary-foreground/40 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-md border border-secondary-foreground/40 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none bg-background text-foreground"
             value={d.value}
             required
             onChange={(e) => onChange(d.field, e.target.value)}
@@ -148,7 +148,7 @@ function AttachmentSection({ error, onChange }: { error: string | null; onChange
         className="w-full text-sm text-secondary-foreground/70 file:mr-3 file:rounded-md file:border-0 file:bg-secondary file:px-3 file:py-1.5 file:text-xs file:font-medium hover:file:bg-secondary/80"
         onChange={onChange}
       />
-      <p className={`mt-1 text-[10px] ${error ? "text-red-500" : "text-secondary-foreground/70"}`}>{error ?? "PDF・画像・動画（5MB以下）を添付できます．"}</p>
+      <p className={`mt-1 text-xs ${error ? "text-red-500" : "text-secondary-foreground/70"}`}>{error ?? "PDF・画像・動画（5MB以下）を添付できます．"}</p>
     </div>
   );
 }
@@ -254,7 +254,7 @@ export function Issue({ products }: { products: ProductInfo[] }) {
           required
           onChange={(e) => setState((s) => ({ ...s, title: e.target.value }))}
         />
-        <p className="mt-1 text-[10px] text-secondary-foreground/70">80文字以内で概要を記述してください．</p>
+        <p className="mt-1 text-xs text-secondary-foreground/70">80文字以内で概要を記述してください．</p>
       </div>
 
       {showBugExtra && <BugExtraSection browser={state.browser} bugType={state.bugType} onChange={(field, value) => setState((s) => ({ ...s, [field]: value }))} />}
@@ -267,10 +267,15 @@ export function Issue({ products }: { products: ProductInfo[] }) {
           required
           onChange={(e) => setState((s) => ({ ...s, detail: e.target.value }))}
         />
-        {showBugExtra && <p className="mt-1 text-[10px] text-secondary-foreground/70">再現手順・期待結果などを具体的に記載してください．</p>}
+        {showBugExtra && <p className="mt-1 text-xs text-secondary-foreground/70">再現手順・期待結果などを具体的に記載してください．</p>}
       </div>
 
-      {showAttachment && <AttachmentSection error={attachmentError} onChange={onAttachmentChange} />}
+      {showAttachment && (
+        <div>
+          <AttachmentSection error={attachmentError} onChange={onAttachmentChange} />
+          <p className="mt-1 text-xs text-secondary-foreground/70">スクリーンショットはメールのみに送信されます．GitHub Issues には含まれません．</p>
+        </div>
+      )}
 
       <div>
         <FieldLabel>連絡手段（任意）</FieldLabel>
@@ -280,6 +285,7 @@ export function Issue({ products }: { products: ProductInfo[] }) {
           value={state.contact}
           onChange={(e) => setState((s) => ({ ...s, contact: e.target.value }))}
         />
+        <p className="mt-1 text-xs text-secondary-foreground/70">連絡手段はメールのみに送信されます．GitHub Issues には含まれません．</p>
       </div>
 
       <button type="submit" disabled={sending} className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white shadow hover:bg-blue-500 disabled:opacity-50">
