@@ -9,7 +9,7 @@ import { TwitterEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
 import { getBlogData, getAllBlogTags } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
-import { BlogCards } from "@/components/layout/blogs";
+import { BlogCards } from "@/components/layout/blog-cards";
 import getProjects from "@/lib/getProjects";
 
 export default async function Home() {

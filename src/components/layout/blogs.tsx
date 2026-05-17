@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
+import { FormattedDate } from "@/components/ui/formatted-date";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
@@ -11,11 +8,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { filterItems, SortType } from "@/utils/filterItems";
+import { filterItems } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Blog } from "@/components/types/blog";
+import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
+import { BlogSectionHeader } from "@/components/layout/blog-section-header";
+import { BlogCards } from "@/components/layout/blog-cards";
+import { BlogList } from "@/components/layout/blog-list";
+import { BlogArchive } from "@/components/layout/blog-archive";
 
 function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs }: { title?: string; className?: string; qittaBlogs?: any; blogs?: any; blogTags?: any; changelogs?: any }) {
   const trigger =
@@ -26,17 +28,44 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   const [tab, setTab] = useState(searchParams.get("tab") || "all");
   const [sort, setSort]: any = useState("blog-new");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [limit, setLimit] = useState(25);
+  const [limit] = useState(25);
   const [selectedExternalTags, setSelectedExternalTags] = useState<string[]>([]);
   const [externalSort, setExternalSort]: any = useState("blog-new");
   const [externalSortOrder, setExternalSortOrder] = useState<"asc" | "desc">("desc");
+  const [externalSearchQuery, setExternalSearchQuery] = useState("");
+
+  const { selectedYear, selectedMonth, searchQuery, setSearchQuery, reset, handleMonthClick, handleYearChange, handleMonthSelectChange, handleClearDateFilter } = useBlogDateFilter({
+    searchParams,
+    tab,
+    selectedTags,
+    onClearTags: () => setSelectedTags([]),
+    onSwitchToAll: () => setTab("all"),
+  });
 
   useEffect(() => {
     setTab(searchParams.get("tab") || "all");
     setSelectedTags(searchParams.getAll("tag"));
   }, [searchParams]);
 
-  const filteredBlogs = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder, limit: limit });
+  const availableYears = useMemo(() => {
+    const years = new Set<number>(((blogs as Blog[]) ?? []).map((b) => new Date(b.date).getFullYear()));
+    return [...years].sort((a, b) => b - a);
+  }, [blogs]);
+
+  const filteredBlogs = useMemo(() => {
+    let result = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder });
+    if (selectedYear !== null) {
+      result = result.filter((b) => new Date(b.date).getFullYear() === selectedYear);
+    }
+    if (selectedMonth !== null) {
+      result = result.filter((b) => new Date(b.date).getMonth() + 1 === selectedMonth);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter((b) => b.title.toLowerCase().includes(q) || (b.description ?? "").toLowerCase().includes(q));
+    }
+    return result.slice(0, limit);
+  }, [blogs, selectedTags, sort, sortOrder, limit, selectedYear, selectedMonth, searchQuery]);
 
   const blogTagCounts = useMemo<Record<string, number>>(() => {
     const items = (blogs as Blog[]) ?? [];
@@ -70,16 +99,20 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   const filteredQiitaBlogs = useMemo(() => {
     const blogs = (qittaBlogs as any[]) ?? [];
-    // desc = 大きい順（デフォルト）、asc = 小さい順
     const dir = externalSortOrder === "asc" ? -1 : 1;
 
-    const filtered =
+    let filtered =
       selectedExternalTags.length === 0
         ? blogs
         : blogs.filter((b: any) => {
             const blogTags = b.tags.map((t: string) => t.trim());
             return selectedExternalTags.some((t) => blogTags.includes(t));
           });
+
+    if (externalSearchQuery.trim()) {
+      const q = externalSearchQuery.trim().toLowerCase();
+      filtered = filtered.filter((b: any) => b.title.toLowerCase().includes(q));
+    }
 
     return [...filtered].sort((a: any, b: any) => {
       if (externalSort === "blog-likes") {
@@ -90,15 +123,10 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
       }
       return dir * (new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
     });
-  }, [qittaBlogs, selectedExternalTags, externalSort, externalSortOrder]);
+  }, [qittaBlogs, selectedExternalTags, externalSort, externalSortOrder, externalSearchQuery]);
 
   const handleExternalTagClick = (tag: string) => {
-    setSelectedExternalTags((prev) => {
-      if (prev.includes(tag)) {
-        return prev.filter((t) => t !== tag);
-      }
-      return [...prev, tag];
-    });
+    setSelectedExternalTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
   const pushURL = (params: URLSearchParams) => {
@@ -107,6 +135,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   const handleTabChange = (newTab: string) => {
     setSelectedTags([]);
+    reset();
     setTab(newTab);
     const params = new URLSearchParams();
     params.set("tab", newTab);
@@ -150,21 +179,29 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
                 setSort={setSort}
                 sortOrder={sortOrder}
                 setSortOrder={setSortOrder}
+                selectedYear={selectedYear ?? undefined}
+                selectedMonth={selectedMonth ?? undefined}
+                onClearDateFilter={handleClearDateFilter}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                availableYears={availableYears}
+                onYearChange={handleYearChange}
+                onMonthChange={handleMonthSelectChange}
               />
               <BlogCards blogs={filteredBlogs} />
             </div>
             <div className="lg:w-96 shrink-0 space-y-4">
+              <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
+                <button className="text-base font-bold hover:underline block w-fit pb-3" onClick={() => handleTabChange("update")}>
+                  ブログ アーカイブ &gt;
+                </button>
+                <BlogArchive blogs={blogs} onMonthClick={handleMonthClick} selectedYear={selectedYear ?? undefined} selectedMonth={selectedMonth ?? undefined} />
+              </div>
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg py-2">
                 <button className="text-base font-bold p-3 hover:underline block" onClick={() => handleTabChange("external")}>
                   外部の記事 &gt;
                 </button>
                 <BlogList currentTab="all" limit={3} className="bg-white dark:bg-background" qittaBlogs={qittaBlogs} />
-              </div>
-              <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
-                <button className="text-base font-bold hover:underline block w-fit pb-3" onClick={() => handleTabChange("update")}>
-                  更新情報 &gt;
-                </button>
-                <ChangeLog changelogs={changelogs} />
               </div>
             </div>
           </div>
@@ -180,11 +217,13 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
             setSortOrder={setExternalSortOrder}
             hasLikes
             hasViews
+            searchQuery={externalSearchQuery}
+            onSearchChange={setExternalSearchQuery}
           />
           <BlogList className="bg-white dark:bg-background" qittaBlogs={filteredQiitaBlogs} />
         </TabsContent>
         <TabsContent className="ms-3" value="update">
-          <Update changelogs={changelogs} />
+          <Update changelogs={changelogs} blogs={blogs} onMonthClick={handleMonthClick} />
         </TabsContent>
       </Tabs>
     </div>
@@ -263,151 +302,7 @@ export function BlogTags({
   );
 }
 
-export function BlogSectionHeader({
-  total,
-  currentCategory,
-  sort,
-  setSort,
-  sortOrder,
-  setSortOrder,
-  hasLikes = false,
-  hasViews = false,
-}: {
-  total: number;
-  currentCategory?: string;
-  sort: string;
-  setSort: (s: string) => void;
-  sortOrder: "asc" | "desc";
-  setSortOrder: (o: "asc" | "desc") => void;
-  hasLikes?: boolean;
-  hasViews?: boolean;
-}) {
-  const sortOptions: { value: SortType; label: string }[] = [
-    { value: "blog-new", label: "新着順" },
-    ...(hasLikes ? [{ value: "blog-likes" as SortType, label: "人気順" }] : []),
-    ...(hasViews ? [{ value: "blog-views" as SortType, label: "閲覧順" }] : []),
-  ];
-
-  const toggleOrder = () => {
-    setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-  };
-
-  return (
-    <div className="flex items-center justify-between">
-      {/* 件数表示 */}
-      <h2 className="ms-1 text-lg font-semibold">
-        {currentCategory ? `${currentCategory}の記事` : "すべての記事"}（{total}件）
-      </h2>
-
-      {/* 並べ替えオプション */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
-        {sortOptions.map(({ value, label }, index) => (
-          <React.Fragment key={value}>
-            <button id={value} className={`${sort === value ? "text-black underline dark:text-white" : ""} cursor-pointer hover:text-black dark:hover:text-white`} onClick={() => setSort(value)}>
-              {label}
-            </button>
-            {index < sortOptions.length - 1 && <span>|</span>}
-          </React.Fragment>
-        ))}
-        <Button title={sortOrder === "desc" ? "降順" : "昇順"} variant="ghost" size="icon" className="w-7 h-7 ms-1 rounded hover:bg-gray-300" onClick={toggleOrder}>
-          <FontAwesomeIcon icon={sortOrder === "desc" ? iconMap["faArrowDownWideShort"] : iconMap["faArrowUpWideShort"]} />
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-export function BlogCards({ title, className, blogs, currentTab }: { title?: string; className?: string; blogs?: Blog[]; currentTab?: string }) {
-  const allClassName = currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
-
-  return (
-    <div className={cn(className)}>
-      {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
-      <div className={allClassName}>
-        {blogs &&
-          blogs.map((blog: any, index) => (
-            <Link href={"/blog/" + blog.id} key={index} className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition">
-              {/* サムネイル */}
-              {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />}
-
-              {/* 本文 */}
-              <div className="flex flex-col justify-between p-4 h-full ">
-                <h2 className="text-lg font-semibold mb-2 line-clamp-3">{blog.title}</h2>
-
-                {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2 line-clamp-3">{blog.excerpt}</p>}
-
-                <div>
-                  <p className="text-sm text-secondary-foreground/70 mb-2">
-                    <FormattedDate isoDate={blog.date} isTime={false} /> ・ <DiffDate isoDate={blog.date} />
-                  </p>
-                  {/* タグ */}
-                  <div className="flex flex-wrap gap-2">
-                    {blog.tags?.map((tag: string) => (
-                      <span key={tag} className="text-xs text-secondary-foreground/80 bg-secondary-foreground/10 px-2 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-      </div>
-    </div>
-  );
-}
-
-export function BlogList({ className, qittaBlogs, currentTab, limit }: { className?: string; qittaBlogs?: string[]; currentTab?: string; limit?: number }) {
-  const allClassName = currentTab === "all" ? "" : "md:pe-15";
-  qittaBlogs = qittaBlogs?.slice(0, limit);
-
-  return (
-    <div className={className}>
-      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {qittaBlogs &&
-          qittaBlogs.map((blog: any, index: number) => (
-            <li key={index}>
-              <Link href={blog.url} target="_blank" className={cn(allClassName, "flex justify-between items-center p-4 hover:bg-accent")} title={blog.title}>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Image src="/imgs/qiita_icon.png" alt="icon" width={16} height={16} />
-                    <h3 className="text-lg font-semibold line-clamp-1">{blog.title}</h3>
-                  </div>
-                  <div className="flex flex-col gap-1 mt-2">
-                    <div className="flex flex-wrap items-center gap-x-5 ms-6">
-                      <time className="text-sm text-accent-foreground/50">
-                        <FormattedDate isoDate={blog.publishDate} />
-                      </time>
-                      <div className="text-sm text-accent-foreground/50">
-                        <FontAwesomeIcon icon={iconMap["faEye"]} /> {blog.views}
-                      </div>
-                      <div className="text-sm text-accent-foreground/50">
-                        <FontAwesomeIcon icon={iconMap["faHeart"]} /> {blog.likes}
-                      </div>
-                      <div className="text-sm text-accent-foreground/50">
-                        <FontAwesomeIcon icon={iconMap["faBookmark"]} /> {blog.bookmarks}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-x-1 ms-5">
-                      {blog.tags.length > 1 &&
-                        blog.tags.map((tag: string, index: number) => (
-                          <Badge key={index} variant="outline">
-                            {tag}
-                          </Badge>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-                <FontAwesomeIcon className="text-accent-foreground/60" icon={iconMap["faChevronRight"]} />
-              </Link>
-            </li>
-          ))}
-      </ul>
-    </div>
-  );
-}
-
-function Update({ changelogs }: { changelogs: any }) {
+function Update({ changelogs, blogs, onMonthClick }: { changelogs: any; blogs?: Blog[]; onMonthClick?: (year: number, month: number) => void }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="border border-muted-foreground/50 rounded-lg p-4">
@@ -420,7 +315,7 @@ function Update({ changelogs }: { changelogs: any }) {
       </div>
       <div className="border border-muted-foreground/50 rounded-lg p-4">
         <div className="text-lg font-semibold mb-2">ブログ・記事の追加・更新情報</div>
-        <NotFound />
+        <BlogArchive blogs={blogs} onMonthClick={onMonthClick} />
       </div>
       <div className="border border-muted-foreground/50 rounded-lg p-4">
         <div className="text-lg font-semibold mb-2">メディア・コミュニティ活動情報</div>
