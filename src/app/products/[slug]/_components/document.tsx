@@ -19,13 +19,11 @@ export function Document({ item, className }: { item: Product; className?: strin
   // console.log("tocItems", tocItems);
   return (
     <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
-      <TabsList className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl bg-white dark:bg-secondary" style={{ top: `${top + 10}px` }}>
+      <TabsList className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl bg-white dark:bg-secondary" style={{ top: `${top}px` }}>
         <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl " value="usage">
           使い方
         </TabsTrigger>
-        <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl" value="options">
-          オプション
-        </TabsTrigger>
+
       </TabsList>
       <TabsContent value="usage" className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-white dark:bg-secondary rounded-none rounded-tr-xl rounded-b-xl">
         {tocItems.length > 0 && (
@@ -119,7 +117,7 @@ function useTopOffset() {
     const tabListHeight = document.querySelector<HTMLElement>("#tabs-list")?.getBoundingClientRect().height ?? 0;
     const headerHeight = document.querySelector<HTMLElement>("header")?.getBoundingClientRect().height ?? 0;
 
-    setTop(tabListHeight + headerHeight);
+    setTop(tabListHeight + headerHeight - 10);
   }, []);
 
   useLayoutEffect(() => {
