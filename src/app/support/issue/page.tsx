@@ -2,7 +2,7 @@ import { Issue } from "./issue";
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { checkSupportEnabled } from "@/lib/support";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductItems } from "@/lib/googleSheets";
 import { Suspense } from "react";
 
 const pathnames: BreadcrumbsProps["paths"] = [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default async function IssuePage() {
   checkSupportEnabled(pathnames[1].href);
-  const allProducts = await getChromeWebStoreItems();
+  const allProducts = await getProductItems();
   const products = allProducts.map((p) => ({ repo_name: p.repo_name, name: p.name, icon_url: p.icon_url, category: p.category }));
   return (
     <main className="max-w-7xl mx-auto p-5">

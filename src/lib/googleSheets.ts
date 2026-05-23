@@ -7,7 +7,7 @@ import { cache } from "react";
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
 const contactSheetId = process.env.GOOGLE_SPREADSHEET_ID_CONTACT!;
 const sheetId = process.env.GOOGLE_SPREADSHEET_ID_BLOG!;
-const chromeWebStoreSheetId = process.env.GOOGLE_SPREADSHEET_ID;
+const productSheetId = process.env.GOOGLE_SPREADSHEET_ID;
 const qittaSheetId = process.env.GOOGLE_SPREADSHEET_ID_QIITA!;
 const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
 const privateKey = (process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "").replace(/\\n/g, "\n");
@@ -134,12 +134,12 @@ export async function updateLikes(postId: string): Promise<number> {
   return newLikes;
 }
 
-/** GET: Chrome Web Store一覧を返す（キャッシュ対応） */
-export const getChromeWebStoreItems = cache(async () => {
+/** GET: プロダクト一覧を返す（キャッシュ対応） */
+export const getProductItems = cache(async () => {
   const sheets = await getSheetsClient();
   const range = "Main!A1:AM100";
   const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: chromeWebStoreSheetId,
+    spreadsheetId: productSheetId,
     range: range,
     fields: "values",
   });

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { ProductPage } from "@/components/layout/product";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductItems } from "@/lib/googleSheets";
 import { getProductCategories } from "@/lib/getProducts";
 import { Product } from "@/components/types/product";
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Products() {
-  const items: Product[] = await getChromeWebStoreItems();
+  const items: Product[] = await getProductItems();
   const categories = await getProductCategories();
 
   return (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProductBySlug } from "@/lib/getProducts";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductItems } from "@/lib/googleSheets";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import Image from "next/image";
 type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
-  const items = await getChromeWebStoreItems().catch(() => []);
+  const items = await getProductItems().catch(() => []);
   return items.map((item) => ({ slug: item.repo_name }));
 }
 

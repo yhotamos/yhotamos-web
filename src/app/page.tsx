@@ -3,7 +3,7 @@
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/product";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductItems } from "@/lib/googleSheets";
 import { ProjectPickup } from "@/components/layout/project";
 import { TwitterEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
@@ -15,7 +15,7 @@ import getProjects from "@/lib/getProjects";
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
   const [items, projects] = await Promise.all([
-    getChromeWebStoreItems().catch(() => []),
+    getProductItems().catch(() => []),
     getProjects().catch(() => []),
   ]);
   const blogs = getBlogData();

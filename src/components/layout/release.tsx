@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { getChromeWebStoreItems } from "@/lib/googleSheets";
+import { getProductItems } from "@/lib/googleSheets";
 import { Product } from "../types/product";
 
 export default async function Release({ title }: { title: string }) {
-  const items: Product[] = await getChromeWebStoreItems();
+  const items: Product[] = await getProductItems();
   // itemの公開日内の最新を取得
   const pastReleases = items.filter((item: Product) => {
     const date = new Date(item.created_at);
