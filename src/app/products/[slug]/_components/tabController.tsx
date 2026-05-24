@@ -40,14 +40,14 @@ function TabControllerInner({ item, className }: { item: Product; className?: Re
 
   return (
     <Tabs defaultValue={activeTab} className={className} id="tabs" value={activeTab} onValueChange={handleTabChange}>
-      <div className="sticky top-12 px-5 z-50  border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)] bg-background border-gray-200 dark:border-gray-700">
+      <div className="sticky top-12 px-3 z-50  border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)] bg-background border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto ">
-          <TabsList id="tabs-list" className="flex flex-wrap gap-2 px-5 pb-0 h-fit bg-background ">
+          <TabsList id="tabs-list" className="flex flex-wrap gap-2 px-2 pb-0 h-fit bg-background ">
             {tabs.map((tab: any) => (
               <TabsTrigger
                 id={tab.value}
                 key={tab.value}
-                className="cursor-pointer w-fit md:min-w-[130px] p-2 rounded-none rounded-t-lg data-[state=active]:text-primary-foreground data-[state=active]:bg-secondary-foreground dark:data-[state=active]:bg-violet-500"
+                className="h-7 text-xs md:text-sm cursor-pointer w-fit md:min-w-[130px] px-4 rounded-none rounded-t-lg data-[state=active]:text-primary-foreground data-[state=active]:bg-secondary-foreground dark:data-[state=active]:bg-violet-500"
                 value={tab.value}
                 title={tab.name}
               >
