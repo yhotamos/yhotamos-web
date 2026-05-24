@@ -56,49 +56,55 @@ export default async function Page({ params }: { params: Params }) {
 function ProductItem({ item, className }: { item: Product; className?: string }) {
   return (
     <div className={className}>
-      <div className="grid gap-2 md:gap-3 grid-cols-1 md:grid-cols-5">
-        <Image src={item.thumbnail} alt={item.name} className="object-cover rounded-sm border-solid w-full h-44 md:h-fit" title={item.name} width={300} height={300} priority></Image>
-        <div className="md:col-span-4 grid gap-1">
-          <div className="font-bold text-xl">
-            <Link href={item.store_url} className="hover:underline" target="_blank">
-              {item.name}
-            </Link>
-            <div className="flex flex-wrap gap-x-2 mt-1">
-              <Link href={`/products?category=${item.category}`}>
-                <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-4 py-1 rounded-full">{item.category}</Badge>
-              </Link>
-              {item.tags &&
-                item.tags.map((tag: string) => (
+      <div className="flex flex-col md:flex-row md:gap-5 md:items-stretch">
+        <div className="relative w-full h-44 md:w-48 md:h-full md:flex-shrink-0 min-h-[112px] md:min-h-[120px]">
+          <Image src={item.thumbnail} alt={item.name} fill className="object-cover rounded-sm border" title={item.name} priority />
+        </div>
+        <div className="flex-1 min-w-0 mt-2 md:mt-0 grid gap-1.5 md:max-w-[800px]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                <Link href={item.store_url} className="font-bold text-xl hover:underline truncate text-wrap" target="_blank">
+                  {item.name}
+                </Link>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="justify-center w-fit md:w-auto mt-0 mb-2 md:mt-0 md:mb-0 shrink md:shrink-0 bg-violet-500 text-white hover:bg-violet-800 dark:bg-violet-500 dark:hover:bg-violet-800 text-xs md:text-sm px-2 py-0.5 md:px-3 md:py-1 h-6 md:h-8 rounded-sm inline-flex items-center gap-2"
+                >
+                  <Link href={item.store_url} target="_blank">
+                    今すぐダウンロード
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <Link href={`/products?category=${item.category}`}>
+                  <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-3 py-0.5 rounded-full text-xs">{item.category}</Badge>
+                </Link>
+                {item.tags?.map((tag: string) => (
                   <Link key={tag} href={`/products?category=${tag}`}>
-                    <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-4 py-1 rounded-full">{tag}</Badge>
+                    <Badge className="cursor-pointer hover:bg-secondary-foreground/70 px-3 py-0.5 rounded-full text-xs">{tag}</Badge>
                   </Link>
                 ))}
+              </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-x-3 text-base ps-3">
-            <span className="">{item.rating} 評価</span>
-            <span className="after:content-['|']"></span>
-            <span className="">{item.users} ユーザー </span>
-            <span className="after:content-['|']"></span>
-            <span className="">バージョン : {item.version}</span>
-            <span className="after:content-['|']"></span>
-            <span className="">作成者 : {item.provider || "yhotta240"}</span>
+          <div className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+            <span>★ {item.rating} 評価</span>
+            <span>·</span>
+            <span>{item.users} ユーザー</span>
+            <span>·</span>
+            <span>v{item.version}</span>
+            <span>·</span>
+            <span>{item.provider || "yhotta240"}</span>
+            <span className="hidden md:inline">·</span>
+            <Link href={`/support/issue?tool=${item.repo_name}`} className="inline-flex items-center gap-1 hover:text-foreground hover:underline transition-colors text-xs md:text-sm">
+              <FontAwesomeIcon icon={faBug} className="text-[12px]" />
+              バグを報告する
+            </Link>
           </div>
-          <div className="text-base text-muted-foreground ps-3">{item.description}</div>
-          <div className="flex gap-3 mt-3">
-            <Button asChild variant="outline" className="w-fit bg-violet-500 text-white hover:bg-violet-800 hover:text-white dark:bg-violet-500 dark:hover:bg-violet-800">
-              <Link href={item.store_url} target="_blank">
-                今すぐダウンロード
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" className="w-fit">
-              <Link href={`/support/issue?tool=${item.repo_name}`}>
-                バグを報告する
-                <FontAwesomeIcon icon={faBug} />
-              </Link>
-            </Button>
-          </div>
+          <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
         </div>
       </div>
     </div>
