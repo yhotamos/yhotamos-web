@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
+import Image from "next/image";
 
 export { ProductPage, ProductGrid, ProductList };
 
@@ -203,13 +204,15 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
         {filteredItems.map((item: Product, index: number) => (
           <Card
             key={index}
-            className={`rounded-md gap-4 mb-3 transition-transform duration-300 ease-out ${!open ? "opacity-100 translate-y-0 delay-[" + index * 50 + "ms]" : "delay-[" + index * 50 + "ms]"}
+            className={`rounded-md gap-3 mb-3 pt-4 pb-2 transition-transform duration-300 ease-out ${!open ? "opacity-100 translate-y-0 delay-[" + index * 50 + "ms]" : "delay-[" + index * 50 + "ms]"}
             translate-y-4 hover:scale-102 hover:shadow-md hover:shadow-gray-500 hover:cursor-pointer`}
             title={item.name}
           >
             <div className="relative">
-              {item.rating != 0 && <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 ">{rating(item)}</div>}
-              <img src={item.thumbnail} alt={item.name} />
+              {item.rating != 0 && <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 z-10">{rating(item)}</div>}
+              <div className="relative w-full h-40">
+                <Image src={item.thumbnail} alt={item.name} fill className="object-cover" title={item.name} priority />
+              </div>{" "}
             </div>
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-2">

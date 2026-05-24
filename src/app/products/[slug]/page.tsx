@@ -57,7 +57,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
   return (
     <div className={className}>
       <div className="flex flex-col md:flex-row md:gap-5 md:items-stretch">
-        <div className="relative w-full h-44 md:w-48 md:h-full md:flex-shrink-0 min-h-[112px] md:min-h-[120px]">
+        <div className="relative w-full h-36 md:w-48 md:h-full md:flex-shrink-0 min-h-[96px] md:min-h-[120px]">
           <Image src={item.thumbnail} alt={item.name} fill className="object-cover rounded-sm border" title={item.name} priority />
         </div>
         <div className="flex-1 min-w-0 mt-2 md:mt-0 grid gap-1.5 md:max-w-[800px]">
@@ -70,7 +70,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
                 <Button
                   asChild
                   variant="outline"
-                  className="justify-center w-fit md:w-auto mt-0 mb-2 md:mt-0 md:mb-0 shrink md:shrink-0 bg-violet-500 text-white hover:bg-violet-800 dark:bg-violet-500 dark:hover:bg-violet-800 text-xs md:text-sm px-2 py-0.5 md:px-3 md:py-1 h-6 md:h-8 rounded-sm inline-flex items-center gap-2"
+                  className="justify-center w-fit md:w-auto mt-0 mb-2 md:mt-0 md:mb-0 shrink md:shrink-0 bg-violet-500 text-white hover:bg-violet-800 dark:bg-violet-500 dark:hover:bg-violet-800 text-xs md:text-sm px-2 py-0.5 md:px-3 md:py-1 h-8 md:h-8 rounded-sm inline-flex items-center gap-2"
                 >
                   <Link href={item.store_url} target="_blank">
                     今すぐダウンロード
