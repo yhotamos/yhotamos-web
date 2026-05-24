@@ -211,7 +211,7 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
             <div className="relative">
               {item.rating != 0 && <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 z-10">{rating(item)}</div>}
               <div className="relative w-full h-40">
-                <Image src={item.thumbnail} alt={item.name} fill className="object-cover" title={item.name} priority />
+                <Image src={item.thumbnail} alt={item.name} fill sizes="(max-width:768px) 100vw, 384px" className="object-cover" title={item.name} priority />
               </div>{" "}
             </div>
             <div className="col-span-2 grid gap-1">

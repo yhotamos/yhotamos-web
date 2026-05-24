@@ -58,7 +58,7 @@ function ProductItem({ item, className }: { item: Product; className?: string })
     <div className={className}>
       <div className="flex flex-col md:flex-row md:gap-5 md:items-stretch">
         <div className="relative w-full h-36 md:w-48 md:h-full md:flex-shrink-0 min-h-[96px] md:min-h-[120px]">
-          <Image src={item.thumbnail} alt={item.name} fill className="object-cover rounded-sm border" title={item.name} priority />
+          <Image src={item.thumbnail} alt={item.name} fill sizes="(max-width:768px) 100vw, 192px" className="object-cover rounded-sm border" title={item.name} priority />
         </div>
         <div className="flex-1 min-w-0 mt-2 md:mt-0 grid gap-1.5 md:max-w-[800px]">
           <div className="flex items-start justify-between gap-3">
