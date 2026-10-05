@@ -4,16 +4,17 @@ import { BlogBody } from "./_components/body";
 import NotFoundPage from "@/components/layout/notFound";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { Blog } from "@/components/types/blog";
+import Image from "next/image";
 import Link from "next/link";
 import { getBlogData } from "@/lib/getBlog";
 
 export async function generateStaticParams() {
   const blogs = getBlogData() ?? [];
-  return blogs.map((blog: any) => ({ slug: blog.id }));
+  return blogs.map((blog) => ({ slug: blog.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = await params;
+  const slug = await params;
   const blogId = decodeURIComponent(slug.slug);
   const blogBody = getBlogBody(blogId);
 
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export const revalidate = 60;
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const slug: any = await params;
+  const slug = await params;
   const blogId = decodeURIComponent(slug.slug);
   const blogBody = getBlogBody(blogId);
   // console.log("blogId", blogBody);
@@ -51,7 +52,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 const BlogHeader: React.FC<{ data: Blog }> = ({ data }) => {
   return (
     <div className="w-full pt-8 pb-4 px-2 md:px-20">
-      {data.thumbnail && <img src={data.thumbnail} className="w-full mb-5" />}
+      {data.thumbnail && <Image src={data.thumbnail} alt={data.title} width={1200} height={630} unoptimized className="w-full h-auto mb-5" />}
       <div id="title" className="text-3xl font-bold mb-5">
         {data.title}
       </div>

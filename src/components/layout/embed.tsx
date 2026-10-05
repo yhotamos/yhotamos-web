@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import Iframe from "react-iframe";
 import Script from "next/script";
 import Link from "next/link";
@@ -11,11 +12,8 @@ export const HatenaEmbed = ({ url }: { url: string }) => {
 };
 
 export const TwitterEmbed = ({ username, height }: { username: string; height: number }) => {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
-  }, []);
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === "dark" ? "dark" : "light";
 
   return (
     <div className="not-italic w-full sm:w-1/2 mx-auto">
@@ -33,7 +31,7 @@ export const OpenGraphEmbed = ({ repo_name, className }: { repo_name: string; cl
   return (
     <div className={className}>
       <Link href={`https://github.com/${repo_name}`} target="_blank" rel="noopener noreferrer">
-        <img src={ogImageUrl} alt={repo_name} title={repo_name} />
+        <Image src={ogImageUrl} alt={repo_name} title={repo_name} width={1200} height={600} unoptimized className="w-full h-auto" />
       </Link>
     </div>
   );

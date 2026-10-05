@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { cn } from "@/lib/utils";
@@ -12,13 +13,13 @@ export function BlogCards({ title, className, blogs, currentTab }: { title?: str
     <div className={cn(className)}>
       {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
       <div className={gridClass}>
-        {blogs?.map((blog: any, index) => (
+        {blogs?.map((blog, index) => (
           <Link
             href={"/blog/" + blog.id}
             key={index}
             className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
           >
-            {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-40 object-cover" />}
+            {blog.thumbnail && <Image src={blog.thumbnail} alt={blog.title} width={640} height={160} unoptimized className="w-full h-40 object-cover" />}
             <div className="flex flex-col justify-between p-4 h-full">
               <h2 className="text-lg font-semibold mb-2 line-clamp-3">{blog.title}</h2>
               {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2 line-clamp-3">{blog.excerpt}</p>}

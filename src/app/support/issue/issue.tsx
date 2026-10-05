@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import type { IssueEntry, ProductInfo, ToolFeedbackType } from "@/components/types/feedback";
@@ -72,7 +73,7 @@ function ToolDropdown({ products, value, onSelect }: { products: ProductInfo[]; 
       >
         {selected ? (
           <span className="flex items-center gap-2">
-            <img src={selected.icon_url} alt="" className="w-4 h-4 flex-shrink-0 rounded-sm object-contain" />
+            <Image src={selected.icon_url} alt="" width={16} height={16} unoptimized className="w-4 h-4 flex-shrink-0 rounded-sm object-contain" />
             <span>{selected.name}</span>
           </span>
         ) : (
@@ -95,7 +96,7 @@ function ToolDropdown({ products, value, onSelect }: { products: ProductInfo[]; 
                 }}
               >
                 <span className="flex items-center gap-2 min-w-0">
-                  <img src={p.icon_url} alt="" className="w-4 h-4 flex-shrink-0 rounded-sm object-contain" />
+                  <Image src={p.icon_url} alt="" width={16} height={16} unoptimized className="w-4 h-4 flex-shrink-0 rounded-sm object-contain" />
                   <span className="truncate">{p.name}</span>
                 </span>
                 <span className="text-xs text-secondary-foreground/60 flex-shrink-0">{p.category}</span>
