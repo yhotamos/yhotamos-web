@@ -114,17 +114,6 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
     grid: faGrip,
   };
 
-  const ViewMap = ({ view, items }: { view: "list" | "grid"; items: Product[] }) => {
-    switch (view) {
-      case "list":
-        return <ProductList items={items} />;
-      case "grid":
-        return <ProductGrid items={items} />;
-      default:
-        return <ProductGrid items={items} />;
-    }
-  };
-
   const filteredItems = filterItems({ items, categories, sort });
 
   return (
@@ -163,7 +152,7 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
         </div>
       </div>
 
-      <ViewMap view={view} items={filteredItems} />
+      {view === "list" ? <ProductList items={filteredItems} /> : <ProductGrid items={filteredItems} />}
     </div>
   );
 }

@@ -112,7 +112,7 @@ export async function updateLikes(postId: string): Promise<number> {
 
   const rows = res.data.values || [];
   // 指定した記事IDの行を探す
-  let index = rows.findIndex((r) => r[0] === postId);
+  const index = rows.findIndex((r) => r[0] === postId);
   let newLikes = 1;
 
   if (index >= 0) {

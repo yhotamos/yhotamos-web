@@ -11,6 +11,7 @@ import { getBlogData, getAllBlogTags } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
 import { BlogCards } from "@/components/layout/blog-cards";
 import getProjects from "@/lib/getProjects";
+import Link from "next/link";
 
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
@@ -31,7 +32,7 @@ export default async function Home() {
       <div className="space-y-3 my-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold">最新の記事</h2>
-          <a href="/blog" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">ブログを見る ＞</a>
+          <Link href="/blog" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">ブログを見る ＞</Link>
         </div>
         <BlogCards blogs={recentBlogs} />
       </div>

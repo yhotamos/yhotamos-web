@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# YHOTAMOS
 
-## Getting Started
+自作ツール・Chrome 拡張機能・技術ブログをまとめた個人開発サイト．
 
-First, run the development server:
+## 技術構成
 
-```bash
+- Next.js 16.3.8（App Router／Turbopack）
+- React／React DOM 19.3.0
+- TypeScript 6.0.3
+- Tailwind CSS v4
+- ESLint 9.39.5／typescript-eslint 8.71.0
+
+製品・記事情報と投稿の保存には Google Sheets，プロジェクト情報には Notion，リポジトリ・Issue には GitHub，メール通知には Resend を利用する．各サービスの認証情報は `.env.local` に設定する．
+
+## 開発
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 で確認できる．ブログ本文は `content/blog`，変更履歴は `content/changelog` に置く．
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 検証と本番起動
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+型・lint・ビルドの順に検証する．
 
-## Learn More
+```sh
+npm run typecheck
+npm run lint
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+`typecheck` は Next.js のルート型を生成してから `tsc --noEmit` を実行する．`build` はブログ索引を生成してから本番ビルドを行う．Google Fonts と外部データの取得にはネットワーク接続が必要である．
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+依存更新時の広範な書き換えを避けるため，既存の `any` 型，指定した箇所の Effect 内の状態同期と見出しコンポーネントの表示名は lint の警告として残している．
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel へ反映する前に Preview で主要ページと外部データの読み取りを確認する．
