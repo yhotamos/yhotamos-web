@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useLayoutEffect, useCallback } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { getMarkdown } from "@/api";
 import Loading from "@/components/layout/loading";
 import React from "react";
@@ -18,7 +18,7 @@ export function Document({ item, className }: { item: Product; className?: strin
   const top = useTopOffset();
   // console.log("tocItems", tocItems);
   return (
-    <Tabs defaultValue="usage" className="min-h-screen grid grid-cols-5 mt-5 gap-0">
+    <Tabs defaultValue="usage" className={`min-h-screen grid grid-cols-5 mt-5 gap-0 ${className ?? ""}`}>
       <TabsList className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl bg-white dark:bg-secondary" style={{ top: `${top}px` }}>
         <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl " value="usage">
           使い方
@@ -48,23 +48,26 @@ export function Document({ item, className }: { item: Product; className?: strin
 }
 
 export function DocHtml({ src, className, onTocGenerated, top }: { src: string; className?: string; onTocGenerated?: (toc: TocItem[]) => void; top?: number }) {
-  const [markdown, setMarkdown] = useState("");
-  const [notFound, setNotFound] = useState(false);
+  const [loaded, setLoaded] = useState({ src: "", markdown: "", notFound: false });
+  const markdown = loaded.src === src ? loaded.markdown : "";
+  const notFound = loaded.src === src && loaded.notFound;
 
-  let toc;
   useEffect(() => {
+    if (!src) return;
+    let active = true;
     getMarkdown(src).then((markdown) => {
-      const pageNotFound = markdown.includes("Page not found") || markdown.trim() === "";
-      if (!pageNotFound) {
-        setMarkdown(markdown);
-        toc = getTocFromMarkdown(markdown);
-        // console.log("toc", toc);
-        onTocGenerated?.(toc);
-      } else {
-        setNotFound(true);
+      if (!active) return;
+      const notFound = markdown.includes("Page not found") || markdown.trim() === "";
+      setLoaded({ src, markdown, notFound });
+      onTocGenerated?.(notFound ? [] : getTocFromMarkdown(markdown));
+    }).catch(() => {
+      if (active) {
+        setLoaded({ src, markdown: "", notFound: true });
+        onTocGenerated?.([]);
       }
     });
-  }, []);
+    return () => { active = false; };
+  }, [src, onTocGenerated]);
 
   if (!src || notFound) {
     return <NotFoundPage className={`${className} mt-10 text-center font-bold`} />;
@@ -93,9 +96,9 @@ export function DocHtml({ src, className, onTocGenerated, top }: { src: string; 
   );
 }
 
-const createHeading = (Tag: any, tabHeight = 100) => {
-  return ({ children }: any) => {
-    const text = children.toString();
+const createHeading = (Tag: "h1" | "h2" | "h3", tabHeight = 100) => {
+  return function MarkdownHeading({ children }: React.ComponentPropsWithoutRef<"h1">) {
+    const text = String(children);
     const id = text
       .toLowerCase()
       .replace(/[^\w一-龠ぁ-んァ-ンー]/g, "")
@@ -108,26 +111,17 @@ const createHeading = (Tag: any, tabHeight = 100) => {
   };
 };
 
+function subscribeTopOffset(onChange: () => void) {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+function getTopOffset() {
+  const tabListHeight = document.querySelector<HTMLElement>("#tabs-list")?.getBoundingClientRect().height ?? 0;
+  const headerHeight = document.querySelector<HTMLElement>("header")?.getBoundingClientRect().height ?? 0;
+  return tabListHeight + headerHeight - 10;
+}
+
 function useTopOffset() {
-  const [top, setTop] = useState(0);
-
-  const calcTop = useCallback(() => {
-    if (typeof window === "undefined") return;
-
-    const tabListHeight = document.querySelector<HTMLElement>("#tabs-list")?.getBoundingClientRect().height ?? 0;
-    const headerHeight = document.querySelector<HTMLElement>("header")?.getBoundingClientRect().height ?? 0;
-
-    setTop(tabListHeight + headerHeight - 10);
-  }, []);
-
-  useLayoutEffect(() => {
-    calcTop(); // 初回計測
-    window.addEventListener("resize", calcTop);
-    // クリーンアップ
-    return () => {
-      window.removeEventListener("resize", calcTop);
-    };
-  }, [calcTop]);
-
-  return top;
+  return useSyncExternalStore(subscribeTopOffset, getTopOffset, () => 0);
 }

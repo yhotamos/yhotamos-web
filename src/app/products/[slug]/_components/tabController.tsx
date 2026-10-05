@@ -3,7 +3,7 @@
 import { Product } from "@/components/types/product";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocHtml, Document } from "./document";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -20,19 +20,10 @@ const tabs: { name: string; value: string }[] = [
 function TabControllerInner({ item, className }: { item: Product; className?: React.ComponentProps<typeof Tabs>["className"] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState("description");
-
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab && tabs.some((t) => t.value === tab)) {
-      setActiveTab(tab);
-    } else {
-      setActiveTab("description");
-    }
-  }, [searchParams]);
+  const requestedTab = searchParams.get("tab");
+  const activeTab = tabs.some((tab) => tab.value === requestedTab) ? requestedTab! : "description";
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
     router.replace(`?${params.toString()}`, { scroll: false });
@@ -43,7 +34,7 @@ function TabControllerInner({ item, className }: { item: Product; className?: Re
       <div className="sticky top-12 px-3 z-50  border-b shadow-[0_1px_1px_rgba(0,0,0,0.10)] bg-background border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto ">
           <TabsList id="tabs-list" className="flex flex-wrap gap-2 px-2 pb-0 h-fit bg-background ">
-            {tabs.map((tab: any) => (
+            {tabs.map((tab) => (
               <TabsTrigger
                 id={tab.value}
                 key={tab.value}
@@ -73,11 +64,11 @@ function TabControllerInner({ item, className }: { item: Product; className?: Re
         </TabsContent>
         {/* フィードバック */}
         <TabsContent className="grid md:grid-cols-5 pt-5" value="feedback">
-          <Feedback item={item} className="min-h-screen col-span-3 md:col-start-2" />
+          <Feedback className="min-h-screen col-span-3 md:col-start-2" />
         </TabsContent>
         {/* 評価 & レビュー */}
         <TabsContent className="grid md:grid-cols-5 pt-5" value="review">
-          <Review item={item} className="min-h-screen col-span-3 md:col-start-2" />
+          <Review className="min-h-screen col-span-3 md:col-start-2" />
         </TabsContent>
         {/* 詳細情報 */}
         <TabsContent value="info" className="grid md:grid-cols-5 pt-5">
@@ -113,7 +104,7 @@ function Version({ item, className }: { item: Product; className?: string }) {
   );
 }
 
-function Feedback({ item, className }: { item: Product; className?: string }) {
+function Feedback({ className }: { className?: string }) {
   return (
     <div className={`${className} w-full bg-white dark:bg-secondary rounded-md p-3 lg:p-5`}>
       <div className="font-bold text-xl mb-3">フィードバック</div>
@@ -122,7 +113,7 @@ function Feedback({ item, className }: { item: Product; className?: string }) {
   );
 }
 
-function Review({ item, className }: { item: Product; className?: string }) {
+function Review({ className }: { className?: string }) {
   return (
     <div className={`${className} bg-white dark:bg-secondary rounded-md p-3 lg:p-5`}>
       <div className="font-bold text-xl mb-3">レビュー</div>

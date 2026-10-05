@@ -1,25 +1,26 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import type { Blog, BlogBodyData, Changelog } from "@/components/types/blog";
 
 const blogPathName = "content/blog";
 const blogIndexPath = path.join(blogPathName, "blogIndex.json");
 const blogDir = path.join(process.cwd(), blogPathName);
 
-export function getBlogData() {
+export function getBlogData(): Blog[] {
   if (!fs.existsSync(blogIndexPath)) {
-    return;
+    return [];
   }
   const blogIndex = fs.readFileSync(blogIndexPath, "utf-8");
-  const blogIndexJson = JSON.parse(blogIndex);
+  const blogIndexJson: Blog[] = JSON.parse(blogIndex);
 
   return blogIndexJson;
 }
 
-export function getBlogBody(id: string) {
+export function getBlogBody(id: string): BlogBodyData | undefined {
   // blogIndexPathの中から、dirNameに合致するものを探す
   const blogIndex = getBlogData();
-  const dirName = blogIndex.find((blog: any) => blog.id === id)?.dirName;
+  const dirName = blogIndex.find((blog) => blog.id === id)?.dirName;
   if (!dirName) {
     return;
   }
@@ -27,23 +28,23 @@ export function getBlogBody(id: string) {
   const source = fs.readFileSync(mdPath, "utf-8");
   const { data, content } = matter(source);
   return {
-    data: data,
+    data: data as Blog,
     content: content
   };
 }
 
 export function getAllBlogTags() {
   const blogIndex = getBlogData();
-  const tags = blogIndex.map((blog: any) => blog.tags).flat();
+  const tags = blogIndex.map((blog) => blog.tags).flat();
   const tagsSet = new Set(tags);
   return [...tagsSet] as string[];
 }
 
 const changelogPath = path.join(process.cwd(), "content/changelog");
 
-export function getChangelog() {
+export function getChangelog(): Changelog[] {
   if (!fs.existsSync(changelogPath)) {
-    return;
+    return [];
   }
 
   const files = fs.readdirSync(changelogPath).filter((file) => file.endsWith(".md"));

@@ -9,10 +9,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
 import clsx from "clsx";
 import { shareFacebook, shareHatena, shareTwitter } from "@/utils/share";
+import type { Blog, BlogBodyData } from "@/components/types/blog";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BlogComments } from "./comments";
 
-export const BlogBody: React.FC<{ blogId: any; body: any }> = ({ blogId, body }) => {
+export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData }> = ({ blogId, body }) => {
   const tocItems = getTocFromMarkdown(body.content);
 
   return (
@@ -59,9 +61,9 @@ export const BlogBody: React.FC<{ blogId: any; body: any }> = ({ blogId, body })
   );
 };
 
-const createHeading = (Tag: any) => {
-  return ({ children }: any) => {
-    const text = children.toString();
+const createHeading = (Tag: "h1" | "h2" | "h3") => {
+  return function MarkdownHeading({ children }: React.ComponentPropsWithoutRef<"h1">) {
+    const text = String(children);
     const id = text
       .toLowerCase()
       .replace(/[^\w一-龠ぁ-んァ-ンー]/g, "")
@@ -70,7 +72,7 @@ const createHeading = (Tag: any) => {
   };
 };
 
-const BlogSidebar: React.FC<{ blogId: any; data: any; className?: string }> = ({ blogId, data, className }) => {
+const BlogSidebar: React.FC<{ blogId: string; data: Blog; className?: string }> = ({ blogId, data, className }) => {
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -78,16 +80,19 @@ const BlogSidebar: React.FC<{ blogId: any; data: any; className?: string }> = ({
   const tags = data.tags || [];
 
   useEffect(() => {
+    let active = true;
     const load = async () => {
       const res = await fetch(`/api/blog/${blogId}/likes`);
       const data = await res.json();
+      if (!active || !data.ok) return;
       setLikes(data.likes);
       // いいね済みフラグ(ローカルストレージから取得)
       const setIsLocalLiked = localStorage.getItem(`isLiked-${blogId}`) === "true";
       setIsLiked(setIsLocalLiked);
     };
     load();
-  }, []);
+    return () => { active = false; };
+  }, [blogId]);
 
   // コメントフォームへ移動
   const moveCommentForm = (targetId: string) => {
@@ -181,7 +186,7 @@ const BlogShare: React.FC<{ title: string; tags: string[] }> = ({ title, tags })
               title={item.title}
               onClick={item.onClick}
             >
-              <img src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png" alt={item.title} width="20" height="20" />
+              <Image src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png" alt={item.title} width={20} height={20} unoptimized />
             </div>
           </div>
         )

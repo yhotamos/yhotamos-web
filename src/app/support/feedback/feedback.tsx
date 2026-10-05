@@ -53,6 +53,7 @@ export function Feedback() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (!res.ok) throw new Error("送信に失敗しました");
       setDone(true);
       setState(INITIAL_STATE);
     } catch (err: unknown) {

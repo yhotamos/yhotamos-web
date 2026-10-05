@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 type Comment = {
   blogId: string;
-  id: number;
+  id: string;
   text: string;
   author: string;
   createdAt: string;
@@ -21,20 +21,22 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
 
   // コメント取得
   useEffect(() => {
+    let active = true;
     const load = async () => {
       const res = await fetch(`/api/blog/${blogId}/comments`);
       const data = await res.json();
-      if (!data.ok) return;
+      if (!active || !data.ok) return;
       // コメント数
       const commentCount = document.getElementById("comment-count");
       if (commentCount) {
-        commentCount.textContent = data.comments.length || 0;
+        commentCount.textContent = String(data.comments.length);
       }
 
       setComments(data.comments);
     };
     load();
-  }, []);
+    return () => { active = false; };
+  }, [blogId]);
 
   // コメント送信
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +47,7 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
 
     const newComment: Comment = {
       blogId: blogId,
-      id: Date.now(),
+      id: Date.now().toString(),
       text: input,
       author: name || "匿名ユーザー",
       createdAt: new Date().toLocaleString(),
@@ -60,14 +62,14 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
 
     const data = await res.json();
     if (data.ok && data.comment) {
-      setComments([data.comment, ...comments]); // コメントを先頭に追加
+      setComments((previous) => [data.comment, ...previous]); // コメントを先頭に追加
       setSuccessMsg("投稿しました．");
       setErrorMsg("");
       setInput(""); // 入力欄クリア
       // コメント数
       const commentCount = document.getElementById("comment-count");
       if (commentCount) {
-        commentCount.textContent = data.comment.length || 0;
+        commentCount.textContent = String(comments.length + 1);
       }
     } else {
       setSuccessMsg("");

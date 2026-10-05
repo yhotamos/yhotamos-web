@@ -1,10 +1,10 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faGrip, faStar } from "@fortawesome/free-solid-svg-icons";
+import { faList, faGrip } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,17 +15,13 @@ import Image from "next/image";
 
 export { ProductPage, ProductGrid, ProductList };
 
-function ProductPageInner({ items, categories }: { items?: Product[]; categories: any }) {
+function ProductPageInner({ items, categories }: { items?: Product[]; categories: string[] }) {
   const searchParams = useSearchParams();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => searchParams.getAll("category"));
+  const selectedCategories = searchParams.getAll("category");
 
   const updateURL = (params: URLSearchParams) => {
     window.history.replaceState(null, "", `/products?${decodeURIComponent(params.toString())}`);
   };
-
-  useEffect(() => {
-    setSelectedCategories(() => searchParams.getAll("category"));
-  }, [searchParams]);
 
   const handleCategory = (key: string) => {
     let newCategories = [...selectedCategories];
@@ -34,7 +30,6 @@ function ProductPageInner({ items, categories }: { items?: Product[]; categories
     } else {
       newCategories.push(key);
     }
-    setSelectedCategories(newCategories);
 
     const params = new URLSearchParams();
     newCategories.forEach((c) => params.append("category", c));
@@ -74,7 +69,7 @@ export function ProductHero({ title, description, className = "" }: { title: str
   );
 }
 
-function ProductCategory({ categories, selectedCategories, handleCategory }: any) {
+function ProductCategory({ categories, selectedCategories, handleCategory }: { categories: string[]; selectedCategories: string[]; handleCategory: (category: string) => void }) {
   return (
     <div className="flex flex-col gap-2 text-white bg-gray-800 p-4 rounded-lg border">
       <p className="font-medium">カテゴリーから絞り込む</p>
@@ -206,7 +201,7 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-2">
                 <CardTitle className="leading-none font-semibold flex items-start gap-2 whitespace-normal break-words">
-                  <img src={item.icon_url} alt={item.name} className="w-6 h-6" />
+                  <Image src={item.icon_url} alt={item.name} width={24} height={24} unoptimized className="w-6 h-6" />
                   <a href={item.store_url} className="hover:underline line-clamp-2" rel="noopener noreferrer" target="_blank">
                     {item.name}
                   </a>
@@ -306,8 +301,8 @@ function ProductList({ items, title }: Filter & { items: Product[]; title?: stri
   );
 }
 
-function filterItems({ items, categories = [], filter, sort, limit }: Filter & { items: any; categories?: string[] }) {
-  let filtered = [...items];
+function filterItems({ items, categories = [], filter, sort, limit }: Filter & { items?: Product[]; categories?: string[] }) {
+  let filtered = [...(items ?? [])];
   // カテゴリ処理
   if (categories.length > 0) {
     filtered = filtered.filter((item) => categories.includes(item.category) || item.tags?.some((tag: string) => categories.includes(tag.trim())));
@@ -322,24 +317,24 @@ function filterItems({ items, categories = [], filter, sort, limit }: Filter & {
   // 人気順
   if (sort === "users-desc" || sort === "sort-popular") {
     filtered = filtered.sort((a, b) => {
-      const aUsers = parseInt(a.users || 0);
-      const bUsers = parseInt(b.users || 0);
+      const aUsers = a.users || 0;
+      const bUsers = b.users || 0;
       return bUsers - aUsers;
     });
   }
   // 新着順
   if (sort === "sort-new") {
     filtered = filtered.sort((a, b) => {
-      const aDate = new Date(a.releaseDate).getTime() || 0;
-      const bDate = new Date(b.releaseDate).getTime() || 0;
+      const aDate = new Date(a.created_at).getTime() || 0;
+      const bDate = new Date(b.created_at).getTime() || 0;
       return bDate - aDate;
     });
   }
   // 更新順
   if (sort === "sort-update") {
     filtered = filtered.sort((a, b) => {
-      const aDate = new Date(a.updateDate).getTime() || 0;
-      const bDate = new Date(b.updateDate).getTime() || 0;
+      const aDate = new Date(a.updated_at).getTime() || 0;
+      const bDate = new Date(b.updated_at).getTime() || 0;
       return bDate - aDate;
     });
   }

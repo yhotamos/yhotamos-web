@@ -44,8 +44,8 @@ export const ContactForm: React.FC = () => {
       if (!res.ok) throw new Error("送信に失敗しました");
       setDone(true);
       setState({ name: "", email: "", subject: "", message: "" });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "送信に失敗しました");
     } finally {
       setSending(false);
     }
