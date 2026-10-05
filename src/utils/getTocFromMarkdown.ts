@@ -13,10 +13,10 @@ export function getTocFromMarkdown(markdown: string): TocItem[] {
 
   const toc: TocItem[] = [];
 
-  visit(tree, "heading", (node: any) => {
+  visit(tree, "heading", (node) => {
     const text = node.children
-      .filter((child: any) => child.type === "text")
-      .map((child: any) => child.value)
+      .filter((child) => child.type === "text")
+      .map((child) => child.value)
       .join("");
 
     const id = text

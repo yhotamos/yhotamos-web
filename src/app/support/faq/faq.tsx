@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import type { FAQItem as FAQEntry } from "@/components/types/support";
 import { faqItems } from "@/components/config/faqItems";
 import clsx from "clsx";
 
@@ -29,7 +30,7 @@ export default function FAQ() {
 interface Props {
   value: string;
   onChange: (c: string) => void;
-  items: any[];
+  items: FAQEntry[];
 }
 
 export const FAQCategoryFilter: React.FC<Props> = ({ value, onChange, items }) => {
@@ -49,7 +50,7 @@ export const FAQCategoryFilter: React.FC<Props> = ({ value, onChange, items }) =
   );
 };
 
-export const FAQItem: React.FC<{ item: any }> = ({ item }) => {
+export const FAQItem: React.FC<{ item: FAQEntry }> = ({ item }) => {
   const [open, setOpen] = useState(false);
   return (
     <li id={item.id} className="">

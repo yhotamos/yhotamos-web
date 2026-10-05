@@ -1,5 +1,6 @@
 "use client";
 
+import type { QiitaBlog } from "@/components/types/blog";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +9,14 @@ import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { cn } from "@/lib/utils";
 
-export function BlogList({ className, qittaBlogs, currentTab, limit }: { className?: string; qittaBlogs?: any[]; currentTab?: string; limit?: number }) {
+export function BlogList({ className, qittaBlogs, currentTab, limit }: { className?: string; qittaBlogs?: QiitaBlog[]; currentTab?: string; limit?: number }) {
   const itemClass = currentTab === "all" ? "" : "md:pe-15";
   const items = qittaBlogs?.slice(0, limit);
 
   return (
     <div className={className}>
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {items?.map((blog: any, index: number) => (
+        {items?.map((blog, index) => (
           <li key={index}>
             <Link
               href={blog.url}

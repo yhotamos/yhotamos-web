@@ -3,7 +3,6 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { ProjectPage } from "@/components/layout/project";
 import { getReposWithIssues } from "@/lib/getRepository";
 import getProjects from "@/lib/getProjects";
-import { Issue, Project } from "@/components/types/project";
 
 export const revalidate = 60;
 

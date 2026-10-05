@@ -1,5 +1,6 @@
 import type { ContactEntry } from "@/components/types/contact";
 import type { FeedbackEntry, IssueEntry } from "@/components/types/feedback";
+import type { QiitaBlog } from "@/components/types/blog";
 import type { Product } from "@/components/types/product";
 import { google } from "googleapis";
 import { cache } from "react";
@@ -251,7 +252,7 @@ export const getQiitaList = cache(async () => {
   });
   const data = res.data.values || [];
   // console.log("apiを叩いたz",data);
-  const formatted: any = data.slice(1).map((item: string[]) => {
+  const formatted: QiitaBlog[] = data.slice(1).map((item: string[]) => {
     return {
       title: item[0],
       url: item[1],

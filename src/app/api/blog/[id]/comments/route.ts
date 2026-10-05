@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     const { id } = await context.params;
     const comments = await getComments(id);
     return NextResponse.json({ ok: true, comments });
-  } catch (err: any) {
+  } catch (err) {
     console.error("GET /api/comments error:", err);
     return NextResponse.json(
       { ok: false, error: "Failed to load comments" },
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     await appendComment(comment);
 
     return NextResponse.json({ ok: true, comment });
-  } catch (err: any) {
+  } catch (err) {
     console.error("POST /api/comments error:", err);
     return NextResponse.json(
       { ok: false, error: "Failed to append comment" },

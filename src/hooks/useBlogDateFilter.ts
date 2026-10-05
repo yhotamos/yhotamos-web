@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { ReadonlyURLSearchParams } from "next/navigation";
 
 interface Options {
   searchParams: ReadonlyURLSearchParams;
   tab: string;
   selectedTags: string[];
-  onClearTags?: () => void;
-  onSwitchToAll?: () => void;
 }
 
 function pushURL(params: URLSearchParams) {
@@ -23,27 +21,14 @@ function buildAllTabParams(year: number | null, month: number | null): URLSearch
   return params;
 }
 
-export function useBlogDateFilter({ searchParams, tab, selectedTags, onClearTags, onSwitchToAll }: Options) {
-  const [selectedYear, setSelectedYear] = useState<number | null>(() => {
-    const y = searchParams.get("year");
-    return y ? Number(y) : null;
-  });
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(() => {
-    const m = searchParams.get("month");
-    return m ? Number(m) : null;
-  });
+export function useBlogDateFilter({ searchParams, tab, selectedTags }: Options) {
+  const year = searchParams.get("year");
+  const month = searchParams.get("month");
+  const selectedYear = year ? Number(year) : null;
+  const selectedMonth = month ? Number(month) : null;
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const y = searchParams.get("year");
-    const m = searchParams.get("month");
-    setSelectedYear(y ? Number(y) : null);
-    setSelectedMonth(m ? Number(m) : null);
-  }, [searchParams]);
-
   const reset = useCallback(() => {
-    setSelectedYear(null);
-    setSelectedMonth(null);
     setSearchQuery("");
   }, []);
 
@@ -52,24 +37,17 @@ export function useBlogDateFilter({ searchParams, tab, selectedTags, onClearTags
       const isSame = selectedYear === year && selectedMonth === month;
       const newYear = isSame ? null : year;
       const newMonth = isSame ? null : month;
-      setSelectedYear(newYear);
-      setSelectedMonth(newMonth);
-      onClearTags?.();
-      onSwitchToAll?.();
       pushURL(buildAllTabParams(newYear, newMonth));
     },
-    [selectedYear, selectedMonth, onClearTags, onSwitchToAll],
+    [selectedYear, selectedMonth],
   );
 
   const handleYearChange = useCallback((year: number | null) => {
-    setSelectedYear(year);
-    setSelectedMonth(null);
     pushURL(buildAllTabParams(year, null));
   }, []);
 
   const handleMonthSelectChange = useCallback(
     (month: number | null) => {
-      setSelectedMonth(month);
       pushURL(buildAllTabParams(selectedYear, month));
     },
     [selectedYear],

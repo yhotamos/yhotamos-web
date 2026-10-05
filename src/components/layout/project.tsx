@@ -1,6 +1,5 @@
 import { OpenGraphEmbed } from "./embed";
 import { Hr } from "./hr";
-import Loading from "./loading";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
+import type { Repository } from "@/lib/getRepository";
 import { Issue, Project } from "@/components/types/project";
 
-export function ProjectPage({ title, repos, issues, projects }: { title?: string; repos: any[]; issues: Issue[]; projects: Project[] }) {
+export function ProjectPage({ title, repos, issues, projects }: { title?: string; repos: Repository[]; issues: Issue[]; projects: Project[] }) {
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title || "Projects"} className="" />
@@ -31,7 +31,7 @@ export function ProjectPage({ title, repos, issues, projects }: { title?: string
   );
 }
 
-export function ProjectHero({ title, description, className = "" }: { title: string; description?: string; className?: string }) {
+export function ProjectHero({ title, className = "" }: { title: string; description?: string; className?: string }) {
   return (
     <section className={cn(className, "text-center space-y-4")}>
       <h1 className="text-3xl font-bold">{title}</h1>
@@ -151,7 +151,7 @@ export function Contribute({ className = "" }: { className?: string }) {
   );
 }
 
-export function ProjectRepos({ className, title, repos, limit = 5 }: { className?: string; title?: string; repos?: any; limit?: number }) {
+export function ProjectRepos({ className, title, repos, limit = 5 }: { className?: string; title?: string; repos?: Repository[]; limit?: number }) {
   if (!repos || repos.length === 0) {
     return null;
   }
@@ -161,7 +161,7 @@ export function ProjectRepos({ className, title, repos, limit = 5 }: { className
       <h1 className="font-bold text-xl mb-3">{title || "Githubリポジトリ一覧"}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {repos.length > 0 &&
-          repos.map((repo: any, index: number) => {
+          repos.map((repo, index) => {
             if (index < limit) {
               return <ProjectCard repo={repo} key={index} />;
             }
@@ -171,7 +171,7 @@ export function ProjectRepos({ className, title, repos, limit = 5 }: { className
   );
 }
 
-function ProjectCard({ className = "", repo }: { className?: string; repo: any }) {
+function ProjectCard({ className = "", repo }: { className?: string; repo: Repository }) {
   return (
     <div className={cn(className, "")}>
       <Card className="h-full gap-3 rounded-2xl shadow hover:shadow-md transition">
@@ -182,7 +182,7 @@ function ProjectCard({ className = "", repo }: { className?: string; repo: any }
             </div>
             <p className="text-sm text-muted-foreground">{repo.description}</p>
             <div className="flex flex-wrap gap-2">
-              {repo.topics.map((tag: string, index: number) => {
+              {(repo.topics ?? []).map((tag: string, index: number) => {
                 if (index > 2) return null;
                 return (
                   <Badge key={tag} variant="outline" className="rounded-full">

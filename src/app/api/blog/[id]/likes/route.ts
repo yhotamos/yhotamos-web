@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     const { id } = await context.params;
     const likes = await getLikes(id);
     return NextResponse.json({ ok: true, likes });
-  } catch (err: any) {
+  } catch (err) {
     console.error("GET /api/comments error:", err);
     return NextResponse.json(
       { ok: false, error: "Failed to load comments" },
@@ -26,7 +26,7 @@ export async function POST(
     const { id } = await context.params;
     const likes = await updateLikes(id);
     return NextResponse.json({ ok: true, likes });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ ok: false, error: "Failed to update likes" }, { status: 500 });
   }
 }

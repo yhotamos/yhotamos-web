@@ -5,32 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { iconMap } from "@/components/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { filterItems } from "@/utils/filterItems";
+import { filterItems, type SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { Blog } from "@/components/types/blog";
+import { Blog, Changelog, QiitaBlog } from "@/components/types/blog";
 import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
 import { BlogSectionHeader } from "@/components/layout/blog-section-header";
 import { BlogCards } from "@/components/layout/blog-cards";
 import { BlogList } from "@/components/layout/blog-list";
 import { BlogArchive } from "@/components/layout/blog-archive";
 
-function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs }: { title?: string; className?: string; qittaBlogs?: any; blogs?: any; blogTags?: any; changelogs?: any }) {
+function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: { title?: string; className?: string; qittaBlogs?: QiitaBlog[]; blogs?: Blog[]; blogTags?: string[]; changelogs?: Changelog[] }) {
   const trigger =
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
   const searchParams = useSearchParams();
-  const [selectedTags, setSelectedTags] = useState<string[]>(() => searchParams.getAll("tag"));
-  const [tab, setTab] = useState(searchParams.get("tab") || "all");
-  const [sort, setSort]: any = useState("blog-new");
+  const selectedTags = useMemo(() => searchParams.getAll("tag"), [searchParams]);
+  const tab = searchParams.get("tab") || "all";
+  const [sort, setSort] = useState<SortType>("blog-new");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [limit] = useState(25);
   const [selectedExternalTags, setSelectedExternalTags] = useState<string[]>([]);
-  const [externalSort, setExternalSort]: any = useState("blog-new");
+  const [externalSort, setExternalSort] = useState<SortType>("blog-new");
   const [externalSortOrder, setExternalSortOrder] = useState<"asc" | "desc">("desc");
   const [externalSearchQuery, setExternalSearchQuery] = useState("");
 
@@ -38,17 +38,10 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
     searchParams,
     tab,
     selectedTags,
-    onClearTags: () => setSelectedTags([]),
-    onSwitchToAll: () => setTab("all"),
   });
 
-  useEffect(() => {
-    setTab(searchParams.get("tab") || "all");
-    setSelectedTags(searchParams.getAll("tag"));
-  }, [searchParams]);
-
   const availableYears = useMemo(() => {
-    const years = new Set<number>(((blogs as Blog[]) ?? []).map((b) => new Date(b.date).getFullYear()));
+    const years = new Set<number>(blogs.map((b) => new Date(b.date).getFullYear()));
     return [...years].sort((a, b) => b - a);
   }, [blogs]);
 
@@ -68,7 +61,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   }, [blogs, selectedTags, sort, sortOrder, limit, selectedYear, selectedMonth, searchQuery]);
 
   const blogTagCounts = useMemo<Record<string, number>>(() => {
-    const items = (blogs as Blog[]) ?? [];
+    const items = blogs;
     const counts: Record<string, number> = {};
     items.forEach((b) => {
       (b.tags ?? []).forEach((t) => {
@@ -79,15 +72,15 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   }, [blogs]);
 
   const allExternalTags = useMemo<string[]>(() => {
-    const blogs = (qittaBlogs as any[]) ?? [];
-    const tags = blogs.flatMap((b: any) => b.tags.map((t: string) => t.trim()));
+    const blogs = qittaBlogs ?? [];
+    const tags = blogs.flatMap((b) => b.tags.map((t: string) => t.trim()));
     return [...new Set(tags)];
   }, [qittaBlogs]);
 
   const externalTagCounts = useMemo<Record<string, number>>(() => {
-    const items = (qittaBlogs as any[]) ?? [];
+    const items = qittaBlogs ?? [];
     const counts: Record<string, number> = {};
-    items.forEach((b: any) => {
+    items.forEach((b) => {
       (b.tags ?? [])
         .map((t: string) => t.trim())
         .forEach((t: string) => {
@@ -98,23 +91,23 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   }, [qittaBlogs]);
 
   const filteredQiitaBlogs = useMemo(() => {
-    const blogs = (qittaBlogs as any[]) ?? [];
+    const blogs = qittaBlogs ?? [];
     const dir = externalSortOrder === "asc" ? -1 : 1;
 
     let filtered =
       selectedExternalTags.length === 0
         ? blogs
-        : blogs.filter((b: any) => {
+        : blogs.filter((b) => {
             const blogTags = b.tags.map((t: string) => t.trim());
             return selectedExternalTags.some((t) => blogTags.includes(t));
           });
 
     if (externalSearchQuery.trim()) {
       const q = externalSearchQuery.trim().toLowerCase();
-      filtered = filtered.filter((b: any) => b.title.toLowerCase().includes(q));
+      filtered = filtered.filter((b) => b.title.toLowerCase().includes(q));
     }
 
-    return [...filtered].sort((a: any, b: any) => {
+    return [...filtered].sort((a, b) => {
       if (externalSort === "blog-likes") {
         return dir * (Number(b.likes) - Number(a.likes));
       }
@@ -134,9 +127,7 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
   };
 
   const handleTabChange = (newTab: string) => {
-    setSelectedTags([]);
     reset();
-    setTab(newTab);
     const params = new URLSearchParams();
     params.set("tab", newTab);
     pushURL(params);
@@ -144,7 +135,6 @@ function BlogsInner({ title, className, qittaBlogs, blogs, blogTags, changelogs 
 
   const handleTagClick = (tag: string) => {
     const newTags = selectedTags.includes(tag) ? selectedTags.filter((t) => t !== tag) : [...selectedTags, tag];
-    setSelectedTags(newTags);
 
     const params = new URLSearchParams();
     params.set("tab", tab);
@@ -247,7 +237,7 @@ export function BlogHero({ title, description, className = "" }: { title: string
   );
 }
 
-export function BlogSearch({ tags, className = "" }: { tags: string[]; className?: string }) {
+export function BlogSearch({ className = "" }: { tags: string[]; className?: string }) {
   return (
     <div className={`${className}`}>
       {/* 検索バー */}
@@ -302,7 +292,7 @@ export function BlogTags({
   );
 }
 
-function Update({ changelogs, blogs, onMonthClick }: { changelogs: any; blogs?: Blog[]; onMonthClick?: (year: number, month: number) => void }) {
+function Update({ changelogs, blogs, onMonthClick }: { changelogs: Changelog[]; blogs?: Blog[]; onMonthClick?: (year: number, month: number) => void }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="border border-muted-foreground/50 rounded-lg p-4">
@@ -333,11 +323,11 @@ function NotFound() {
   );
 }
 
-function ChangeLog({ className, changelogs }: { className?: string; changelogs: any }) {
+function ChangeLog({ className, changelogs }: { className?: string; changelogs: Changelog[] }) {
   return (
     <div className={cn(className, "space-y-4")}>
       {changelogs ? (
-        changelogs.map((log: any, index: number) => (
+        changelogs.map((log, index) => (
           <div key={index}>
             <div className="flex gap-3 my-2">
               <div>{log.title}</div>

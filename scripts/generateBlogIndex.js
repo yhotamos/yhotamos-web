@@ -10,7 +10,7 @@ function generateBlogIndex() {
     fs.statSync(path.join(blogRoot, file)).isDirectory()
   );
   const blogs = directories.map((dirName) => {
-    const [date, ...titleParts] = dirName.split("-");
+    const [, ...titleParts] = dirName.split("-");
     const titleFromDir = titleParts.join("_");
 
     const mdPath = path.join(blogRoot, dirName, "index.md");

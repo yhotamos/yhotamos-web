@@ -4,6 +4,8 @@ import { Octokit } from "@octokit/core";
 import { components } from "@octokit/openapi-types";
 import { Issue } from "@/components/types/project";
 
+export type Repository = Awaited<ReturnType<typeof getRepos>>[number];
+
 type SortType = "created" | "updated" | "pushed" | "full_name";
 
 const octokit = new Octokit({
@@ -65,10 +67,10 @@ export async function getRecentIssues(limit = 10): Promise<Issue[]> {
     octokit.request("GET /search/issues", { q: "is:issue org:yhotamos", ...searchOpts }),
   ]);
 
-  const toIssue = (item: any): Issue => ({
+  const toIssue = (item: components["schemas"]["issue-search-result-item"]): Issue => ({
     title: item.title,
     url: item.html_url,
-    labels: item.labels.map((label: any) => label.name as string),
+    labels: item.labels.map((label) => label.name ?? ""),
     updated: item.updated_at ?? "",
   });
 
@@ -83,7 +85,7 @@ export async function getRecentIssues(limit = 10): Promise<Issue[]> {
     .slice(0, limit);
 }
 
-export async function getReposWithIssues(sort?: SortType, limit?: number): Promise<{ repos: any[]; issues: Issue[] }> {
+export async function getReposWithIssues(sort?: SortType, limit?: number): Promise<{ repos: Repository[]; issues: Issue[] }> {
   const [repos, issues] = await Promise.all([
     getRepos(sort, limit),
     getRecentIssues(10).catch(() => [] as Issue[]),  // issues失敗でもreposは表示する

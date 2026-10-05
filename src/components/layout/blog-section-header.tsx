@@ -73,8 +73,8 @@ function BlogFilterPopup({ searchQuery, onSearchChange, availableYears, selected
 export interface BlogSectionHeaderProps {
   total: number;
   currentCategory?: string;
-  sort: string;
-  setSort: (s: string) => void;
+  sort: SortType;
+  setSort: (s: SortType) => void;
   sortOrder: "asc" | "desc";
   setSortOrder: (o: "asc" | "desc") => void;
   hasLikes?: boolean;

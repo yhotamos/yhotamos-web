@@ -1,4 +1,3 @@
-import { Product } from "@/components/types/product";
 import { Blog } from "@/components/types/blog";
 
 export type Filter = {
@@ -10,7 +9,7 @@ export type Filter = {
 
 export type SortType = "" | "sort-popular" | "sort-new" | "sort-update" | "blog-popular" | "blog-new" | "blog-update" | "blog-views" | "blog-likes";
 
-export function filterItems({ items, tags = [], filter, sort, order = "desc", limit }: { items: Product[] & Blog[]; tags?: string[] } & Filter) {
+export function filterItems({ items, tags = [], filter, sort, order = "desc", limit }: { items: Blog[]; tags?: string[] } & Filter) {
   let filtered = [...items];
 
   if (tags.length > 0) {
@@ -37,11 +36,11 @@ export function filterItems({ items, tags = [], filter, sort, order = "desc", li
   }
 
   if (sort === "blog-views") {
-    filtered = filtered.sort((a, b) => dir * ((Number((b as any).views) || 0) - (Number((a as any).views) || 0)));
+    filtered = filtered.sort((a, b) => dir * ((Number(b.views) || 0) - (Number(a.views) || 0)));
   }
 
   if (sort === "blog-likes") {
-    filtered = filtered.sort((a, b) => dir * ((Number((b as any).likes) || 0) - (Number((a as any).likes) || 0)));
+    filtered = filtered.sort((a, b) => dir * ((Number(b.likes) || 0) - (Number(a.likes) || 0)));
   }
 
   if (typeof limit === "number") {

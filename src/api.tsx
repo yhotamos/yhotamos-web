@@ -1,3 +1,5 @@
+import type { QiitaBlog } from "@/components/types/blog";
+
 export const getMarkdown = async (url: string) => {
   const response = await fetch(url);
   const markdown = await response.text();
@@ -13,7 +15,7 @@ export const getQiitaList = async () => {
   const res = await fetch(url);
   const data = await res.json();
   // console.log("apiを叩いたz",data);
-  const formatted: any = data.values.slice(1).map((item: string[]) => {
+  const formatted: QiitaBlog[] = data.values.slice(1).map((item: string[]) => {
     return {
       title: item[0],
       url: item[1],
