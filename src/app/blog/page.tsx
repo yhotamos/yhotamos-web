@@ -4,6 +4,8 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getQiitaList } from "@/lib/googleSheets";
 import { getBlogData, getAllBlogTags, getChangelog } from "@/lib/getBlog";
 
+export const revalidate = 60;
+
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Blog", href: "/blog" }];
 
 export const metadata: Metadata = {

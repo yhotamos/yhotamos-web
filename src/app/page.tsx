@@ -13,6 +13,8 @@ import { BlogCards } from "@/components/layout/blog-cards";
 import getProjects from "@/lib/getProjects";
 import Link from "next/link";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
   const [items, projects] = await Promise.all([
