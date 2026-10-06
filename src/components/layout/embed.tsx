@@ -1,10 +1,20 @@
 "use client";
 
+import { useRef, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Iframe from "react-iframe";
 import Script from "next/script";
 import Link from "next/link";
+
+type TwitterApi = {
+  ready: (callback: (api: TwitterApi) => void) => void;
+  widgets: { load: (container: HTMLElement) => void };
+};
+
+function subscribe() {
+  return () => {};
+}
 
 export const HatenaEmbed = ({ url }: { url: string }) => {
   const hatenaUrl = "https://hatenablog-parts.com/embed?url=" + url;
@@ -12,16 +22,31 @@ export const HatenaEmbed = ({ url }: { url: string }) => {
 };
 
 export const TwitterEmbed = ({ username, height }: { username: string; height: number }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme === "dark" ? "dark" : "light";
+  // サーバーと初回描画はlightにそろえ，描画後に選択中のテーマを反映する．
+  const theme = useSyncExternalStore(subscribe, () => (resolvedTheme === "dark" ? "dark" : "light"), () => "light");
 
   return (
-    <div className="not-italic w-full sm:w-1/2 mx-auto">
+    <div ref={containerRef} className="not-italic w-full sm:w-1/2 mx-auto">
       <h2 className="font-bold text-xl mb-3">Twitter</h2>
-      <a className="twitter-timeline" data-theme={theme} data-height={height} href={`https://twitter.com/${username}`}>
-        Tweets by {username}
+      <a className="twitter-timeline" data-theme={theme} data-height={height} href={`https://x.com/${username}?ref_src=twsrc%5Etfw`}>
+        Posts by {username}
       </a>
-      <Script src="https://platform.twitter.com/widgets.js" strategy="lazyOnload" />
+      <Script
+        id="twitter-wjs"
+        src="https://platform.x.com/widgets.js"
+        charSet="utf-8"
+        strategy="lazyOnload"
+        onReady={() => {
+          const twitter = (window as Window & { twttr?: TwitterApi }).twttr;
+          twitter?.ready((api) => {
+            if (containerRef.current) {
+              api.widgets.load(containerRef.current);
+            }
+          });
+        }}
+      />
     </div>
   );
 };
