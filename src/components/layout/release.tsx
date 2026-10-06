@@ -26,14 +26,14 @@ export default async function Release({ title }: { title: string }) {
         <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-violet-700 to-violet-900 text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.01] w-full cursor-pointer">
         {/* モバイル: カード上部にカバー画像 / SM以上: 非表示 */}
         <div className="relative w-full h-36 sm:hidden">
-          <Image src={latestItem.thumbnail} alt={latestItem.name} fill sizes="100vw" className="object-cover" priority />
+          <Image src={latestItem.thumbnail} alt={latestItem.name} fill sizes="(max-width: 639px) calc(100vw - 40px), 0px" className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/80" />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-0">
           {/* SM以上: 左サムネイル */}
           <div className="relative hidden sm:block w-90 flex-shrink-0">
-            <Image src={latestItem.thumbnail} alt={latestItem.name} fill sizes="128px" className="object-cover" priority />
+            <Image src={latestItem.thumbnail} alt={latestItem.name} fill sizes="(min-width: 640px) 360px, 0px" className="object-cover" priority />
           </div>
 
           {/* テキスト部分 */}
