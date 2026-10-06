@@ -2,7 +2,7 @@ import type { ContactEntry } from "@/components/types/contact";
 import type { FeedbackEntry, IssueEntry } from "@/components/types/feedback";
 import type { QiitaBlog } from "@/components/types/blog";
 import type { Product } from "@/components/types/product";
-import { google } from "googleapis";
+import { auth, sheets } from "@googleapis/sheets";
 import { cache } from "react";
 
 const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
@@ -17,16 +17,16 @@ if (!sheetId || !clientEmail || !privateKey) {
   console.warn("[googleSheets] Missing env variables．");
 }
 
-let sheetsClient: ReturnType<typeof google.sheets> | null = null;
+let sheetsClient: ReturnType<typeof sheets> | null = null;
 
 async function initializeSheetsClient() {
-  const auth = new google.auth.JWT({
+  const credentials = new auth.JWT({
     email: clientEmail,
     key: privateKey,
     scopes,
   });
-  await auth.authorize();
-  return google.sheets({ version: "v4", auth });
+  await credentials.authorize();
+  return sheets({ version: "v4", auth: credentials });
 }
 
 export async function getSheetsClient() {
