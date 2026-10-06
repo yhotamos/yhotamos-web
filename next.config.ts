@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // Netlifyでは秘密情報がビルドキャッシュに保存されるのを防ぐ
+    turbopackFileSystemCacheForBuild: process.env.NETLIFY !== "true",
+  },
   images: {
     remotePatterns: [
       {
