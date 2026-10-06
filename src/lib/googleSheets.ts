@@ -24,9 +24,10 @@ async function initializeSheetsClient() {
     email: clientEmail,
     key: privateKey,
     scopes,
+    transporterOptions: { fetchImplementation: fetch },
   });
   await credentials.authorize();
-  return sheets({ version: "v4", auth: credentials });
+  return sheets({ version: "v4", auth: credentials, fetchImplementation: fetch });
 }
 
 export async function getSheetsClient() {
