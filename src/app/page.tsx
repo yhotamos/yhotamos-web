@@ -25,7 +25,7 @@ export default async function Home() {
   const recentBlogs = filterItems({ items: blogs, tags: [], sort: "blog-new", limit: 6 });
 
   return (
-    <main className="max-w-7xl mx-auto p-5 w-full grid gap-8">
+    <main className="max-w-7xl mx-auto p-5 w-full grid grid-cols-1 gap-8">
       <Breadcrumbs paths={urls} />
       <Release title="最新リリース" />
       <Hr />
