@@ -17,7 +17,7 @@ import {
   faFilter,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-import { faDiscord, faFacebook, faGithub, faXTwitter, } from '@fortawesome/free-brands-svg-icons'
+import { faDiscord, faFacebook, faGithub, faXTwitter as faX, } from '@fortawesome/free-brands-svg-icons'
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export const iconMap: { [key: string]: IconDefinition } = {
@@ -28,7 +28,7 @@ export const iconMap: { [key: string]: IconDefinition } = {
   faDiagramProject,
   faCircleQuestion,
   faGithub,
-  faXTwitter,
+  faX,
   faDiscord,
   faFacebook,
   faChevronRight,

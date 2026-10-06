@@ -5,7 +5,7 @@ import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/product";
 import { getProductItems } from "@/lib/googleSheets";
 import { ProjectPickup } from "@/components/layout/project";
-import { TwitterEmbed } from "@/components/layout/embed";
+import { XEmbed } from "@/components/layout/embed";
 import { Hr } from "@/components/layout/hr";
 import { getBlogData } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
@@ -39,7 +39,7 @@ export default async function Home() {
       <Hr />
       <ProjectPickup open={true} projects={projects} />
       <Hr />
-      <TwitterEmbed username="yhotta240" height={600} />
+      <XEmbed username="yhotta240" height={600} />
     </main>
   );
 }

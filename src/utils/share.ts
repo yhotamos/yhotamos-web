@@ -1,4 +1,4 @@
-export const shareTwitter = ({ text, tags }: { text: string; tags: string[] }) => {
+export const shareX = ({ text, tags }: { text: string; tags: string[] }) => {
   if (typeof window === "undefined") return;
 
   const url = window.location.href;

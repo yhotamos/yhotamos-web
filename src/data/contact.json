@@ -10,11 +10,11 @@
       "external": false
     },
     {
-      "title": "X",
-      "path": "https://twitter.com/yhotta240",
+      "title": "X/Twitter",
+      "path": "https://x.com/yhotta240",
       "icon": {
         "type": "fontAwesome",
-        "value": "faXTwitter"
+        "value": "faX"
       },
       "external": true
     },

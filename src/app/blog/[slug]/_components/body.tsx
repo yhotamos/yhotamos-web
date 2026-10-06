@@ -8,7 +8,7 @@ import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
 import clsx from "clsx";
-import { shareFacebook, shareHatena, shareTwitter } from "@/utils/share";
+import { shareFacebook, shareHatena, shareX } from "@/utils/share";
 import type { Blog, BlogBodyData } from "@/components/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -159,7 +159,7 @@ const BlogSidebar: React.FC<{ blogId: string; data: Blog; className?: string }> 
 
 const BlogShare: React.FC<{ title: string; tags: string[] }> = ({ title, tags }) => {
   const share = [
-    { type: "fontAwesome", icon: "faXTwitter", title: "Twitterでシェアする", onClick: () => shareTwitter({ text: title, tags: tags }) },
+    { type: "fontAwesome", icon: "faX", title: "X/Twitterでシェアする", onClick: () => shareX({ text: title, tags: tags }) },
     { type: "fontAwesome", icon: "faFacebook", title: "Facebookでシェアする", onClick: () => shareFacebook() },
     { type: "url", icon: "hatena", title: "はてなブックマークに追加", onClick: () => shareHatena() },
   ];

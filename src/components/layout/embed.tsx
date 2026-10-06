@@ -7,8 +7,8 @@ import Iframe from "react-iframe";
 import Script from "next/script";
 import Link from "next/link";
 
-type TwitterApi = {
-  ready: (callback: (api: TwitterApi) => void) => void;
+type XApi = {
+  ready: (callback: (api: XApi) => void) => void;
   widgets: { load: (container: HTMLElement) => void };
 };
 
@@ -21,7 +21,7 @@ export const HatenaEmbed = ({ url }: { url: string }) => {
   return <Iframe url={hatenaUrl} className="w-full sm:w-xl border-solid rounded-md shadow hover:shadow-md transition" />;
 };
 
-export const TwitterEmbed = ({ username, height }: { username: string; height: number }) => {
+export const XEmbed = ({ username, height }: { username: string; height: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   // サーバーと初回描画はlightにそろえ，描画後に選択中のテーマを反映する．
@@ -29,18 +29,18 @@ export const TwitterEmbed = ({ username, height }: { username: string; height: n
 
   return (
     <div ref={containerRef} className="not-italic w-full sm:w-1/2 mx-auto">
-      <h2 className="font-bold text-xl mb-3">Twitter</h2>
+      <h2 className="font-bold text-xl mb-3">X/Twitter</h2>
       <a className="twitter-timeline" data-theme={theme} data-height={height} href={`https://x.com/${username}?ref_src=twsrc%5Etfw`}>
         Posts by {username}
       </a>
       <Script
-        id="twitter-wjs"
+        id="x-wjs"
         src="https://platform.x.com/widgets.js"
         charSet="utf-8"
         strategy="lazyOnload"
         onReady={() => {
-          const twitter = (window as Window & { twttr?: TwitterApi }).twttr;
-          twitter?.ready((api) => {
+          const xApi = (window as Window & { twttr?: XApi }).twttr;
+          xApi?.ready((api) => {
             if (containerRef.current) {
               api.widgets.load(containerRef.current);
             }
