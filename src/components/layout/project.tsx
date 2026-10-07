@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBug, faFlask, faHandshake, faRocket } from "@fortawesome/free-solid-svg-icons";
 import { iconMap } from "@/components/config/iconMap";
 import type { Repository } from "@/lib/getRepository";
 import { Issue, Project } from "@/components/types/project";
@@ -18,7 +19,7 @@ export function ProjectPage({ title, repos, issues, projects }: { title?: string
       <ProjectPickup projects={projects} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="grid gap-6">
+        <div className="grid content-start gap-6">
           <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
           <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
         </div>
@@ -45,15 +46,18 @@ export function ProjectHero({ title, className = "" }: { title: string; descript
 export function ProjectPickup({ className = "", open = false, projects }: { className?: string; open?: boolean; projects: Project[] }) {
   return (
     <section className={cn(className)}>
-      <h2 className="text-xl font-bold mb-6">🚀 注目のプロジェクト</h2>
+      <h2 className="flex items-center gap-2 text-xl font-bold mb-6">
+        <FontAwesomeIcon icon={faRocket} className="text-base text-muted-foreground" aria-hidden="true" />
+        注目のプロジェクト
+      </h2>
       <div className="grid gap-6 md:grid-cols-2">
         {projects.map((project, index) => {
           if (!project || [project.title, project.description, project.githubUrl, project.progress, project.updated].some((v) => v === "")) {
             return null;
           }
           return (
-            <Card key={index} className="justify-between gap-3 rounded-2xl shadow hover:shadow-md transition">
-              <CardContent className="pt-4 space-y-4">
+            <Card key={index} className="justify-between gap-3 rounded-2xl py-4 shadow hover:shadow-md transition">
+              <CardContent className="px-4 space-y-3">
                 <div className="flex gap-2 items-center">
                   <h3 className="text-xl font-semibold">{project.title}</h3>
                 </div>
@@ -73,7 +77,7 @@ export function ProjectPickup({ className = "", open = false, projects }: { clas
 
                 <p className="text-xs text-muted-foreground">最終更新: {project.updated}</p>
               </CardContent>
-              <CardFooter className="flex justify-end">
+              <CardFooter className="flex justify-end px-4">
                 <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                   <Button className="" variant="link">
                     <FontAwesomeIcon icon={iconMap["faGithub"]} />
@@ -98,8 +102,11 @@ export function ProjectPickup({ className = "", open = false, projects }: { clas
 
 export function IssuePickup({ className = "", issues = [] }: { className?: string; issues?: Issue[] }) {
   return (
-    <section className={cn(className, "py-10")}>
-      <h2 className="text-2xl font-bold mb-4">🐛 Picked Issues</h2>
+    <section className={className}>
+      <h2 className="flex items-center gap-2 text-2xl font-bold mb-4">
+        <FontAwesomeIcon icon={faBug} className="text-base text-muted-foreground" aria-hidden="true" />
+        Picked Issues
+      </h2>
       <ul className="space-y-3">
         {issues &&
           issues.map((issue) => {
@@ -128,8 +135,11 @@ const experiments = ["CanvasにPNG画像+メタ情報を合成して再表示（
 
 export function Labs({ className = "" }: { className?: string }) {
   return (
-    <section className={cn(className, "py-10")}>
-      <h2 className="text-xl font-bold mb-4">🧪 開発ラボ - 技術検証ログ</h2>
+    <section className={className}>
+      <h2 className="flex items-center gap-2 text-xl font-bold mb-4">
+        <FontAwesomeIcon icon={faFlask} className="text-base text-muted-foreground" aria-hidden="true" />
+        開発ラボ - 技術検証ログ
+      </h2>
       <ul className="text-muted-foreground text-base list-disc pl-5 space-y-2">
         {experiments.map((item, i) => (
           <li key={i}>{item}</li>
@@ -141,8 +151,11 @@ export function Labs({ className = "" }: { className?: string }) {
 
 export function Contribute({ className = "" }: { className?: string }) {
   return (
-    <section className={cn(className, "py-10")}>
-      <h2 className="text-xl font-bold mb-2">🤝 貢献してみませんか？</h2>
+    <section className={className}>
+      <h2 className="flex items-center gap-2 text-xl font-bold mb-2">
+        <FontAwesomeIcon icon={faHandshake} className="text-base text-muted-foreground" aria-hidden="true" />
+        貢献してみませんか？
+      </h2>
       <p className="text-muted-foreground text-base mb-4">気になるプロジェクトがあれば，ぜひIssueのコメントやPRで参加してみてください． コードだけでなく，アイデアやレビューも大歓迎です！</p>
       <a href="https://github.com/yhotta240" target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition">
         GitHubでプロジェクトを見る
@@ -174,8 +187,8 @@ export function ProjectRepos({ className, title, repos, limit = 5 }: { className
 function ProjectCard({ className = "", repo }: { className?: string; repo: Repository }) {
   return (
     <div className={cn(className, "")}>
-      <Card className="h-full gap-3 rounded-2xl shadow hover:shadow-md transition">
-        <CardContent className="grid grid-cols-3  pt-4 pe-0 ps-2">
+      <Card className="h-full gap-3 rounded-2xl py-4 shadow hover:shadow-md transition">
+        <CardContent className="grid grid-cols-3 gap-3 px-4">
           <div className="col-span-2 space-y-3">
             <div className="flex gap-2 items-center">
               <h3 className="text-xl font-semibold">{repo.full_name}</h3>
@@ -193,9 +206,9 @@ function ProjectCard({ className = "", repo }: { className?: string; repo: Repos
             </div>
             <p className="text-xs text-muted-foreground">最終更新: {repo.updated_at}</p>
           </div>
-          <OpenGraphEmbed repo_name={repo.full_name} className="ps-0 pe-2" />
+          <OpenGraphEmbed repo_name={repo.full_name} />
         </CardContent>
-        <CardFooter className="flex justify-center sm:justify-end">
+        <CardFooter className="flex justify-center sm:justify-end px-4">
           <Link href={repo.html_url} className=" p-0 text-sm" target="_blank" rel="noopener noreferrer">
             <Button className="cursor-pointer " variant="link">
               <FontAwesomeIcon className="p-0" icon={iconMap["faGithub"]} />
