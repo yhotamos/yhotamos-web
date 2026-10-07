@@ -42,7 +42,7 @@ function ProductPageInner({ items, categories }: { items?: Product[]; categories
 
   return (
     <div className="max-w-full my-3">
-      <ProductHero className="mb-6" title={"Product"} description="開発したツールやWEBサービスなどをまとめています．" />
+      <ProductHero className="mb-6" title={"Products"} description="開発したツールやWEBサービスなどをまとめています．" />
 
       <div className="flex flex-col gap-5">
         <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
