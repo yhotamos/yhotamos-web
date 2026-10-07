@@ -16,7 +16,7 @@ import { ProductCompact, ProductRows } from "./product-views";
 export { ProductPage, ProductGrid, ProductList };
 
 const viewOptions = [
-  { value: "thumbnail", label: "サムネイル付き", icon: faImage },
+  { value: "thumbnail", label: "サムネイル", icon: faImage },
   { value: "grid", label: "グリッド", icon: faGrip },
   { value: "list", label: "リスト", icon: faList },
   { value: "simple", label: "シンプル", icon: faAlignLeft },
@@ -115,6 +115,7 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
   ];
 
   const filteredItems = filterItems({ items, categories, sort });
+  const selectedView = viewOptions.find((option) => option.value === view) ?? viewOptions[0];
 
   return (
     <div className={`${className}`}>
@@ -135,8 +136,11 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
           </div>
           {/* 表示オプション */}
           <Select value={view} onValueChange={(value) => setView(value as ProductView)}>
-            <SelectTrigger className="cursor-pointer" aria-label="表示形式">
-              <SelectValue />
+            <SelectTrigger className="cursor-pointer justify-center" aria-label="表示形式" title={selectedView.label}>
+              <SelectValue>
+                <FontAwesomeIcon icon={selectedView.icon} />
+                <span className="sr-only">{selectedView.label}</span>
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {viewOptions.map(({ value, label, icon }) => (
