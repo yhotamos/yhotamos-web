@@ -5,6 +5,8 @@ import { checkSupportEnabled } from "@/lib/support";
 import { getProductItems } from "@/lib/googleSheets";
 import { Suspense } from "react";
 
+export const revalidate = 60;
+
 const pathnames: BreadcrumbsProps["paths"] = [
   { name: "Support", href: "/support" },
   { name: "Issue", href: "/support/issue" },
