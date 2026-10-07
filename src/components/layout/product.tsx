@@ -17,11 +17,11 @@ import { ProductCompact, ProductRows } from "./product-views";
 export { ProductPage, ProductGrid, ProductList };
 
 const viewOptions = [
+  { value: "thumbnail", label: "サムネイル付き", icon: faImage },
   { value: "grid", label: "グリッド", icon: faGrip },
   { value: "list", label: "リスト", icon: faList },
   { value: "simple", label: "シンプル", icon: faAlignLeft },
   { value: "compact", label: "コンパクト", icon: faBars },
-  { value: "thumbnail", label: "サムネイル付き", icon: faImage },
 ] as const;
 
 type ProductView = (typeof viewOptions)[number]["value"];
@@ -106,7 +106,7 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: { c
 }
 
 function ProductContents({ items, className, categories }: { items?: Product[]; className?: string; categories?: string[] }) {
-  const [view, setView] = useState<ProductView>("grid");
+  const [view, setView] = useState<ProductView>("thumbnail");
   const [sort, setSort] = useState("sort-popular");
 
   const sortData = [

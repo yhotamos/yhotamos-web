@@ -4,7 +4,7 @@ import type { Product } from "@/components/types/product";
 
 export function ProductRows({ items, thumbnails = false }: { items: Product[]; thumbnails?: boolean }) {
   return (
-    <ul className="divide-y">
+    <ul className="grid grid-cols-1 gap-x-6 lg:grid-cols-2">
       {items.map((item) => {
         let image = <Image src={item.icon_url} alt="" width={36} height={36} className="size-9 shrink-0 rounded object-contain" />;
         if (thumbnails) {
@@ -16,7 +16,7 @@ export function ProductRows({ items, thumbnails = false }: { items: Product[]; t
         }
 
         return (
-          <li key={item.repo_name}>
+          <li key={item.repo_name} className="min-w-0 border-b">
             <Link href={`/products/${item.repo_name}`} className="flex items-start gap-4 rounded px-3 py-5 hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2">
               {image}
               <div className="min-w-0 flex-1 space-y-2">
