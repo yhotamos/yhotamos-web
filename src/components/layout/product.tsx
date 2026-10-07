@@ -195,13 +195,20 @@ function ProductGrid({ items, title, filter, sort, limit, isOpen = false }: Filt
             <div className="relative">
               {item.rating != 0 && <div className="bg-gray-900 text-yellow-400 rounded-full opacity-80 w-fit absolute top-2 px-2 right-2 z-10">{rating(item)}</div>}
               <div className="relative w-full h-40">
-                <Image src={item.thumbnail} alt={item.name} fill sizes="(max-width:768px) 100vw, 384px" className="object-cover" title={item.name} priority />
+                <Image
+                  src={item.thumbnail}
+                  alt={item.name}
+                  fill
+                  sizes="(min-width: 1280px) 295px, (min-width: 1024px) calc(25vw - 25px), (min-width: 768px) calc((100vw - 88px) / 3), (min-width: 640px) calc(50vw - 38px), calc(100vw - 64px)"
+                  className="object-cover"
+                  title={item.name}
+                />
               </div>{" "}
             </div>
             <div className="col-span-2 grid gap-1">
               <CardHeader className="px-2">
                 <CardTitle className="leading-none font-semibold flex items-start gap-2 whitespace-normal break-words">
-                  <Image src={item.icon_url} alt={item.name} width={24} height={24} unoptimized className="w-6 h-6" />
+                  <Image src={item.icon_url} alt={item.name} width={24} height={24} className="w-6 h-6" />
                   <a href={item.store_url} className="hover:underline line-clamp-2" rel="noopener noreferrer" target="_blank">
                     {item.name}
                   </a>
