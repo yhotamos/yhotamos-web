@@ -4,16 +4,27 @@ import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faGrip } from "@fortawesome/free-solid-svg-icons";
+import { faList, faGrip, faBars, faAlignLeft, faImage } from "@fortawesome/free-solid-svg-icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import Image from "next/image";
+import { ProductCompact, ProductRows } from "./product-views";
 
 export { ProductPage, ProductGrid, ProductList };
+
+const viewOptions = [
+  { value: "grid", label: "グリッド", icon: faGrip },
+  { value: "list", label: "リスト", icon: faList },
+  { value: "simple", label: "シンプル", icon: faAlignLeft },
+  { value: "compact", label: "コンパクト", icon: faBars },
+  { value: "thumbnail", label: "サムネイル付き", icon: faImage },
+] as const;
+
+type ProductView = (typeof viewOptions)[number]["value"];
 
 function ProductPageInner({ items, categories }: { items?: Product[]; categories: string[] }) {
   const searchParams = useSearchParams();
@@ -95,7 +106,7 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: { c
 }
 
 function ProductContents({ items, className, categories }: { items?: Product[]; className?: string; categories?: string[] }) {
-  const [view, setView] = useState<"list" | "grid">("grid");
+  const [view, setView] = useState<ProductView>("grid");
   const [sort, setSort] = useState("sort-popular");
 
   const sortData = [
@@ -104,19 +115,14 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
     { value: "sort-update", label: "更新順" },
   ];
 
-  const iconMap = {
-    list: faList,
-    grid: faGrip,
-  };
-
   const filteredItems = filterItems({ items, categories, sort });
 
   return (
     <div className={`${className}`}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         {/* 件数表示 */}
         <h2 className="text-lg font-semibold ms-3">{filteredItems.length}件</h2>
-        <div className="flex gap-4 justify-end">
+        <div className="flex flex-wrap items-center gap-3 justify-end">
           {/* 並べ替えオプション */}
           <div className="flex items-center gap-2 text-sm text-gray-500">
             {sortData.map(({ value, label }, index) => (
@@ -129,25 +135,27 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
             ))}
           </div>
           {/* 表示オプション */}
-          <Select defaultValue={view} onValueChange={(value) => setView(value as "list" | "grid")}>
-            <SelectTrigger className="cursor-pointer justify-center">
-              <FontAwesomeIcon icon={iconMap[view]} />
+          <Select value={view} onValueChange={(value) => setView(value as ProductView)}>
+            <SelectTrigger className="cursor-pointer" aria-label="表示形式">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem className="cursor-pointer" value="grid">
-                <FontAwesomeIcon icon={faGrip} />
-                グリッド表示
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="list">
-                <FontAwesomeIcon icon={faList} />
-                リスト表示
-              </SelectItem>
+              {viewOptions.map(({ value, label, icon }) => (
+                <SelectItem key={value} className="cursor-pointer" value={value}>
+                  <FontAwesomeIcon icon={icon} />
+                  {label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {view === "list" ? <ProductList items={filteredItems} /> : <ProductGrid items={filteredItems} />}
+      {view === "grid" && <ProductGrid items={filteredItems} />}
+      {view === "list" && <ProductList items={filteredItems} />}
+      {view === "simple" && <ProductRows items={filteredItems} />}
+      {view === "compact" && <ProductCompact items={filteredItems} />}
+      {view === "thumbnail" && <ProductRows items={filteredItems} thumbnails />}
     </div>
   );
 }
