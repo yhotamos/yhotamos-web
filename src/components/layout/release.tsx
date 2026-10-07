@@ -21,8 +21,8 @@ export default async function Release({ title }: { title: string }) {
   if (!latestItem) return null;
 
   return (
-    <div className="w-full max-w-4xl">
-      <h1 className="mb-3 flex items-center gap-3 text-xl font-bold">
+    <div className="w-full max-w-4xl lg:pt-10">
+      <h1 className="mb-3 flex items-center gap-3 text-xl font-bold lg:absolute lg:top-0 lg:left-0">
         {title}
         <span className="text-xs font-semibold tracking-wide text-blue-600 dark:text-blue-400">NEW</span>
       </h1>
@@ -33,7 +33,7 @@ export default async function Release({ title }: { title: string }) {
               src={latestItem.thumbnail}
               alt=""
               fill
-              sizes="(min-width: 936px) 330px, (min-width: 640px) calc(40vw - 46px), calc(100vw - 74px)"
+              sizes="(min-width: 1280px) 321px, (min-width: 1024px) calc(40vw - 191px), (min-width: 936px) 330px, (min-width: 640px) calc(40vw - 46px), calc(100vw - 74px)"
               className="object-cover"
               preload
             />

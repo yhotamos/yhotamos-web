@@ -6,6 +6,7 @@ import { ProductGrid } from "@/components/layout/product";
 import { getProductItems } from "@/lib/googleSheets";
 import { ProjectPickup } from "@/components/layout/project";
 import { XEmbed } from "@/components/layout/embed";
+import { SnsPanel } from "@/components/layout/snsLinks";
 import { Hr } from "@/components/layout/hr";
 import { getBlogData } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
@@ -27,7 +28,12 @@ export default async function Home() {
   return (
     <main className="max-w-7xl mx-auto p-5 w-full grid grid-cols-1 gap-8">
       <Breadcrumbs paths={urls} />
-      <Release title="最新リリース" />
+      <div className="relative">
+        <div className="grid w-full items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:px-5">
+          <Release title="最新リリース" />
+          <SnsPanel />
+        </div>
+      </div>
       <Hr />
       <ProductGrid items={items} title="Chrome 拡張機能" sort={"users-desc"} limit={8} isOpen={true} />
       <Hr />
