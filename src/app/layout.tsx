@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import TopArrowIcon from "@/components/layout/topArrowIcon";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { geistSans, geistMono, notosansjp } from "./fonts";
@@ -31,7 +30,6 @@ export default function RootLayout({
           <GoogleAdsense />
           <Header />
           {children}
-          <TopArrowIcon />
           <Footer />
         </ThemeProvider>
       </body>
