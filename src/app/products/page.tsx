@@ -17,11 +17,15 @@ export const revalidate = 60;
 export default async function Products() {
   const items: Product[] = await getProductItems();
   const categories = await getProductCategories();
+  const categoryCounts: Record<string, number> = {};
+  for (const category of categories) {
+    categoryCounts[category] = items.filter((item) => item.category === category || item.tags?.some((tag) => tag.trim() === category)).length;
+  }
 
   return (
     <main className="max-w-7xl mx-auto p-5 min-h-screen">
       <Breadcrumbs paths={pathnames} />
-      <ProductPage items={items} categories={categories} />
+      <ProductPage items={items} categories={categories} categoryCounts={categoryCounts} />
     </main>
   );
 }

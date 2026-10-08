@@ -8,7 +8,7 @@ import { faList, faGrip, faBars, faAlignLeft, faImage } from "@fortawesome/free-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { CategoryFilter } from "@/components/ui/category-filter";
 import { Product } from "@/components/types/product";
 import Image from "next/image";
 import { ProductCompact, ProductRows } from "./product-views";
@@ -28,7 +28,7 @@ type ProductView = (typeof viewOptions)[number]["value"];
 
 const subscribeToHydration = () => () => undefined;
 
-function ProductPageInner({ items, categories }: { items?: Product[]; categories: string[] }) {
+function ProductPageInner({ items, categories, categoryCounts }: { items?: Product[]; categories: string[]; categoryCounts: Record<string, number> }) {
   const searchParams = useSearchParams();
   const selectedCategories = searchParams.getAll("category");
 
@@ -58,7 +58,7 @@ function ProductPageInner({ items, categories }: { items?: Product[]; categories
       <ProductHero className="mb-6" title={"Products"} description="開発したツールやWEBサービスなどをまとめています．" />
 
       <div className="flex flex-col gap-5">
-        <ProductCategory categories={categories} selectedCategories={selectedCategories} handleCategory={handleCategory} />
+        <CategoryFilter heading="カテゴリから絞り込む" categories={categories} selectedCategories={selectedCategories} onCategoryClick={handleCategory} counts={categoryCounts} />
         <ProductContents items={items} categories={selectedCategories} />
       </div>
     </div>
@@ -79,31 +79,6 @@ export function ProductHero({ title, description, className = "" }: { title: str
       <h1 className="text-3xl font-bold">{title}</h1>
       <p className="text-secondary-foreground/70 text-sm md:text-base">{description}</p>
     </section>
-  );
-}
-
-function ProductCategory({ categories, selectedCategories, handleCategory }: { categories: string[]; selectedCategories: string[]; handleCategory: (category: string) => void }) {
-  return (
-    <div className="flex flex-col gap-2 text-white bg-gray-800 p-4 rounded-lg border">
-      <p className="font-medium">カテゴリーから絞り込む</p>
-      <div className="flex flex-wrap gap-2">
-        {categories.map((category: string) => {
-          category = category.trim();
-          const isActive = selectedCategories.includes(category);
-          return (
-            <Badge
-              key={category}
-              variant={isActive ? undefined : "outline"}
-              className={`${isActive ? "bg-yellow-300 " : "bg-white hover:bg-white/80"} text-black cursor-pointer  rounded-full`}
-              onClick={() => handleCategory(category)} // クリックしたらhandleCategoryを呼び出す
-            >
-              {category} {isActive && "✕"}
-            </Badge>
-          );
-        })}
-        {categories.length === 0 && <div className="text-sm text-muted/70">カテゴリがありません</div>}
-      </div>
-    </div>
   );
 }
 

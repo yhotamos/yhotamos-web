@@ -1,10 +1,7 @@
 "use client";
 
 import { FormattedDate } from "@/components/ui/formatted-date";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { iconMap } from "@/components/config/iconMap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { Suspense, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
@@ -18,6 +15,7 @@ import { BlogSectionHeader } from "@/components/layout/blog-section-header";
 import { BlogCards } from "@/components/layout/blog-cards";
 import { BlogList } from "@/components/layout/blog-list";
 import { BlogArchive } from "@/components/layout/blog-archive";
+import { CategoryFilter } from "@/components/ui/category-filter";
 
 function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: { title?: string; className?: string; qittaBlogs?: QiitaBlog[]; blogs?: Blog[]; blogTags?: string[]; changelogs?: Changelog[] }) {
   const trigger =
@@ -161,7 +159,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
         <TabsContent className="space-y-5" value="all">
           <div className="flex flex-col lg:flex-row gap-5 items-start">
             <div className="flex-1 min-w-0 space-y-5">
-              <BlogTags tags={blogTags} selectedTags={selectedTags} handleTagClick={handleTagClick} tagCounts={blogTagCounts} />
+              <CategoryFilter categories={blogTags} selectedCategories={selectedTags} onCategoryClick={handleTagClick} counts={blogTagCounts} />
               <BlogSectionHeader
                 total={filteredBlogs.length}
                 currentCategory={selectedTags.length === 1 ? selectedTags[0] : undefined}
@@ -197,7 +195,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
           </div>
         </TabsContent>
         <TabsContent className="space-y-5" value="external">
-          <BlogTags tags={allExternalTags} selectedTags={selectedExternalTags} handleTagClick={handleExternalTagClick} tagCounts={externalTagCounts} />
+          <CategoryFilter categories={allExternalTags} selectedCategories={selectedExternalTags} onCategoryClick={handleExternalTagClick} counts={externalTagCounts} />
           <BlogSectionHeader
             total={filteredQiitaBlogs.length}
             currentCategory={selectedExternalTags.length === 1 ? selectedExternalTags[0] : undefined}
@@ -242,52 +240,6 @@ export function BlogSearch({ className = "" }: { tags: string[]; className?: str
     <div className={`${className}`}>
       {/* 検索バー */}
       <input type="text" placeholder="記事を検索" className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500" />
-    </div>
-  );
-}
-
-export function BlogTags({
-  className,
-  tags,
-  selectedTags,
-  handleTagClick,
-  tagCounts,
-}: {
-  className?: string;
-  tags: string[];
-  selectedTags: string[];
-  handleTagClick: (tag: string) => void;
-  tagCounts?: Record<string, number>;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className={`${className} flex items-center justify-between border border-muted-foreground/50 p-2 rounded-lg`}>
-      {/* タグフィルタ */}
-      <div className={cn(isOpen ? "h-auto" : "max-h-[73px] overflow-auto", "flex flex-wrap gap-2 ")}>
-        {tags.map((tag) => {
-          const isActive = selectedTags?.includes(tag);
-          return (
-            <Button
-              key={tag}
-              size={"sm"}
-              className={cn(
-                isActive ? "!bg-violet-500 !text-white" : "",
-                "px-4 py-2 text-black dark:text-white bg-gray-200 dark:bg-secondary rounded-full",
-                "hover:bg-gray-300 text-sm whitespace-nowrap",
-              )}
-              onClick={() => handleTagClick(tag)}
-            >
-              {tag}
-              {tagCounts?.[tag] !== undefined && <span className="text-xs opacity-50">{tagCounts[tag]}</span>}
-              {isActive && " ✕"}
-            </Button>
-          );
-        })}
-      </div>
-      <Button title={isOpen ? "開く" : "閉じる"} onClick={() => setIsOpen((o) => !o)} variant={"ghost"} size={"icon"} className={cn("px-4 py-2 ms-2 rounded-full hover:bg-gray-300 text-sm ")}>
-        <FontAwesomeIcon className={cn(isOpen ? "" : " rotate-180", "transition-transform duration-300 ease-in-out")} icon={iconMap["faAngleDown"]} />
-      </Button>
     </div>
   );
 }
