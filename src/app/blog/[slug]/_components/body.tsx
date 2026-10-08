@@ -1,8 +1,5 @@
 "use client";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
 import { Hr } from "@/components/layout/hr";
 import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,7 +11,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BlogComments } from "./comments";
 
-export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData }> = ({ blogId, body }) => {
+export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData; children: React.ReactNode }> = ({ blogId, body, children }) => {
   const tocItems = getTocFromMarkdown(body.content);
 
   return (
@@ -43,33 +40,12 @@ export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData }> = ({ blo
             "[&_h3]:scroll-mt-20"
           )}
         >
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={{
-              h1: createHeading("h1"),
-              h2: createHeading("h2"),
-              h3: createHeading("h3"),
-            }}
-          >
-            {body.content}
-          </ReactMarkdown>
+          {children}
         </div>
         <BlogComments blogId={blogId} className="lg:col-span-2" />
       </div>
     </div>
   );
-};
-
-const createHeading = (Tag: "h1" | "h2" | "h3") => {
-  return function MarkdownHeading({ children }: React.ComponentPropsWithoutRef<"h1">) {
-    const text = String(children);
-    const id = text
-      .toLowerCase()
-      .replace(/[^\w一-龠ぁ-んァ-ンー]/g, "")
-      .replace(/\s+/g, "-");
-    return <Tag id={id}>{children}</Tag>;
-  };
 };
 
 const BlogSidebar: React.FC<{ blogId: string; data: Blog; className?: string }> = ({ blogId, data, className }) => {

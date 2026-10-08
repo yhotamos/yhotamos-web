@@ -1,6 +1,7 @@
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getBlogBody } from "@/lib/getBlog";
 import { BlogBody } from "./_components/body";
+import { Markdown } from "@/components/markdown/markdown";
 import NotFoundPage from "@/components/layout/notFound";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { Blog } from "@/components/types/blog";
@@ -44,7 +45,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <main className="max-w-7xl mx-auto p-5 ">
       <Breadcrumbs paths={pathnames} className="mb-5" />
       <BlogHeader data={blogBody.data as Blog} />
-      <BlogBody blogId={blogId} body={blogBody} />
+      <BlogBody blogId={blogId} body={blogBody}>
+        <Markdown content={blogBody.content} />
+      </BlogBody>
     </main>
   );
 }

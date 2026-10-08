@@ -4,12 +4,9 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { getMarkdown } from "@/api";
 import Loading from "@/components/layout/loading";
 import React from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
+import { Markdown } from "@/components/markdown/markdown";
 import NotFoundPage from "@/components/layout/notFound";
 import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
-import { CodeBlock } from "./codeBlock";
 
 export function DocHtml({ src, className, top, notFoundFallback }: { src: string; className?: string; top?: number; notFoundFallback?: React.ReactNode }) {
   const [loaded, setLoaded] = useState({ src: "", markdown: "", notFound: false });
@@ -59,39 +56,8 @@ export function DocHtml({ src, className, top, notFoundFallback }: { src: string
         </details>
       )}
       <div className="prose prose-sm prose-neutral dark:prose-invert md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h2]:border-b [&_h2]:border-gray-200 dark:[&_h2]:border-gray-700 max-w-none">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw]}
-          components={{
-            pre: CodeBlock,
-            h1: createHeading("h1", headingPrefix, top),
-            h2: createHeading("h2", headingPrefix, top),
-            h3: createHeading("h3", headingPrefix, top),
-            a: ({ href, children, title, target, rel }) => {
-              let link = href;
-              if (href?.startsWith("#")) link = `#${headingPrefix}-${href.slice(1)}`;
-              return <a href={link} title={title} target={target} rel={rel}>{children}</a>;
-            },
-          }}
-        >
-          {markdown}
-        </ReactMarkdown>
+        <Markdown content={markdown} headingPrefix={headingPrefix} top={top ?? 100} codeTheme="adaptive" />
       </div>
     </div>
   );
 }
-
-const createHeading = (Tag: "h1" | "h2" | "h3", headingPrefix: string, tabHeight = 100) => {
-  return function MarkdownHeading({ children }: React.ComponentPropsWithoutRef<"h1">) {
-    const text = String(children);
-    const id = text
-      .toLowerCase()
-      .replace(/[^\w一-龠ぁ-んァ-ンー]/g, "")
-      .replace(/\s+/g, "-");
-    return (
-      <Tag id={`${headingPrefix}-${id}`} style={{ scrollMarginTop: `${tabHeight}px` }}>
-        {children}
-      </Tag>
-    );
-  };
-};

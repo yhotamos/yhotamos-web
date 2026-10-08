@@ -1,0 +1,56 @@
+.markdown {
+  --code-comment: #8b949e;
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-constant: #79c0ff;
+  --code-function: #d2a8ff;
+  --code-tag: #7ee787;
+  --code-builtin: #ffa657;
+}
+
+.markdown pre {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* プロダクトの明るいコード背景では，読みやすい濃い色を使う */
+:global(html:not(.dark)) .markdown pre[data-code-theme="adaptive"] {
+  --code-comment: #57606a;
+  --code-keyword: #cf222e;
+  --code-string: #0a3069;
+  --code-constant: #0550ae;
+  --code-function: #8250df;
+  --code-tag: #116329;
+  --code-builtin: #953800;
+}
+
+.markdown :global(.hljs-comment),
+.markdown :global(.hljs-quote) { color: var(--code-comment); }
+
+.markdown :global(.hljs-keyword),
+.markdown :global(.hljs-doctag),
+.markdown :global(.hljs-type) { color: var(--code-keyword); }
+
+.markdown :global(.hljs-string),
+.markdown :global(.hljs-regexp) { color: var(--code-string); }
+
+.markdown :global(.hljs-number),
+.markdown :global(.hljs-literal),
+.markdown :global(.hljs-attr),
+.markdown :global(.hljs-attribute),
+.markdown :global(.hljs-variable),
+.markdown :global(.hljs-meta),
+.markdown :global(.hljs-selector-class),
+.markdown :global(.hljs-selector-id) { color: var(--code-constant); }
+
+.markdown :global(.hljs-title),
+.markdown :global(.hljs-section) { color: var(--code-function); }
+
+.markdown :global(.hljs-name),
+.markdown :global(.hljs-selector-tag),
+.markdown :global(.hljs-addition) { color: var(--code-tag); }
+
+.markdown :global(.hljs-built_in),
+.markdown :global(.hljs-symbol) { color: var(--code-builtin); }
+
+.markdown :global(.hljs-deletion) { color: var(--code-keyword); }

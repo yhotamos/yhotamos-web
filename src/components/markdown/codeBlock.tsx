@@ -5,7 +5,11 @@ import { Check, Copy, WrapText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function CodeBlock({ children, className }: ComponentPropsWithoutRef<"pre">) {
+type CodeBlockProps = ComponentPropsWithoutRef<"pre"> & {
+  codeTheme?: "dark" | "adaptive";
+};
+
+export function CodeBlock({ children, className, codeTheme = "dark" }: CodeBlockProps) {
   const preRef = useRef<HTMLPreElement>(null);
   const [wrap, setWrap] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
@@ -36,17 +40,26 @@ export function CodeBlock({ children, className }: ComponentPropsWithoutRef<"pre
   let wrapLabel = "コードを折り返す";
   if (wrap) wrapLabel = "折り返しを解除";
 
+  let buttonClass = "size-8 text-neutral-300 hover:bg-neutral-700 hover:text-white";
+  let toolbarClass = "bg-neutral-800/95";
+  if (codeTheme === "adaptive") {
+    buttonClass = "size-8 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white";
+    toolbarClass = "bg-neutral-100/95 dark:bg-neutral-900/95";
+  }
+
   return (
     <div className="not-prose group relative my-4">
-      <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100">
-        <Button type="button" variant="ghost" size="icon" className="size-8 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white" onClick={handleCopy} aria-label={copyLabel} title={copyLabel}>
-          <CopyIcon aria-hidden="true" />
-        </Button>
-        <Button type="button" variant="ghost" size="icon" className="size-8 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white" onClick={() => setWrap(!wrap)} aria-label={wrapLabel} title={wrapLabel} aria-pressed={wrap}>
+      <div className={cn("absolute top-2 right-2 z-10 flex gap-1 rounded-md opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100", toolbarClass)}>
+        <Button type="button" variant="ghost" size="icon" className={buttonClass} onClick={() => setWrap(!wrap)} aria-label={wrapLabel} title={wrapLabel} aria-pressed={wrap}>
           <WrapText aria-hidden="true" />
         </Button>
+        <Button type="button" variant="ghost" size="icon" className={buttonClass} onClick={handleCopy} aria-label={copyLabel} title={copyLabel}>
+          <CopyIcon aria-hidden="true" />
+        </Button>
       </div>
-      <pre ref={preRef} className={cn("m-0 max-w-full overflow-x-auto rounded-md border border-neutral-200 bg-neutral-100 p-4 pt-12 font-mono text-[13px] leading-relaxed text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 [&_code]:bg-transparent [&_code]:p-0 [&_code]:font-[inherit] [&_code]:text-inherit", className, {
+      <pre ref={preRef} data-code-theme={codeTheme} className={cn("m-0 max-w-full overflow-x-auto rounded-md p-4 font-mono text-sm leading-relaxed [&_code]:bg-transparent [&_code]:p-0 [&_code]:font-[inherit] [&_code]:text-inherit", className, {
+        "border border-neutral-200 bg-neutral-100 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100": codeTheme === "adaptive",
+        "bg-[var(--tw-prose-pre-bg)] text-[var(--tw-prose-pre-code)]": codeTheme === "dark",
         "whitespace-pre-wrap break-words": wrap,
         "whitespace-pre": !wrap,
       })}>
