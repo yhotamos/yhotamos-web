@@ -1,6 +1,5 @@
 "use client";
 
-import { Hr } from "@/components/layout/hr";
 import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { iconMap } from "@/components/config/iconMap";
@@ -10,6 +9,7 @@ import type { Blog, BlogBodyData } from "@/components/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BlogComments } from "./comments";
+import { BlogToc } from "./toc";
 
 export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData; children: React.ReactNode }> = ({ blogId, body, children }) => {
   const tocItems = getTocFromMarkdown(body.content);
@@ -19,23 +19,11 @@ export const BlogBody: React.FC<{ blogId: string; body: BlogBodyData; children: 
       <BlogSidebar blogId={blogId} data={body.data} />
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* 目次 */}
-        <div className="bg-white dark:bg-secondary lg:sticky lg:top-20 h-fit py-5 px-3 ">
-          目次
-          <Hr />
-          <div className="flex flex-col gap-2 pt-5">
-            {tocItems.map((item, index) => (
-              <div key={index}>
-                <a className={`${item.depth === 3 && "pl-3 "} text-base text-secondary-foreground/80 hover:underline`} href={`#${item.id}`}>
-                  {item.text}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
+        <BlogToc items={tocItems} />
         {/* 本文 */}
         <div
           className={clsx(
-            "bg-white dark:bg-secondary lg:col-span-2 min-w-full lg:order-first p-2 md:p-5 prose prose-sm prose-neutral dark:prose-invert ",
+            "rounded-[4px] bg-white dark:bg-secondary lg:col-span-2 min-w-full lg:order-first p-2 md:p-5 prose prose-sm prose-neutral dark:prose-invert ",
             "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
             "[&_h3]:scroll-mt-20"
           )}

@@ -78,7 +78,7 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
   };
 
   return (
-    <div className={clsx(className, "bg-white dark:bg-secondary  space-y-5 p-6 ")}>
+    <div className={clsx(className, "rounded-[4px] bg-white dark:bg-secondary space-y-5 p-6")}>
       <div className="flex  items-center gap-5">
         <h2 className="text-xl font-bold  ms-2">コメント</h2>
         {errorMsg && <div className="min-w-50 text-red-500 bg-red-100 p-2 rounded-lg text-xs">{errorMsg}</div>}
