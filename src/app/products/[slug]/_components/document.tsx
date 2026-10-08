@@ -1,56 +1,22 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { getMarkdown } from "@/api";
 import Loading from "@/components/layout/loading";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { getTocFromMarkdown, TocItem } from "@/utils/getTocFromMarkdown";
-import { Product } from "@/components/types/product";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Hr } from "@/components/layout/hr";
 import NotFoundPage from "@/components/layout/notFound";
+import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
+import { CodeBlock } from "./codeBlock";
 
-export function Document({ item, className }: { item: Product; className?: string }) {
-  const [tocItems, setTocItems] = useState<TocItem[]>([]);
-  const top = useTopOffset();
-  // console.log("tocItems", tocItems);
-  return (
-    <Tabs defaultValue="usage" className={`min-h-screen grid grid-cols-5 mt-5 gap-0 ${className ?? ""}`}>
-      <TabsList className="sticky flex flex-col gap-4 w-full h-fit py-5 rounded-none rounded-l-xl bg-white dark:bg-secondary" style={{ top: `${top}px` }}>
-        <TabsTrigger className="data-[state=active]:!bg-secondary cursor-pointer w-full h-fit rounded-none rounded-l-xl " value="usage">
-          使い方
-        </TabsTrigger>
-
-      </TabsList>
-      <TabsContent value="usage" className="col-span-4 grid gap-y-4 md:grid-cols-4 bg-white dark:bg-secondary rounded-none rounded-tr-xl rounded-b-xl">
-        {tocItems.length > 0 && (
-          <div className="border-1 rounded-xl border-gray-200 dark:border-gray-700 lg:border-none m-2 lg:m-0 lg:sticky lg:top-20 h-fit py-5 px-3 lg:ps-0 col-span-3 lg:col-span-1">
-            目次
-            <Hr />
-            <div className="flex flex-col gap-4 pt-5">
-              {tocItems.map((item, index) => (
-                <div key={index}>
-                  <a className={`${item.depth === 3 && "pl-3 "}  text-secondary-foreground/70 hover:underline`} href={`#${item.id}`}>
-                    {item.text}
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        <DocHtml src={item.repo_usage} className="p-3 lg:p-5 col-span-3 lg:order-first" onTocGenerated={setTocItems} top={top} />
-      </TabsContent>
-    </Tabs>
-  );
-}
-
-export function DocHtml({ src, className, onTocGenerated, top }: { src: string; className?: string; onTocGenerated?: (toc: TocItem[]) => void; top?: number }) {
+export function DocHtml({ src, className, top, notFoundFallback }: { src: string; className?: string; top?: number; notFoundFallback?: React.ReactNode }) {
   const [loaded, setLoaded] = useState({ src: "", markdown: "", notFound: false });
   const markdown = loaded.src === src ? loaded.markdown : "";
   const notFound = loaded.src === src && loaded.notFound;
+  const headingPrefix = useId();
+  const tocItems = useMemo(() => getTocFromMarkdown(markdown).filter((item) => item.depth <= 3 && item.id), [markdown]);
 
   useEffect(() => {
     if (!src) return;
@@ -59,17 +25,16 @@ export function DocHtml({ src, className, onTocGenerated, top }: { src: string; 
       if (!active) return;
       const notFound = markdown.includes("Page not found") || markdown.trim() === "";
       setLoaded({ src, markdown, notFound });
-      onTocGenerated?.(notFound ? [] : getTocFromMarkdown(markdown));
     }).catch(() => {
       if (active) {
         setLoaded({ src, markdown: "", notFound: true });
-        onTocGenerated?.([]);
       }
     });
     return () => { active = false; };
-  }, [src, onTocGenerated]);
+  }, [src]);
 
   if (!src || notFound) {
+    if (notFoundFallback !== undefined) return <>{notFoundFallback}</>;
     return <NotFoundPage className={`${className} mt-10 text-center font-bold`} />;
   }
 
@@ -78,25 +43,45 @@ export function DocHtml({ src, className, onTocGenerated, top }: { src: string; 
   }
 
   return (
-    <div
-      className={`prose prose-sm prose-neutral dark:prose-invert md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h2]:border-b [&_h2]:border-gray-200 dark:[&_h2]:border-gray-700  max-w-none ${className}`}
-    >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          h1: createHeading("h1", top),
-          h2: createHeading("h2", top),
-          h3: createHeading("h3", top),
-        }}
-      >
-        {markdown}
-      </ReactMarkdown>
+    <div className={className}>
+      {tocItems.length > 0 && (
+        <details className="mb-5 rounded-md border px-3 py-2 text-sm">
+          <summary className="cursor-pointer font-medium">目次</summary>
+          <nav aria-label="本文の目次" className="pt-3 pb-1">
+            <ul className="space-y-2">
+              {tocItems.map((item, index) => (
+                <li key={index} style={{ paddingLeft: `${Math.max(0, item.depth - 2) * 12}px` }}>
+                  <a href={`#${headingPrefix}-${item.id}`} className="text-muted-foreground hover:text-foreground hover:underline">{item.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+      )}
+      <div className="prose prose-sm prose-neutral dark:prose-invert md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h2]:border-b [&_h2]:border-gray-200 dark:[&_h2]:border-gray-700 max-w-none">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+          components={{
+            pre: CodeBlock,
+            h1: createHeading("h1", headingPrefix, top),
+            h2: createHeading("h2", headingPrefix, top),
+            h3: createHeading("h3", headingPrefix, top),
+            a: ({ href, children, title, target, rel }) => {
+              let link = href;
+              if (href?.startsWith("#")) link = `#${headingPrefix}-${href.slice(1)}`;
+              return <a href={link} title={title} target={target} rel={rel}>{children}</a>;
+            },
+          }}
+        >
+          {markdown}
+        </ReactMarkdown>
+      </div>
     </div>
   );
 }
 
-const createHeading = (Tag: "h1" | "h2" | "h3", tabHeight = 100) => {
+const createHeading = (Tag: "h1" | "h2" | "h3", headingPrefix: string, tabHeight = 100) => {
   return function MarkdownHeading({ children }: React.ComponentPropsWithoutRef<"h1">) {
     const text = String(children);
     const id = text
@@ -104,24 +89,9 @@ const createHeading = (Tag: "h1" | "h2" | "h3", tabHeight = 100) => {
       .replace(/[^\w一-龠ぁ-んァ-ンー]/g, "")
       .replace(/\s+/g, "-");
     return (
-      <Tag id={id} style={{ scrollMarginTop: `${tabHeight}px` }}>
+      <Tag id={`${headingPrefix}-${id}`} style={{ scrollMarginTop: `${tabHeight}px` }}>
         {children}
       </Tag>
     );
   };
 };
-
-function subscribeTopOffset(onChange: () => void) {
-  window.addEventListener("resize", onChange);
-  return () => window.removeEventListener("resize", onChange);
-}
-
-function getTopOffset() {
-  const tabListHeight = document.querySelector<HTMLElement>("#tabs-list")?.getBoundingClientRect().height ?? 0;
-  const headerHeight = document.querySelector<HTMLElement>("header")?.getBoundingClientRect().height ?? 0;
-  return tabListHeight + headerHeight - 10;
-}
-
-function useTopOffset() {
-  return useSyncExternalStore(subscribeTopOffset, getTopOffset, () => 0);
-}
