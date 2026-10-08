@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/components/types/product";
 import Image from "next/image";
 import { ProductCompact, ProductRows } from "./product-views";
+import { ChevronDown } from "lucide-react";
 
 export { ProductPage, ProductGrid, ProductList };
 
@@ -24,6 +25,8 @@ const viewOptions = [
 ] as const;
 
 type ProductView = (typeof viewOptions)[number]["value"];
+
+const subscribeToHydration = () => () => undefined;
 
 function ProductPageInner({ items, categories }: { items?: Product[]; categories: string[] }) {
   const searchParams = useSearchParams();
@@ -107,6 +110,8 @@ function ProductCategory({ categories, selectedCategories, handleCategory }: { c
 function ProductContents({ items, className, categories }: { items?: Product[]; className?: string; categories?: string[] }) {
   const [view, setView] = useState<ProductView>("thumbnail");
   const [sort, setSort] = useState("sort-popular");
+  // iOS Chromeが初期HTMLの隠しselectに属性を追加するため，Selectはhydration後に描画する
+  const hasHydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
 
   const sortData = [
     { value: "sort-popular", label: "人気順" },
@@ -135,22 +140,30 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
             ))}
           </div>
           {/* 表示オプション */}
-          <Select value={view} onValueChange={(value) => setView(value as ProductView)}>
-            <SelectTrigger className="cursor-pointer justify-center" aria-label="表示形式" title={selectedView.label}>
-              <SelectValue>
-                <FontAwesomeIcon icon={selectedView.icon} />
-                <span className="sr-only">{selectedView.label}</span>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {viewOptions.map(({ value, label, icon }) => (
-                <SelectItem key={value} className="cursor-pointer" value={value}>
-                  <FontAwesomeIcon icon={icon} />
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {!hasHydrated && (
+            <Button type="button" variant="outline" disabled className="h-9 gap-2 bg-transparent px-3 py-2 text-muted-foreground" aria-label="表示形式" title={selectedView.label}>
+              <FontAwesomeIcon icon={selectedView.icon} />
+              <ChevronDown className="size-4 opacity-50" />
+            </Button>
+          )}
+          {hasHydrated && (
+            <Select value={view} onValueChange={(value) => setView(value as ProductView)}>
+              <SelectTrigger className="cursor-pointer justify-center" aria-label="表示形式" title={selectedView.label}>
+                <SelectValue>
+                  <FontAwesomeIcon icon={selectedView.icon} />
+                  <span className="sr-only">{selectedView.label}</span>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {viewOptions.map(({ value, label, icon }) => (
+                  <SelectItem key={value} className="cursor-pointer" value={value}>
+                    <FontAwesomeIcon icon={icon} />
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
       </div>
 
