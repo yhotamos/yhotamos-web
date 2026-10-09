@@ -8,14 +8,14 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
 import type { Repository } from "@/lib/getRepository";
-import { Issue } from "@/types/project";
+import type { FeaturedRepository, Issue } from "@/types/project";
 
-export function ProjectPage({ title, repos, issues }: { title?: string; repos: Repository[]; issues: Issue[] }) {
+export function ProjectPage({ title, repos, featuredRepos, issues }: { title?: string; repos: Repository[]; featuredRepos: FeaturedRepository[]; issues: Issue[] }) {
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title || "Projects"} className="" />
       <Hr />
-      <ProjectPickup repos={repos} />
+      <ProjectPickup repos={featuredRepos} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="grid content-start gap-6">

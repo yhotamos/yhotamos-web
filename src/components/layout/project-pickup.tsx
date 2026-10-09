@@ -3,16 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare, faRocket } from "@fortawesome/free-solid-svg-icons";
 import { ProjectThumbnail } from "./project-thumbnail";
 import { cn } from "@/lib/utils";
-import type { Repository } from "@/lib/getRepository";
+import type { FeaturedRepository } from "@/types/project";
 
-export function ProjectPickup({ className, open = false, repos }: { className?: string; open?: boolean; repos: Repository[] }) {
-  const projects = repos
-    .filter((repo) => !repo.private)
-    .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
-    .slice(0, 4);
-
-  if (projects.length === 0) return null;
-  const featured = projects[0];
+export function ProjectPickup({ className, open = false, repos }: { className?: string; open?: boolean; repos: FeaturedRepository[] }) {
+  if (repos.length === 0) return null;
+  const featured = repos[0];
 
   return (
     <section className={cn("min-w-0", className)}>
@@ -27,7 +22,7 @@ export function ProjectPickup({ className, open = false, repos }: { className?: 
           </Link>
           <div className="p-4 sm:p-5"><ProjectSummary repo={featured} featured /></div>
         </article>
-        {projects.slice(1).map((repo) => (
+        {repos.slice(1).map((repo) => (
           <article key={repo.id} className="flex min-w-0 items-center border-b border-border py-4 md:px-4">
             <ProjectSummary repo={repo} />
           </article>
@@ -44,9 +39,9 @@ export function ProjectPickup({ className, open = false, repos }: { className?: 
   );
 }
 
-function ProjectSummary({ repo, featured = false }: { repo: Repository; featured?: boolean }) {
+function ProjectSummary({ repo, featured = false }: { repo: FeaturedRepository; featured?: boolean }) {
   return (
-    <div className="min-w-0 space-y-2">
+    <div className={cn("min-w-0", featured ? "space-y-2" : "space-y-1")}>
       <p className="text-xs text-muted-foreground">{repo.owner.login}</p>
       <h3 className={cn("font-semibold", featured ? "text-xl" : "text-lg")}>
         <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="break-words hover:underline underline-offset-4">

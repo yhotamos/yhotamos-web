@@ -2,7 +2,7 @@
 
 import { Octokit } from "@octokit/core";
 import { components } from "@octokit/openapi-types";
-import { Issue } from "@/types/project";
+import type { FeaturedRepository, Issue } from "@/types/project";
 
 export type Repository = Awaited<ReturnType<typeof getRepos>>[number];
 
@@ -46,6 +46,32 @@ export async function getRepos(sort?: SortType, limit?: number) {
     return [];
   }).filter(isPublicRepository);
 };
+
+export async function getFeaturedRepos(): Promise<FeaturedRepository[]> {
+  const results = await Promise.allSettled(repositorySources.map(async (source) => {
+    const owner = source.type === "org" ? "org" : "user";
+    const response = await octokit.request("GET /search/repositories", {
+      q: `${owner}:${source.login} topic:featured is:public`,
+      sort: "updated",
+      order: "desc",
+      per_page: 4,
+      headers: { "X-GitHub-Api-Version": "2022-11-28" },
+    });
+    return response.data.items.flatMap((repo) => {
+      if (!repo.owner) return [];
+      return [{ ...repo, owner: repo.owner }];
+    });
+  }));
+
+  return results.flatMap((result, index) => {
+    if (result.status === "fulfilled") return result.value;
+    console.error(`[getFeaturedRepos] ${repositorySources[index].login}: 注目のプロジェクトの取得に失敗しました`);
+    return [];
+  })
+    .filter(isPublicRepository)
+    .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+    .slice(0, 4);
+}
 
 export const getIssues = async ( repo: components["schemas"]["repository"], limit?: number) => {
   if (!isPublicRepository(repo)) return [];

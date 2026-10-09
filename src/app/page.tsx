@@ -11,7 +11,7 @@ import { Hr } from "@/components/layout/hr";
 import { getBlogData } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
 import { BlogCards } from "@/components/layout/blog-cards";
-import { getRepos } from "@/lib/getRepository";
+import { getFeaturedRepos } from "@/lib/getRepository";
 import Link from "next/link";
 
 export const revalidate = 60;
@@ -20,7 +20,7 @@ export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
   const [items, repos] = await Promise.all([
     getProductItems().catch(() => []),
-    getRepos("updated", 5).catch(() => []),
+    getFeaturedRepos().catch(() => []),
   ]);
   const blogs = getBlogData();
   const recentBlogs = filterItems({ items: blogs, tags: [], sort: "blog-new", limit: 6 });

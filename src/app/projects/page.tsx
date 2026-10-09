@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { ProjectPage } from "./_components/projects";
-import { getReposWithIssues } from "@/lib/getRepository";
+import { getFeaturedRepos, getReposWithIssues } from "@/lib/getRepository";
 
 export const revalidate = 60;
 
@@ -13,12 +13,15 @@ export const metadata: Metadata = {
 };
 
 export default async function Projects() {
-  const { repos, issues } = await getReposWithIssues("updated", 5).catch(() => ({ repos: [], issues: [] }));
+  const [{ repos, issues }, featuredRepos] = await Promise.all([
+    getReposWithIssues("updated", 5).catch(() => ({ repos: [], issues: [] })),
+    getFeaturedRepos().catch(() => []),
+  ]);
 
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <ProjectPage repos={repos} issues={issues} />
+      <ProjectPage repos={repos} featuredRepos={featuredRepos} issues={issues} />
     </main>
   );
 }
