@@ -8,6 +8,11 @@ export type Repository = Awaited<ReturnType<typeof getRepos>>[number];
 
 type SortType = "created" | "updated" | "pushed" | "full_name";
 
+const repositorySources: { login: string; type: "user" | "org" }[] = [
+  { login: "yhotta240", type: "user" },
+  { login: "yhotamos", type: "org" },
+];
+
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
@@ -22,18 +27,20 @@ export async function getRepos(sort?: SortType, limit?: number) {
     },
   };
 
-  const [userRes, orgRes] = await Promise.all([
-    octokit.request("GET /users/{username}/repos", {
-      username: "yhotta240",
-      ...params,
-    }),
-    octokit.request("GET /orgs/{org}/repos", {
-      org: "yhotamos",
-      ...params,
-    }),
-  ]);
+  const results = await Promise.allSettled(repositorySources.map(async (source) => {
+    if (source.type === "org") {
+      const response = await octokit.request("GET /orgs/{org}/repos", { org: source.login, ...params });
+      return response.data;
+    }
+    const response = await octokit.request("GET /users/{username}/repos", { username: source.login, ...params });
+    return response.data;
+  }));
 
-  return [...userRes.data, ...orgRes.data];
+  return results.flatMap((result, index) => {
+    if (result.status === "fulfilled") return result.value;
+    console.error(`[getRepos] ${repositorySources[index].login}: リポジトリの取得に失敗しました`);
+    return [];
+  });
 };
 
 export const getIssues = async ( repo: components["schemas"]["repository"], limit?: number) => {

@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TabsContent } from "@/components/ui/tabs";
+import { ProjectRepositoryTabs } from "./project-repository-tabs";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBug, faFlask, faHandshake, faRocket } from "@fortawesome/free-solid-svg-icons";
@@ -26,7 +28,7 @@ export function ProjectPage({ title, repos, issues, projects }: { title?: string
         <IssuePickup issues={issues} className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
-      <ProjectRepos repos={repos} limit={10} />
+      <ProjectRepos repos={repos} />
       <ProjectFooter />
     </div>
   );
@@ -164,23 +166,30 @@ export function Contribute({ className = "" }: { className?: string }) {
   );
 }
 
-export function ProjectRepos({ className, title, repos, limit = 5 }: { className?: string; title?: string; repos?: Repository[]; limit?: number }) {
+export function ProjectRepos({ className, title, repos }: { className?: string; title?: string; repos?: Repository[] }) {
   if (!repos || repos.length === 0) {
     return null;
   }
 
+  const owners = [...new Set(repos.map((repo) => repo.owner.login))];
+  const groups = [
+    { value: "all", label: "すべて", repos },
+    ...owners.map((owner) => ({ value: `owner:${owner}`, label: owner, repos: repos.filter((repo) => repo.owner.login === owner) })),
+  ];
+
   return (
-    <div className={cn(className, "space-y-3")}>
-      <h1 className="font-bold text-xl mb-3">{title || "Githubリポジトリ一覧"}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {repos.length > 0 &&
-          repos.map((repo, index) => {
-            if (index < limit) {
-              return <ProjectCard repo={repo} key={index} />;
-            }
-          })}
-      </div>
-    </div>
+    <section className={cn(className, "space-y-3")}>
+      <h2 className="font-bold text-xl mb-3">{title || "GitHubリポジトリ一覧"}</h2>
+      <ProjectRepositoryTabs groups={groups.map((group) => ({ value: group.value, label: group.label, count: group.repos.length }))}>
+        {groups.map((group) => (
+          <TabsContent key={group.value} value={group.value}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {group.repos.map((repo) => <ProjectCard repo={repo} key={repo.id} />)}
+            </div>
+          </TabsContent>
+        ))}
+      </ProjectRepositoryTabs>
+    </section>
   );
 }
 
