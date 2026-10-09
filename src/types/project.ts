@@ -1,3 +1,5 @@
+export type RepositorySort = "created" | "updated" | "pushed" | "full_name";
+
 export type Issue = {
   title: string;
   url: string;
