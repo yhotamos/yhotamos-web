@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState } from "react";
-import { getMarkdown } from "@/api";
+import { getMarkdown } from "@/lib/getMarkdown";
 import Loading from "@/components/layout/loading";
 import React from "react";
 import { Markdown } from "@/components/markdown/markdown";
