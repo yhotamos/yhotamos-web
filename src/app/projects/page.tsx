@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
-import { ProjectPage } from "@/components/layout/project";
+import { ProjectPage } from "./_components/projects";
 import { getReposWithIssues } from "@/lib/getRepository";
 
 export const revalidate = 60;

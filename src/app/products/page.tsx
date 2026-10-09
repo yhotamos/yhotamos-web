@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
-import { ProductPage } from "@/components/layout/product";
+import { ProductPage } from "./_components/products";
 import { getProductItems } from "@/lib/googleSheets";
 import { getProductCategories } from "@/lib/getProducts";
 import { Product } from "@/types/product";

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/getProducts";
 import { getProductItems } from "@/lib/googleSheets";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
-import { ProductDetails } from "./_components/productDetails";
+import { ProductDetails } from "./_components/details";
 
 type Params = Promise<{ slug: string }>;
 

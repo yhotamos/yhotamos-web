@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Blogs } from "@/components/layout/blogs";
+import { Blogs } from "./_components/blogs";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getQiitaList } from "@/lib/googleSheets";
 import { getBlogData, getAllBlogTags, getChangelog } from "@/lib/getBlog";

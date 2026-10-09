@@ -1,7 +1,7 @@
 // "use server";
 
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
-import Release from "@/components/layout/release";
+import Release from "./_components/release";
 import { ProductGrid } from "@/components/layout/product";
 import { getProductItems } from "@/lib/googleSheets";
 import { ProjectPickup } from "@/components/layout/project-pickup";

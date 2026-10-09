@@ -11,10 +11,10 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Blog, Changelog, QiitaBlog } from "@/types/blog";
 import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
-import { BlogSectionHeader } from "@/components/layout/blog-section-header";
+import { BlogSectionHeader } from "./section-header";
 import { BlogCards } from "@/components/layout/blog-cards";
-import { BlogList } from "@/components/layout/blog-list";
-import { BlogArchive } from "@/components/layout/blog-archive";
+import { BlogList } from "./list";
+import { BlogArchive } from "./archive";
 import { CategoryFilter } from "@/components/ui/category-filter";
 
 function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: { title?: string; className?: string; qittaBlogs?: QiitaBlog[]; blogs?: Blog[]; blogTags?: string[]; changelogs?: Changelog[] }) {

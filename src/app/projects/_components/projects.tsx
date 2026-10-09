@@ -1,9 +1,9 @@
-import { Hr } from "./hr";
+import { Hr } from "@/components/layout/hr";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { TabsContent } from "@/components/ui/tabs";
-import { ProjectRepositoryTabs } from "./project-repository-tabs";
-import { ProjectPickup } from "./project-pickup";
+import { ProjectRepositoryTabs } from "./repository-tabs";
+import { ProjectPickup } from "@/components/layout/project-pickup";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";

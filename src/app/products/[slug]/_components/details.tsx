@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/types/product";
 import { DocHtml } from "./document";
-import { ProductDocumentTabs } from "./productDocumentTabs";
+import { ProductDocumentTabs } from "./document-tabs";
 
 export function ProductDetails({ item }: { item: Product }) {
   return (
