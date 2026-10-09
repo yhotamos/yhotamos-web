@@ -17,6 +17,10 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
+function isPublicRepository(repo: { private: boolean; visibility?: string }) {
+  return repo.private === false && (repo.visibility === undefined || repo.visibility === "public");
+}
+
 export async function getRepos(sort?: SortType, limit?: number) {
 
   const params = {
@@ -29,7 +33,7 @@ export async function getRepos(sort?: SortType, limit?: number) {
 
   const results = await Promise.allSettled(repositorySources.map(async (source) => {
     if (source.type === "org") {
-      const response = await octokit.request("GET /orgs/{org}/repos", { org: source.login, ...params });
+      const response = await octokit.request("GET /orgs/{org}/repos", { org: source.login, type: "public", ...params });
       return response.data;
     }
     const response = await octokit.request("GET /users/{username}/repos", { username: source.login, ...params });
@@ -40,10 +44,11 @@ export async function getRepos(sort?: SortType, limit?: number) {
     if (result.status === "fulfilled") return result.value;
     console.error(`[getRepos] ${repositorySources[index].login}: リポジトリの取得に失敗しました`);
     return [];
-  });
+  }).filter(isPublicRepository);
 };
 
 export const getIssues = async ( repo: components["schemas"]["repository"], limit?: number) => {
+  if (!isPublicRepository(repo)) return [];
 
   const issuesRes = await octokit.request("GET /repos/{owner}/{repo}/issues", {
     owner: repo.owner.login,
@@ -70,8 +75,8 @@ export async function getRecentIssues(limit = 10): Promise<Issue[]> {
   };
 
   const [userRes, orgRes] = await Promise.allSettled([
-    octokit.request("GET /search/issues", { q: "is:issue user:yhotta240", ...searchOpts }),
-    octokit.request("GET /search/issues", { q: "is:issue org:yhotamos", ...searchOpts }),
+    octokit.request("GET /search/issues", { q: "is:issue is:public user:yhotta240", ...searchOpts }),
+    octokit.request("GET /search/issues", { q: "is:issue is:public org:yhotamos", ...searchOpts }),
   ]);
 
   const toIssue = (item: components["schemas"]["issue-search-result-item"]): Issue => ({

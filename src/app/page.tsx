@@ -4,23 +4,23 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Release from "@/components/layout/release";
 import { ProductGrid } from "@/components/layout/product";
 import { getProductItems } from "@/lib/googleSheets";
-import { ProjectPickup } from "@/components/layout/project";
+import { ProjectPickup } from "@/components/layout/project-pickup";
 import { XEmbed } from "@/components/layout/embed";
 import { SnsPanel } from "@/components/layout/snsLinks";
 import { Hr } from "@/components/layout/hr";
 import { getBlogData } from "@/lib/getBlog";
 import { filterItems } from "@/utils/filterItems";
 import { BlogCards } from "@/components/layout/blog-cards";
-import getProjects from "@/lib/getProjects";
+import { getRepos } from "@/lib/getRepository";
 import Link from "next/link";
 
 export const revalidate = 60;
 
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
-  const [items, projects] = await Promise.all([
+  const [items, repos] = await Promise.all([
     getProductItems().catch(() => []),
-    getProjects().catch(() => []),
+    getRepos("updated", 5).catch(() => []),
   ]);
   const blogs = getBlogData();
   const recentBlogs = filterItems({ items: blogs, tags: [], sort: "blog-new", limit: 6 });
@@ -45,7 +45,7 @@ export default async function Home() {
         <BlogCards blogs={recentBlogs} />
       </div>
       <Hr />
-      <ProjectPickup open={true} projects={projects} />
+      <ProjectPickup open={true} repos={repos} />
       <Hr />
       <XEmbed username="yhotta240" height={600} />
     </main>

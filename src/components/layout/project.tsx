@@ -1,24 +1,21 @@
-import { OpenGraphEmbed } from "./embed";
 import { Hr } from "./hr";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
 import { ProjectRepositoryTabs } from "./project-repository-tabs";
+import { ProjectPickup } from "./project-pickup";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBug, faFlask, faHandshake, faRocket } from "@fortawesome/free-solid-svg-icons";
-import { iconMap } from "@/components/config/iconMap";
+import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
 import type { Repository } from "@/lib/getRepository";
-import { Issue, Project } from "@/components/types/project";
+import { Issue } from "@/components/types/project";
 
-export function ProjectPage({ title, repos, issues, projects }: { title?: string; repos: Repository[]; issues: Issue[]; projects: Project[] }) {
+export function ProjectPage({ title, repos, issues }: { title?: string; repos: Repository[]; issues: Issue[] }) {
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title || "Projects"} className="" />
       <Hr />
-      <ProjectPickup projects={projects} />
+      <ProjectPickup repos={repos} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="grid content-start gap-6">
@@ -41,63 +38,6 @@ export function ProjectHero({ title, className = "" }: { title: string; descript
       <div>
         <p className="text-muted-foreground text-sm md:text-base">現在進行中のプロジェクトや実験的なアイデアを紹介します．</p>
       </div>
-    </section>
-  );
-}
-
-export function ProjectPickup({ className = "", open = false, projects }: { className?: string; open?: boolean; projects: Project[] }) {
-  return (
-    <section className={cn(className)}>
-      <h2 className="flex items-center gap-2 text-xl font-bold mb-6">
-        <FontAwesomeIcon icon={faRocket} className="text-base text-muted-foreground" aria-hidden="true" />
-        注目のプロジェクト
-      </h2>
-      <div className="grid gap-6 md:grid-cols-2">
-        {projects.map((project, index) => {
-          if (!project || [project.title, project.description, project.githubUrl, project.progress, project.updated].some((v) => v === "")) {
-            return null;
-          }
-          return (
-            <Card key={index} className="justify-between gap-3 rounded-2xl py-4 shadow hover:shadow-md transition">
-              <CardContent className="px-4 space-y-3">
-                <div className="flex gap-2 items-center">
-                  <h3 className="text-xl font-semibold">{project.title}</h3>
-                </div>
-
-                <p className="text-sm text-muted-foreground">{project.description}</p>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="rounded-full">
-                      {tag}
-                    </Badge>
-                  ))}
-                  <Badge className="bg-yellow-100 text-yellow-800" variant="secondary">
-                    {project.progress}
-                  </Badge>
-                </div>
-
-                <p className="text-xs text-muted-foreground">最終更新: {project.updated}</p>
-              </CardContent>
-              <CardFooter className="flex justify-end px-4">
-                <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Button className="" variant="link">
-                    <FontAwesomeIcon icon={iconMap["faGithub"]} />
-                    GitHubで見る →
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
-      {open && (
-        <div className="text-right mt-4 me-3">
-          <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline">
-            すべてのプロジェクトを見る ＞
-          </Link>
-        </div>
-      )}
     </section>
   );
 }
@@ -193,40 +133,32 @@ export function ProjectRepos({ className, title, repos }: { className?: string; 
   );
 }
 
-function ProjectCard({ className = "", repo }: { className?: string; repo: Repository }) {
+function ProjectCard({ repo }: { repo: Repository }) {
   return (
-    <div className={cn(className, "")}>
-      <Card className="h-full gap-3 rounded-2xl py-4 shadow hover:shadow-md transition">
-        <CardContent className="grid grid-cols-3 gap-3 px-4">
-          <div className="col-span-2 space-y-3">
-            <div className="flex gap-2 items-center">
-              <h3 className="text-xl font-semibold">{repo.full_name}</h3>
-            </div>
-            <p className="text-sm text-muted-foreground">{repo.description}</p>
-            <div className="flex flex-wrap gap-2">
-              {(repo.topics ?? []).map((tag: string, index: number) => {
-                if (index > 2) return null;
-                return (
-                  <Badge key={tag} variant="outline" className="rounded-full">
-                    {tag}
-                  </Badge>
-                );
-              })}
-            </div>
-            <p className="text-xs text-muted-foreground">最終更新: {repo.updated_at}</p>
-          </div>
-          <OpenGraphEmbed repo_name={repo.full_name} />
-        </CardContent>
-        <CardFooter className="flex justify-center sm:justify-end px-4">
-          <Link href={repo.html_url} className=" p-0 text-sm" target="_blank" rel="noopener noreferrer">
-            <Button className="cursor-pointer " variant="link">
-              <FontAwesomeIcon className="p-0" icon={iconMap["faGithub"]} />
-              GitHubで見る →
-            </Button>
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+    <article className="flex min-w-0 flex-col gap-3 rounded-md border border-border p-4">
+      <h3 className="flex items-start gap-2 text-base font-semibold">
+        <FontAwesomeIcon icon={faBook} className="mt-1 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <Link href={repo.html_url} target="_blank" rel="noopener noreferrer" className="min-w-0 break-words text-blue-600 hover:underline dark:text-blue-400">
+          {repo.full_name}
+        </Link>
+      </h3>
+      {repo.description && <p className="text-sm leading-relaxed text-muted-foreground">{repo.description}</p>}
+      {(repo.topics ?? []).length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {repo.topics?.slice(0, 3).map((topic) => <Badge key={topic} variant="outline" className="rounded-full">{topic}</Badge>)}
+        </div>
+      )}
+      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs text-muted-foreground">
+        {repo.language && <span>{repo.language}</span>}
+        <Link href={`${repo.html_url}/stargazers`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-foreground" aria-label={`${repo.name}のスター ${repo.stargazers_count ?? 0}件`}>
+          <FontAwesomeIcon icon={faStar} aria-hidden="true" />{repo.stargazers_count ?? 0}
+        </Link>
+        <Link href={`${repo.html_url}/forks`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-foreground" aria-label={`${repo.name}のフォーク ${repo.forks_count ?? 0}件`}>
+          <FontAwesomeIcon icon={faCodeFork} aria-hidden="true" />{repo.forks_count ?? 0}
+        </Link>
+        <span className="sm:ml-auto">更新 {repo.updated_at?.slice(0, 10)}</span>
+      </div>
+    </article>
   );
 }
 
