@@ -2,9 +2,7 @@
 
 import { Octokit } from "@octokit/core";
 import { components } from "@octokit/openapi-types";
-import type { FeaturedRepository, Issue } from "@/types/project";
-
-export type Repository = Awaited<ReturnType<typeof getRepos>>[number];
+import type { FeaturedRepository, Issue, Repository } from "@/types/project";
 
 type SortType = "created" | "updated" | "pushed" | "full_name";
 
@@ -21,7 +19,7 @@ function isPublicRepository(repo: { private: boolean; visibility?: string }) {
   return repo.private === false && (repo.visibility === undefined || repo.visibility === "public");
 }
 
-export async function getRepos(sort?: SortType, limit?: number) {
+export async function getRepos(sort?: SortType, limit?: number): Promise<Repository[]> {
 
   const params = {
     sort,

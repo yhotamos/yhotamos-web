@@ -13,5 +13,11 @@ export type FeaturedRepository = {
   html_url: string;
   description: string | null;
   topics?: string[];
-  updated_at: string | null;
+  updated_at?: string | null;
+};
+
+export type Repository = FeaturedRepository & {
+  language?: string | null;
+  stargazers_count?: number;
+  forks_count?: number;
 };

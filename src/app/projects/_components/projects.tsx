@@ -7,8 +7,7 @@ import { ProjectPickup } from "@/components/layout/project-pickup";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
-import type { Repository } from "@/lib/getRepository";
-import type { FeaturedRepository, Issue } from "@/types/project";
+import type { FeaturedRepository, Issue, Repository } from "@/types/project";
 
 export function ProjectPage({ title, repos, featuredRepos, issues }: { title?: string; repos: Repository[]; featuredRepos: FeaturedRepository[]; issues: Issue[] }) {
   return (
