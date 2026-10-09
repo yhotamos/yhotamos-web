@@ -1,4 +1,16 @@
-{
+type ContactIcon = {
+  type: "fontAwesome" | "image";
+  value: string;
+};
+
+type ContactConfig = {
+  title: string;
+  ja: string;
+  description: string;
+  items: { title: string; path: string; icon: ContactIcon | null; external: boolean }[];
+};
+
+export const contact: ContactConfig = {
   "title": "Contact",
   "ja": "お問い合わせ",
   "description": "Contact us for more information",
@@ -46,4 +58,4 @@
       "external": true
     }
   ]
-}
+};

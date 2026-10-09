@@ -2,7 +2,7 @@
 
 import { Octokit } from "@octokit/core";
 import { components } from "@octokit/openapi-types";
-import { Issue } from "@/components/types/project";
+import { Issue } from "@/types/project";
 
 export type Repository = Awaited<ReturnType<typeof getRepos>>[number];
 

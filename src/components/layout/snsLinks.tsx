@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { iconMap } from "@/components/config/iconMap";
+import { iconMap } from "@/config/iconMap";
 import { Button } from "@/components/ui/button";
-import contact from "@/data/contact.json";
+import { contact } from "@/config/contact";
 import Image from "next/image";
 import Link from "next/link";
 

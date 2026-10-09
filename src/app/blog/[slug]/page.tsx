@@ -4,7 +4,7 @@ import { BlogBody } from "./_components/body";
 import { Markdown } from "@/components/markdown/markdown";
 import NotFoundPage from "@/components/layout/notFound";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
-import { Blog } from "@/components/types/blog";
+import { Blog } from "@/types/blog";
 import Image from "next/image";
 import Link from "next/link";
 import { getBlogData } from "@/lib/getBlog";

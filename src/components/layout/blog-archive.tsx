@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { iconMap } from "@/components/config/iconMap";
+import { iconMap } from "@/config/iconMap";
 import { cn } from "@/lib/utils";
-import { Blog } from "@/components/types/blog";
+import { Blog } from "@/types/blog";
 
 export function BlogArchive({
   className,

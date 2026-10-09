@@ -8,10 +8,10 @@ import { faMoon, faSun, faBars } from "@fortawesome/free-solid-svg-icons";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { navigationItems as navItems } from "@/components/config/navigation";
-import { iconMap } from "@/components/config/iconMap";
+import { navigationItems as navItems } from "@/config/navigation";
+import { iconMap } from "@/config/iconMap";
 import { nicoMoji } from "@/app/fonts";
-import { NavigationItem } from "../types/navigationItem";
+import { NavigationItem } from "@/types/navigationItem";
 
 export default function Header() {
   const pathname = usePathname();

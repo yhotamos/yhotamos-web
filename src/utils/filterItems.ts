@@ -1,4 +1,4 @@
-import { Blog } from "@/components/types/blog";
+import { Blog } from "@/types/blog";
 
 export type Filter = {
   filter?: string;

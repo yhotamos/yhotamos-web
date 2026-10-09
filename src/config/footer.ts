@@ -1,4 +1,10 @@
-[
+type FooterSection = {
+  title: string;
+  description: string;
+  items: { title: string; path: string; external: boolean }[];
+};
+
+export const footerSections: FooterSection[] = [
   {
     "title": "About",
     "description": "About the project",
@@ -88,4 +94,4 @@
       }
     ]
   }
-]
+];

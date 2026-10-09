@@ -5,7 +5,7 @@ import { faArrowUpRightFromSquare, faBug, faStar } from "@fortawesome/free-solid
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { Product } from "@/components/types/product";
+import type { Product } from "@/types/product";
 import { DocHtml } from "./document";
 import { ProductDocumentTabs } from "./productDocumentTabs";
 

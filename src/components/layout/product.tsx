@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { CategoryFilter } from "@/components/ui/category-filter";
-import { Product } from "@/components/types/product";
+import { Product } from "@/types/product";
 import Image from "next/image";
 import { ProductCompact, ProductRows } from "./product-views";
 import { ChevronDown } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import type { FeedbackEntry, SiteFeedbackType } from "@/components/types/feedback";
+import type { FeedbackEntry, SiteFeedbackType } from "@/types/feedback";
 
 interface FormState {
   type: SiteFeedbackType;

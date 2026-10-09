@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { cn } from "@/lib/utils";
-import { Blog } from "@/components/types/blog";
+import { Blog } from "@/types/blog";
 
 export function BlogCards({ title, className, blogs, currentTab }: { title?: string; className?: string; blogs?: Blog[]; currentTab?: string }) {
   const gridClass = currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";

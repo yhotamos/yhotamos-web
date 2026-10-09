@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { supportItems } from "@/components/config/supportItem";
+import { supportItems } from "@/config/supportItem";
 
 export function checkSupportEnabled(href: string | undefined): void {
   if (!href) notFound();

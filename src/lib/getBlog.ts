@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import type { Blog, BlogBodyData, Changelog } from "@/components/types/blog";
+import type { Blog, BlogBodyData, Changelog } from "@/types/blog";
 
 const blogPathName = "content/blog";
 const blogIndexPath = path.join(blogPathName, "blogIndex.json");

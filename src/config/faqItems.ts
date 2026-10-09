@@ -1,4 +1,4 @@
-import { FAQItem } from '@/components/types/support';
+import { FAQItem } from '@/types/support';
 
 export const faqItems: FAQItem[] = [
   {

@@ -21,9 +21,3 @@ export type IssueEntry = {
   attachmentMimeType?: string;
 };
 
-export type ProductInfo = {
-  repo_name: string;
-  name: string;
-  icon_url: string;
-  category: string;
-};

@@ -9,7 +9,7 @@ import { filterItems, type SortType } from "@/utils/filterItems";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { Blog, Changelog, QiitaBlog } from "@/components/types/blog";
+import { Blog, Changelog, QiitaBlog } from "@/types/blog";
 import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
 import { BlogSectionHeader } from "@/components/layout/blog-section-header";
 import { BlogCards } from "@/components/layout/blog-cards";

@@ -1,4 +1,4 @@
-import { SupportItem } from "../types/support";
+import { SupportItem } from "@/types/support";
 
 export const supportItems: SupportItem[] = [
   { title: "FAQ", href: "/support/faq", description: "よくある質問と回答を参照できます．", enabled: false },

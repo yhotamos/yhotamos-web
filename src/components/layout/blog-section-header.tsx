@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { iconMap } from "@/components/config/iconMap";
+import { iconMap } from "@/config/iconMap";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SortType } from "@/utils/filterItems";

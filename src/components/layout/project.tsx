@@ -8,7 +8,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
 import type { Repository } from "@/lib/getRepository";
-import { Issue } from "@/components/types/project";
+import { Issue } from "@/types/project";
 
 export function ProjectPage({ title, repos, issues }: { title?: string; repos: Repository[]; issues: Issue[] }) {
   return (

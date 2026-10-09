@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { appendFeedback } from "@/lib/googleSheets";
-import type { FeedbackEntry } from "@/components/types/feedback";
+import type { FeedbackEntry } from "@/types/feedback";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

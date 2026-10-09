@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { getProductItems } from "@/lib/googleSheets";
-import { Product } from "../types/product";
+import { Product } from "@/types/product";
 import Image from "next/image";
 
 export default async function Release({ title }: { title: string }) {

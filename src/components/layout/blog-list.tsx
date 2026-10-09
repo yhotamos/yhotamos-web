@@ -1,11 +1,11 @@
 "use client";
 
-import type { QiitaBlog } from "@/components/types/blog";
+import type { QiitaBlog } from "@/types/blog";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { FormattedDate } from "@/components/ui/formatted-date";
-import { iconMap } from "@/components/config/iconMap";
+import { iconMap } from "@/config/iconMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { cn } from "@/lib/utils";
 

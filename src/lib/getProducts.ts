@@ -1,5 +1,5 @@
 import { getProductItems } from "@/lib/googleSheets";
-import { Product } from "@/components/types/product";
+import { Product } from "@/types/product";
 
 export const getProductCategoriesByItems = async (items: Product[], setItem: string) => {
   const categories: string[] = items.map((item: Product) => item.category).filter(Boolean).map((c) => c.trim());

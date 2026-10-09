@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import type { FAQItem as FAQEntry } from "@/components/types/support";
-import { faqItems } from "@/components/config/faqItems";
+import type { FAQItem as FAQEntry } from "@/types/support";
+import { faqItems } from "@/config/faqItems";
 import clsx from "clsx";
 
 export default function FAQ() {

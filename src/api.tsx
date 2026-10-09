@@ -1,4 +1,4 @@
-import type { QiitaBlog } from "@/components/types/blog";
+import type { QiitaBlog } from "@/types/blog";
 
 export const getMarkdown = async (url: string) => {
   const response = await fetch(url);

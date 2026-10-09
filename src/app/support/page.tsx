@@ -3,8 +3,8 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import Link from "next/link";
 import clsx from "clsx";
 import { Icon } from "@radix-ui/react-select";
-import { supportItems } from "@/components/config/supportItem";
-import type { SupportItem } from "@/components/types/support";
+import { supportItems } from "@/config/supportItem";
+import type { SupportItem } from "@/types/support";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Support", href: "/support" }];
 

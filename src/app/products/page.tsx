@@ -3,7 +3,7 @@ import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { ProductPage } from "@/components/layout/product";
 import { getProductItems } from "@/lib/googleSheets";
 import { getProductCategories } from "@/lib/getProducts";
-import { Product } from "@/components/types/product";
+import { Product } from "@/types/product";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Products", href: "/products" }];
 

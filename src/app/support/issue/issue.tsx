@@ -2,7 +2,14 @@
 import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import type { IssueEntry, ProductInfo, ToolFeedbackType } from "@/components/types/feedback";
+import type { IssueEntry, ToolFeedbackType } from "@/types/feedback";
+
+type ProductInfo = {
+  repo_name: string;
+  name: string;
+  icon_url: string;
+  category: string;
+};
 
 interface FormState {
   toolName: string;

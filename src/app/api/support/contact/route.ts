@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { appendContact } from "@/lib/googleSheets";
-import type { ContactEntry } from "@/components/types/contact";
+import type { ContactEntry } from "@/types/contact";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

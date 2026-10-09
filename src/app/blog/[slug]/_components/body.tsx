@@ -2,10 +2,10 @@
 
 import { getTocFromMarkdown } from "@/utils/getTocFromMarkdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { iconMap } from "@/components/config/iconMap";
+import { iconMap } from "@/config/iconMap";
 import clsx from "clsx";
 import { shareFacebook, shareHatena, shareX } from "@/utils/share";
-import type { Blog, BlogBodyData } from "@/components/types/blog";
+import type { Blog, BlogBodyData } from "@/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { BlogComments } from "./comments";

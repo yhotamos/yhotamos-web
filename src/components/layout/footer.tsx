@@ -1,14 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import json from "@/data/footer.json";
+import { footerSections } from "@/config/footer";
 import { SnsLinks } from "./snsLinks";
 import Link from "next/link";
 import { nicoMoji } from "@/app/fonts";
 
 export default function Footer() {
-  // ../data/footer.jsonから取得
-  const footerData = json;
-
   return (
     <footer className="mt-10 bg-white dark:bg-background border-t border-gray-200 dark:border-gray-700 pb-[6rem]">
       <div className="pt-[3rem] max-w-7xl mx-auto ">
@@ -25,7 +22,7 @@ export default function Footer() {
           </div>
 
           <div className="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 ">
-            {footerData.map((item, index) => (
+            {footerSections.map((item, index) => (
               <div key={index}>
                 <div className="text-secondary-foreground/70 dark:text-gray-400">{item.title}</div>
                 <div className="my-2 flex flex-col gap-1">

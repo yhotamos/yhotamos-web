@@ -1,7 +1,7 @@
-import type { ContactEntry } from "@/components/types/contact";
-import type { FeedbackEntry, IssueEntry } from "@/components/types/feedback";
-import type { QiitaBlog } from "@/components/types/blog";
-import type { Product } from "@/components/types/product";
+import type { ContactEntry } from "@/types/contact";
+import type { FeedbackEntry, IssueEntry } from "@/types/feedback";
+import type { QiitaBlog } from "@/types/blog";
+import type { Product } from "@/types/product";
 import { auth, sheets } from "@googleapis/sheets";
 import { cache } from "react";
 
