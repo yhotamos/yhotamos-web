@@ -1,9 +1,11 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { iconMap } from "@/config/iconMap";
 import clsx from "clsx";
-import { shareFacebook, shareHatena, shareX } from "@/utils/share";
+import { shareHatena, shareX } from "@/utils/share";
+import { copyText } from "@/utils/copyText";
 import type { Blog } from "@/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -95,14 +97,24 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; commentCount: n
 };
 
 const BlogShare: React.FC<{ title: string; tags: string[] }> = ({ title, tags }) => {
+  async function handleCopyUrl() {
+    try {
+      await copyText(window.location.href);
+    } catch (error) {
+      console.error("URLのコピーに失敗しました", error);
+    }
+  }
+
   const share = [
     { type: "fontAwesome", icon: "faX", title: "X/Twitterでシェアする", onClick: () => shareX({ text: title, tags: tags }) },
-    { type: "fontAwesome", icon: "faFacebook", title: "Facebookでシェアする", onClick: () => shareFacebook() },
     { type: "url", icon: "hatena", title: "はてなブックマークに追加", onClick: () => shareHatena() },
   ];
 
   return (
     <div className="flex items-center gap-1">
+      <button type="button" onClick={handleCopyUrl} aria-label="URLをコピー" title="URLをコピー" className="inline-flex size-11 items-center justify-center rounded hover:bg-muted [&_svg]:text-xl">
+        <FontAwesomeIcon icon={faLink} style={{ fontSize: 16 }} aria-hidden="true" />
+      </button>
       {share.map((item, index) =>
         item.type === "fontAwesome" ? (
           <button key={index} type="button" onClick={item.onClick} aria-label={item.title} title={item.title} className="inline-flex size-11 items-center justify-center rounded hover:bg-muted [&_svg]:text-xl">

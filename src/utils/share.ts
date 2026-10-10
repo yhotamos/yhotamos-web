@@ -9,15 +9,6 @@ export const shareX = ({ text, tags }: { text: string; tags: string[] }) => {
   window.open(shareUrl, "_blank");
 };
 
-export const shareFacebook = () => {
-  if (typeof window === "undefined") return;
-
-  const url = window.location.href;
-  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-
-  window.open(shareUrl, "_blank", "noopener,noreferrer");
-};
-
 export const shareHatena = () => {
   if (typeof window === "undefined") return;
 
