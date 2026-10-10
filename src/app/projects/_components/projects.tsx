@@ -7,28 +7,28 @@ import { ProjectPickup } from "@/components/layout/project-pickup";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
-import type { FeaturedRepository, Issue, Repository } from "@/types/project";
-import { IssuePickup } from "./issue-pickup";
+import type { FeaturedRepository, Issue, PullRequest, Repository } from "@/types/project";
+import { IssuePickup, PRPickup } from "./activity-pickup";
 
 interface ProjectPageProps {
   title: string;
   repos: Repository[];
   featuredRepos: FeaturedRepository[];
   issues: Issue[];
+  pullRequests: PullRequest[];
 }
 
-export function ProjectPage({ title, repos, featuredRepos, issues }: ProjectPageProps) {
+export function ProjectPage({ title, repos, featuredRepos, issues, pullRequests }: ProjectPageProps) {
   return (
     <div className="w-full space-y-10">
       <ProjectHero title={title} className="" />
       <ProjectPickup repos={featuredRepos} />
       <Hr />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="grid content-start gap-6">
-          <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
-          <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
-        </div>
-        <IssuePickup issues={issues} className="rounded-2xl border border-muted-foreground/50 p-4" />
+      <div className="grid grid-cols-1 items-start gap-x-3 gap-y-6 md:grid-cols-2">
+        <Labs className="rounded-2xl border border-muted-foreground/50 p-4" />
+        <Contribute className="rounded-2xl border border-muted-foreground/50 p-4" />
+        <IssuePickup items={issues} className="rounded-2xl border border-muted-foreground/50 p-4" />
+        <PRPickup items={pullRequests} className="rounded-2xl border border-muted-foreground/50 p-4" />
       </div>
       <Hr />
       <ProjectRepos repos={repos} />

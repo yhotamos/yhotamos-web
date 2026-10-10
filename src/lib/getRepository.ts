@@ -3,7 +3,7 @@
 import { Octokit } from "@octokit/core";
 import type { components } from "@octokit/openapi-types";
 import { repositorySources } from "@/config/github";
-import type { FeaturedRepository, Issue, Repository, RepositorySort } from "@/types/project";
+import type { FeaturedRepository, Issue, PullRequest, RepositoryActivity, Repository, RepositorySort } from "@/types/project";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -80,9 +80,9 @@ export const getIssues = async (repo: components["schemas"]["repository"], limit
 };
 
 /**
- * 設定したアカウントごとに最新issueを並列取得し、更新順で統合する。
+ * 設定したアカウントごとにIssueまたはPRを並列取得し、更新順で統合する。
  */
-export async function getRecentIssues(limit = 10): Promise<Issue[]> {
+async function getRecentActivity(kind: "issue" | "pr", limit: number): Promise<RepositoryActivity[]> {
   const searchOpts = {
     sort: "updated" as const,
     order: "desc" as const,
@@ -92,34 +92,42 @@ export async function getRecentIssues(limit = 10): Promise<Issue[]> {
 
   const results = await Promise.allSettled(repositorySources.map((source) =>
     octokit.request("GET /search/issues", {
-      q: `is:issue is:public ${source.type}:${source.login}`,
+      q: `is:${kind} is:public ${source.type}:${source.login}`,
       ...searchOpts,
     })
   ));
 
-  const toIssue = (item: components["schemas"]["issue-search-result-item"]): Issue => ({
+  const toActivity = (item: components["schemas"]["issue-search-result-item"]): RepositoryActivity => ({
     title: item.title,
     url: item.html_url,
     labels: item.labels.map((label) => label.name ?? ""),
     updated: item.updated_at ?? "",
   });
 
-  const issues = results.flatMap((result, index) => {
-    if (result.status === "fulfilled") return result.value.data.items.map(toIssue);
-    console.error(`[getRecentIssues] ${repositorySources[index].login}: issueの取得に失敗しました`);
+  const activities = results.flatMap((result, index) => {
+    if (result.status === "fulfilled") return result.value.data.items.map(toActivity);
+    console.error(`[getRecentActivity] ${repositorySources[index].login}: ${kind}の取得に失敗しました`);
     return [];
   });
 
   // 重複排除してupdated順に並べ直す
   const seen = new Set<string>();
-  return issues
-    .filter((issue) => {
-      if (seen.has(issue.url)) return false;
-      seen.add(issue.url);
+  return activities
+    .filter((activity) => {
+      if (seen.has(activity.url)) return false;
+      seen.add(activity.url);
       return true;
     })
     .sort((a, b) => b.updated.localeCompare(a.updated))
     .slice(0, limit);
+}
+
+export async function getRecentIssues(limit = 10): Promise<Issue[]> {
+  return getRecentActivity("issue", limit);
+}
+
+export async function getRecentPullRequests(limit = 10): Promise<PullRequest[]> {
+  return getRecentActivity("pr", limit);
 }
 
 export async function getReposWithIssues(sort?: RepositorySort, limit?: number): Promise<{ repos: Repository[]; issues: Issue[] }> {

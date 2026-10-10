@@ -1,11 +1,14 @@
 export type RepositorySort = "created" | "updated" | "pushed" | "full_name";
 
-export type Issue = {
+export type RepositoryActivity = {
   title: string;
   url: string;
   labels: string[];
   updated: string;
 };
+
+export type Issue = RepositoryActivity;
+export type PullRequest = RepositoryActivity;
 
 export type FeaturedRepository = {
   id: number;
