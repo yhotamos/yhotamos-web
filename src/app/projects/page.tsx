@@ -21,7 +21,7 @@ export default async function Projects() {
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <ProjectPage repos={repos} featuredRepos={featuredRepos} issues={issues} />
+      <ProjectPage title={pathnames[0].name} repos={repos} featuredRepos={featuredRepos} issues={issues} />
     </main>
   );
 }

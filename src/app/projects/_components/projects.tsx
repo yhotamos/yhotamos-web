@@ -6,14 +6,21 @@ import { ProjectRepositoryTabs } from "./repository-tabs";
 import { ProjectPickup } from "@/components/layout/project-pickup";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faBug, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
 import type { FeaturedRepository, Issue, Repository } from "@/types/project";
+import { IssuePickup } from "./issue-pickup";
 
-export function ProjectPage({ title, repos, featuredRepos, issues }: { title?: string; repos: Repository[]; featuredRepos: FeaturedRepository[]; issues: Issue[] }) {
+interface ProjectPageProps {
+  title: string;
+  repos: Repository[];
+  featuredRepos: FeaturedRepository[];
+  issues: Issue[];
+}
+
+export function ProjectPage({ title, repos, featuredRepos, issues }: ProjectPageProps) {
   return (
     <div className="w-full space-y-10">
-      <ProjectHero title={title || "Projects"} className="" />
-      <Hr />
+      <ProjectHero title={title} className="" />
       <ProjectPickup repos={featuredRepos} />
       <Hr />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -37,37 +44,6 @@ export function ProjectHero({ title, className = "" }: { title: string; descript
       <div>
         <p className="text-muted-foreground text-sm md:text-base">現在進行中のプロジェクトや実験的なアイデアを紹介します．</p>
       </div>
-    </section>
-  );
-}
-
-export function IssuePickup({ className = "", issues = [] }: { className?: string; issues?: Issue[] }) {
-  return (
-    <section className={className}>
-      <h2 className="flex items-center gap-2 text-2xl font-bold mb-4">
-        <FontAwesomeIcon icon={faBug} className="text-base text-muted-foreground" aria-hidden="true" />
-        Picked Issues
-      </h2>
-      <ul className="space-y-3">
-        {issues &&
-          issues.map((issue) => {
-            return (
-              <li key={issue.url} className="text-sm">
-                <a href={issue.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                  {issue.title}
-                </a>
-                <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
-                  {issue.labels.map((label) => (
-                    <span key={label} className="text-gray-100 dark:text-gray-800 bg-gray-600 dark:bg-gray-200 px-2 py-0.5 rounded">
-                      {label}
-                    </span>
-                  ))}
-                  <span>更新日: {issue.updated}</span>
-                </div>
-              </li>
-            );
-          })}
-      </ul>
     </section>
   );
 }
