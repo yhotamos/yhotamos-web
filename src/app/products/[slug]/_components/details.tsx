@@ -6,7 +6,7 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/types/product";
-import { DocHtml } from "./document";
+import { DocHtml, ProductDocumentLayout } from "./document";
 import { ProductDocumentTabs } from "./document-tabs";
 
 export function ProductDetails({ item }: { item: Product }) {
@@ -14,7 +14,7 @@ export function ProductDetails({ item }: { item: Product }) {
     <div className="mt-5">
       <ProductHeading item={item} />
       <div className="mt-6 border-t pt-5">
-        <ProductDocumentTabs overview={<Overview item={item} />} usage={item.repo_usage && <Usage item={item} />} information={<ProductFacts item={item} />} />
+        <ProductDocumentTabs overview={<Overview item={item} />} usage={item.repo_usage && <Usage item={item} />} />
       </div>
     </div>
   );
@@ -77,11 +77,11 @@ function ProductFacts({ item }: { item: Product }) {
   ].filter((fact) => fact.value);
 
   return (
-    <section aria-labelledby="product-info-title" className="rounded-lg border bg-card p-4">
-      <h2 id="product-info-title" className="mb-3 text-lg font-semibold">プロダクト情報</h2>
+    <section aria-label="プロダクト情報" className="rounded-lg border bg-card p-3">
+      <h2 className="mb-2 text-lg font-semibold">プロダクト情報</h2>
       <dl className="divide-y text-sm">
         {facts.map((fact) => (
-          <div key={fact.label} className="grid grid-cols-[5rem_minmax(0,1fr)] gap-4 py-3">
+          <div key={fact.label} className="grid grid-cols-[5rem_minmax(0,1fr)] gap-3 py-2">
             <dt className="text-muted-foreground">{fact.label}</dt>
             <dd className="break-words">{fact.value}</dd>
           </div>
@@ -92,18 +92,31 @@ function ProductFacts({ item }: { item: Product }) {
 }
 
 function Overview({ item }: { item: Product }) {
+  const information = <ProductFacts item={item} />;
+
+  if (!item.repo_doc) {
+    return (
+      <ProductDocumentLayout information={information}>
+        <p className="leading-relaxed text-muted-foreground">{item.overview || item.description}</p>
+      </ProductDocumentLayout>
+    );
+  }
+
   return (
-    <section>
-      {item.repo_doc && <DocHtml src={item.repo_doc} notFoundFallback={<p className="text-sm text-muted-foreground">概要の本文を読み込めませんでした。ストアまたはGitHubをご覧ください。</p>} />}
-      {!item.repo_doc && <p className="leading-relaxed text-muted-foreground">{item.overview || item.description}</p>}
-    </section>
+    <DocHtml
+      src={item.repo_doc}
+      information={information}
+      notFoundFallback={<p className="text-sm text-muted-foreground">概要の本文を読み込めませんでした。ストアまたはGitHubをご覧ください。</p>}
+    />
   );
 }
 
 function Usage({ item }: { item: Product }) {
   return (
-    <section>
-      <DocHtml src={item.repo_usage} notFoundFallback={<p className="text-sm text-muted-foreground">使い方の本文を読み込めませんでした。GitHubのドキュメントをご覧ください。</p>} />
-    </section>
+    <DocHtml
+      src={item.repo_usage}
+      information={<ProductFacts item={item} />}
+      notFoundFallback={<p className="text-sm text-muted-foreground">使い方の本文を読み込めませんでした。GitHubのドキュメントをご覧ください。</p>}
+    />
   );
 }
