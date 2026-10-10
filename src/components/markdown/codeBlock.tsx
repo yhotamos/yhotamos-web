@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ComponentPropsWithoutRef } from "reac
 import { Check, Copy, WrapText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { copyText } from "@/utils/copyText";
 
 type CodeBlockProps = ComponentPropsWithoutRef<"pre"> & {
   codeTheme?: "dark" | "adaptive";
@@ -68,27 +69,4 @@ export function CodeBlock({ children, className, codeTheme = "dark" }: CodeBlock
       <span role="status" className="sr-only">{copyStatus !== "idle" && copyLabel}</span>
     </div>
   );
-}
-
-async function copyText(text: string) {
-  if (navigator.clipboard) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  // HTTPでのスマホ確認ではClipboard APIが使えないため，従来のコピー処理を使う
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.readOnly = true;
-  textarea.style.position = "fixed";
-  textarea.style.opacity = "0";
-  const previousFocus = document.activeElement;
-  document.body.appendChild(textarea);
-  textarea.select();
-  try {
-    if (!document.execCommand("copy")) throw new Error("Copy failed");
-  } finally {
-    textarea.remove();
-    if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true });
-  }
 }
