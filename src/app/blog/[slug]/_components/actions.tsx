@@ -8,7 +8,7 @@ import type { Blog } from "@/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-export const BlogActions: React.FC<{ blogId: string; data: Blog; className?: string }> = ({ blogId, data, className }) => {
+export const BlogActions: React.FC<{ blogId: string; data: Blog; commentCount: number; className?: string }> = ({ blogId, data, commentCount, className }) => {
   const [likes, setLikes] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -53,8 +53,8 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; className?: str
     setIsLiked(true);
   };
 
-  return (
-    <div className={clsx("flex flex-wrap items-center justify-between gap-1 py-1 text-sm", className)}>
+  const toolbar = (
+    <div className={clsx("flex flex-wrap items-center justify-between gap-2 py-1 text-base", className)}>
       <div className="flex items-center gap-1">
         <button
           type="button"
@@ -62,7 +62,7 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; className?: str
           aria-label="いいねする"
           aria-pressed={isLiked}
           title="いいねする"
-          className={clsx("inline-flex h-9 items-center gap-2 rounded px-2 hover:bg-muted", isLiked && "text-pink-500")}
+          className={clsx("inline-flex h-11 items-center gap-2 rounded px-3 hover:bg-muted [&_svg]:text-xl", isLiked && "text-pink-500")}
         >
           <FontAwesomeIcon icon={iconMap["faThumbsUp"]} aria-hidden="true" />
           <span>{likes}</span>
@@ -72,14 +72,25 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; className?: str
           onClick={() => moveCommentForm("#comment-form")}
           aria-label="コメントする"
           title="コメントする"
-          className="inline-flex h-9 items-center gap-2 rounded px-2 hover:bg-muted"
+          className="inline-flex h-11 items-center gap-2 rounded px-3 hover:bg-muted [&_svg]:text-xl"
         >
           <FontAwesomeIcon icon={iconMap["faCommentDots"]} aria-hidden="true" />
-          <span id="comment-count" />
+          <span>{commentCount}</span>
         </button>
       </div>
       <BlogShare title={title} tags={tags} />
     </div>
+  );
+
+  return (
+    <>
+      {toolbar}
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-7xl justify-end px-5">
+        <div className="pointer-events-auto max-w-full rounded-full border bg-background px-2 shadow-sm [&>div]:text-sm [&_button]:h-9 [&_button]:min-w-9 [&_button]:w-auto [&_button]:px-2 [&_button_svg]:text-lg [&_img]:w-5 [&_img]:h-auto">
+          {toolbar}
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -94,20 +105,20 @@ const BlogShare: React.FC<{ title: string; tags: string[] }> = ({ title, tags })
     <div className="flex items-center gap-1">
       {share.map((item, index) =>
         item.type === "fontAwesome" ? (
-          <button key={index} type="button" onClick={item.onClick} aria-label={item.title} title={item.title} className="inline-flex size-9 items-center justify-center rounded hover:bg-muted">
+          <button key={index} type="button" onClick={item.onClick} aria-label={item.title} title={item.title} className="inline-flex size-11 items-center justify-center rounded hover:bg-muted [&_svg]:text-xl">
             <FontAwesomeIcon icon={iconMap[item.icon]} aria-hidden="true" />
           </button>
         ) : (
           <button
             key={index}
             type="button"
-            className="hatena-bookmark-button inline-flex size-9 items-center justify-center rounded hover:bg-muted"
+            className="hatena-bookmark-button inline-flex size-11 items-center justify-center rounded hover:bg-muted"
             data-hatena-bookmark-layout="touch-counter"
             title={item.title}
             aria-label={item.title}
             onClick={item.onClick}
           >
-            <Image src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png" alt={item.title} width={20} height={20} unoptimized />
+            <Image src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png" alt={item.title} width={24} height={24} unoptimized />
           </button>
         ),
       )}

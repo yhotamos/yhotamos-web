@@ -12,7 +12,7 @@ type Comment = {
   likes: number;
 };
 
-export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({ blogId, className }) => {
+export const BlogComments: React.FC<{ blogId: string; className?: string; onCountChange?: (count: number) => void }> = ({ blogId, className, onCountChange }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [author, setAuthor] = useState("");
   const [input, setInput] = useState("");
@@ -27,16 +27,13 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
       const data = await res.json();
       if (!active || !data.ok) return;
       // コメント数
-      const commentCount = document.getElementById("comment-count");
-      if (commentCount) {
-        commentCount.textContent = String(data.comments.length);
-      }
+      onCountChange?.(data.comments.length);
 
       setComments(data.comments);
     };
     load();
     return () => { active = false; };
-  }, [blogId]);
+  }, [blogId, onCountChange]);
 
   // コメント送信
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,10 +64,7 @@ export const BlogComments: React.FC<{ blogId: string; className?: string }> = ({
       setErrorMsg("");
       setInput(""); // 入力欄クリア
       // コメント数
-      const commentCount = document.getElementById("comment-count");
-      if (commentCount) {
-        commentCount.textContent = String(comments.length + 1);
-      }
+      onCountChange?.(comments.length + 1);
     } else {
       setSuccessMsg("");
       setErrorMsg("投稿に失敗しました．");
