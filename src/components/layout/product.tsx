@@ -31,22 +31,22 @@ export function ProductGrid({ items, title, filter, sort, limit, isOpen = false 
       >
         {filteredItems.map((item) => (
           <li key={item.repo_name} className="min-w-0">
-            <Link href={`/products/${item.repo_name}`} className="block h-full overflow-hidden rounded-lg border hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2">
-              <div className="relative aspect-video w-full">
+            <Link href={`/products/${item.repo_name}`} className="group block h-full overflow-hidden rounded-lg border hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2">
+              <div className="relative aspect-video w-full overflow-hidden">
                 <Image
                   src={item.thumbnail}
                   alt=""
                   fill
                   sizes="(min-width: 1280px) 295px, (min-width: 1024px) calc(25vw - 25px), (min-width: 768px) calc((100vw - 88px) / 3), (min-width: 640px) calc(50vw - 38px), calc(100vw - 64px)"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-200 group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                 />
               </div>
-              <div className="space-y-3 p-4">
+              <div className="space-y-2 p-3">
                 <div className="flex items-start gap-2">
                   <Image src={item.icon_url} alt="" width={24} height={24} className="size-6 shrink-0 rounded object-contain" />
-                  <h3 className="min-h-10 line-clamp-2 text-sm font-medium break-words">{item.name}</h3>
+                  <h3 className="line-clamp-2 text-sm font-medium break-words">{item.name}</h3>
                 </div>
-                <p className="min-h-10 line-clamp-2 text-sm text-muted-foreground break-words">{item.description}</p>
+                <p className="line-clamp-1 text-sm text-muted-foreground break-words">{item.description}</p>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   <span>{item.category}</span>
                   <span>v{item.version}</span>

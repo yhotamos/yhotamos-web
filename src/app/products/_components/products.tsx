@@ -2,9 +2,10 @@
 
 import React, { Suspense, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faGrip, faBars, faAlignLeft, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faTable, faGrip, faAlignLeft, faImage } from "@fortawesome/free-solid-svg-icons";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -12,17 +13,16 @@ import { CategoryFilter } from "@/components/ui/category-filter";
 import type { Product } from "@/types/product";
 import { ProductGrid } from "@/components/layout/product";
 import { filterProducts, type ProductFilter } from "@/utils/filterProducts";
-import { ProductCompact, ProductRows } from "./views";
+import { ProductRows, ProductThumbnails } from "./views";
 import { ChevronDown } from "lucide-react";
 
 export { ProductPage };
 
 const viewOptions = [
+  { value: "simple", label: "シンプル", icon: faAlignLeft },
   { value: "thumbnail", label: "サムネイル", icon: faImage },
   { value: "grid", label: "グリッド", icon: faGrip },
-  { value: "list", label: "リスト", icon: faList },
-  { value: "simple", label: "シンプル", icon: faAlignLeft },
-  { value: "compact", label: "コンパクト", icon: faBars },
+  { value: "table", label: "テーブル", icon: faTable },
 ] as const;
 
 type ProductView = (typeof viewOptions)[number]["value"];
@@ -84,7 +84,7 @@ export function ProductHero({ title, description, className = "" }: { title: str
 }
 
 function ProductContents({ items, className, categories }: { items?: Product[]; className?: string; categories?: string[] }) {
-  const [view, setView] = useState<ProductView>("thumbnail");
+  const [view, setView] = useState<ProductView>("simple");
   const [sort, setSort] = useState("sort-popular");
   // iOS Chromeが初期HTMLの隠しselectに属性を追加するため，Selectはhydration後に描画する
   const hasHydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
@@ -144,10 +144,9 @@ function ProductContents({ items, className, categories }: { items?: Product[]; 
       </div>
 
       {view === "grid" && <ProductGrid items={filteredItems} />}
-      {view === "list" && <ProductList items={filteredItems} />}
+      {view === "table" && <ProductList items={filteredItems} />}
       {view === "simple" && <ProductRows items={filteredItems} />}
-      {view === "compact" && <ProductCompact items={filteredItems} />}
-      {view === "thumbnail" && <ProductRows items={filteredItems} thumbnails />}
+      {view === "thumbnail" && <ProductThumbnails items={filteredItems} />}
     </div>
   );
 }
@@ -161,6 +160,7 @@ function ProductList({ items, title }: ProductFilter & { items: Product[]; title
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10"><span className="sr-only">アイコン</span></TableHead>
                 <TableHead>タイトル</TableHead>
                 <TableHead>バージョン</TableHead>
                 <TableHead>作成日</TableHead>
@@ -171,6 +171,9 @@ function ProductList({ items, title }: ProductFilter & { items: Product[]; title
             <TableBody>
               {items.map((item: Product, index: number) => (
                 <TableRow key={index}>
+                  <TableCell>
+                    <Image src={item.icon_url} alt="" width={24} height={24} className="h-auto w-6 min-w-6 rounded object-contain" />
+                  </TableCell>
                   <TableCell>
                     <div className="truncate w-50">
                       <Link href={`/products/${item.repo_name}`} className="hover:underline">
