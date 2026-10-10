@@ -35,6 +35,7 @@ export function ProjectThumbnail({ name }: { name: string }) {
       alt={name}
       width={1200}
       height={600}
+      loading="eager"
       unoptimized
       className="aspect-[2/1] w-full object-cover"
       onError={() => setFailedSrc(src)}
