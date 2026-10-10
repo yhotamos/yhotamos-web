@@ -6,7 +6,7 @@ export function BlogToc({ items }: { items: TocItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <aside className="h-fit rounded-[4px] bg-white dark:bg-secondary lg:sticky lg:top-20">
+    <aside className="h-fit rounded-[4px] bg-white dark:bg-secondary">
       <details className="group lg:hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium [&::-webkit-details-marker]:hidden">
           目次

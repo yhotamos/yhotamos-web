@@ -42,7 +42,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   ];
 
   return (
-    <main className="max-w-7xl mx-auto p-5 ">
+    <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} className="mb-5" />
       <BlogHeader data={blogBody.data as Blog} />
       <BlogBody blogId={blogId} body={blogBody}>
@@ -54,7 +54,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
 const BlogHeader: React.FC<{ data: Blog }> = ({ data }) => {
   return (
-    <div className="w-full pt-8 pb-4 px-2 md:px-20">
+    <div className="w-full px-2 pt-2 pb-5 md:px-6">
       {data.thumbnail && <Image src={data.thumbnail} alt={data.title} width={1200} height={630} unoptimized className="w-full h-auto mb-5" />}
       <div id="title" className="text-3xl font-bold mb-5">
         {data.title}
