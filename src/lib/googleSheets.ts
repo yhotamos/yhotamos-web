@@ -174,7 +174,7 @@ export const getProductItems = cache(async () => {
       created_at: item[34],
       updated_at: item[35],
       provider: item[36],
-      tags: item[37].split(","),
+      tags: (item[37] ?? "").split(",").filter(Boolean),
     };
   });
 
@@ -263,7 +263,7 @@ export const getQiitaList = cache(async () => {
       bookmarks: item[5],
       updateDate: item[6],
       publishDate: item[7],
-      tags: item[8].split(","),
+      tags: (item[8] ?? "").split(",").filter(Boolean),
     };
   });
 
