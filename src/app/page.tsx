@@ -35,7 +35,7 @@ export default async function Home() {
         </div>
       </div>
       <Hr />
-      <ProductGrid items={items} title="Chrome 拡張機能" sort={"users-desc"} limit={8} isOpen={true} />
+      <ProductGrid items={items} title="Products" sort="users-desc" limit={8} expandable />
       <Hr />
       <div className="space-y-3 my-3">
         <div className="flex items-center justify-between">
