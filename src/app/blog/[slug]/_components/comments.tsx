@@ -1,7 +1,9 @@
 "use client";
 
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+const subscribeToHydration = () => () => undefined;
 
 type Comment = {
   blogId: string;
@@ -18,6 +20,8 @@ export const BlogComments: React.FC<{ blogId: string; className?: string; onCoun
   const [input, setInput] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  // iOS Chromeが初期HTMLの入力欄に属性を追加するため、フォームはhydration後に描画する
+  const hasHydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
 
   // コメント取得
   useEffect(() => {
@@ -79,7 +83,7 @@ export const BlogComments: React.FC<{ blogId: string; className?: string; onCoun
         {successMsg && <div className="min-w-50 text-emerald-700 bg-emerald-200  p-2 rounded-lg text-xs">{successMsg}</div>}
       </div>
       {/* コメント入力フォーム */}
-      <form id="comment-form" onSubmit={handleSubmit} className="mb-4 scroll-mt-[120px] ">
+      {hasHydrated && <form id="comment-form" onSubmit={handleSubmit} className="mb-4 scroll-mt-[120px] ">
         <input
           type="text"
           placeholder="ニックネーム"
@@ -97,7 +101,7 @@ export const BlogComments: React.FC<{ blogId: string; className?: string; onCoun
         <button type="submit" className=" px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition">
           投稿する
         </button>
-      </form>
+      </form>}
 
       {/* コメント一覧 */}
       <div className="space-y-3">
