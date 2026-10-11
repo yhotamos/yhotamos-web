@@ -6,6 +6,7 @@ import { iconMap } from "@/config/iconMap";
 import clsx from "clsx";
 import { shareHatena, shareX } from "@/utils/share";
 import { copyText } from "@/utils/copyText";
+import { Button } from "@/components/ui/button";
 import type { Blog } from "@/types/blog";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -16,6 +17,8 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; commentCount: n
 
   const title: string = data.title || "";
   const tags = data.tags || [];
+  const prompt = `以下の記事を日本語で要約し、重要なポイントを説明してください。記事を取得できない場合は、その旨を伝えてください。\n\n${title}\nhttps://yhotamos.com/blog/${encodeURIComponent(blogId)}`;
+  const chatGptUrl = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
 
   useEffect(() => {
     let active = true;
@@ -58,29 +61,38 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; commentCount: n
   const toolbar = (
     <div className={clsx("flex flex-wrap items-center justify-between gap-2 py-1 text-base", className)}>
       <div className="flex items-center gap-1">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={handleLike}
           aria-label="いいねする"
           aria-pressed={isLiked}
           title="いいねする"
-          className={clsx("inline-flex h-11 items-center gap-2 rounded px-3 hover:bg-muted [&_svg]:text-xl", isLiked && "text-pink-500")}
+          className={clsx("h-11 rounded px-3 text-base hover:bg-muted [&_svg]:text-xl cursor-pointer", isLiked && "text-pink-500 hover:text-pink-500")}
         >
-          <FontAwesomeIcon icon={iconMap["faThumbsUp"]} aria-hidden="true" />
+          <FontAwesomeIcon icon={iconMap["faThumbsUp"]} className="size-5" aria-hidden="true" />
           <span>{likes}</span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => moveCommentForm("#comment-form")}
           aria-label="コメントする"
           title="コメントする"
-          className="inline-flex h-11 items-center gap-2 rounded px-3 hover:bg-muted [&_svg]:text-xl"
+          className="h-11 rounded px-3 text-base hover:bg-muted [&_svg]:text-xl cursor-pointer"
         >
-          <FontAwesomeIcon icon={iconMap["faCommentDots"]} aria-hidden="true" />
+          <FontAwesomeIcon icon={iconMap["faCommentDots"]} className="size-5" aria-hidden="true" />
           <span>{commentCount}</span>
-        </button>
+        </Button>
       </div>
-      <BlogShare title={title} tags={tags} />
+      <div className="flex items-center gap-1">
+        <BlogShare title={title} tags={tags} />
+        <Button asChild variant="ghost" size="icon" className="size-11 rounded hover:bg-muted">
+          <a href={chatGptUrl} target="_blank" rel="noopener noreferrer" aria-label="ChatGPTに聞く" title="記事についてChatGPTに聞く">
+            <Image src="/imgs/chatgpt.svg" alt="" width={20} height={20} className="dark:invert" />
+          </a>
+        </Button>
+      </div>
     </div>
   );
 
@@ -88,7 +100,7 @@ export const BlogActions: React.FC<{ blogId: string; data: Blog; commentCount: n
     <>
       {toolbar}
       <div className="pointer-events-none fixed inset-x-0 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-7xl justify-end px-5">
-        <div className="pointer-events-auto max-w-full rounded-full border bg-background px-2 shadow-sm [&>div]:text-sm [&_button]:h-9 [&_button]:min-w-9 [&_button]:w-auto [&_button]:px-2 [&_button_svg]:text-lg [&_img]:w-5 [&_img]:h-auto">
+        <div className="pointer-events-auto max-w-full rounded-full border bg-background px-2 shadow-sm [&>div]:text-sm [&_a]:size-9 [&_button]:h-9 [&_button]:min-w-9 [&_button]:w-auto [&_button]:px-2 [&_button]:text-sm [&_button_svg]:size-[1em] [&_button_svg]:text-lg [&_img]:w-5 [&_img]:h-auto">
           {toolbar}
         </div>
       </div>
@@ -112,26 +124,28 @@ const BlogShare: React.FC<{ title: string; tags: string[] }> = ({ title, tags })
 
   return (
     <div className="flex items-center gap-1">
-      <button type="button" onClick={handleCopyUrl} aria-label="URLをコピー" title="URLをコピー" className="inline-flex size-11 items-center justify-center rounded hover:bg-muted [&_svg]:text-xl">
-        <FontAwesomeIcon icon={faLink} style={{ fontSize: 16 }} aria-hidden="true" />
-      </button>
+      <Button type="button" variant="ghost" size="icon" onClick={handleCopyUrl} aria-label="URLをコピー" title="URLをコピー" className="size-11 rounded hover:bg-muted cursor-pointer">
+        <FontAwesomeIcon icon={faLink} className="size-4" style={{ fontSize: 16 }} aria-hidden="true" />
+      </Button>
       {share.map((item, index) =>
         item.type === "fontAwesome" ? (
-          <button key={index} type="button" onClick={item.onClick} aria-label={item.title} title={item.title} className="inline-flex size-11 items-center justify-center rounded hover:bg-muted [&_svg]:text-xl">
-            <FontAwesomeIcon icon={iconMap[item.icon]} aria-hidden="true" />
-          </button>
+          <Button key={index} type="button" variant="ghost" size="icon" onClick={item.onClick} aria-label={item.title} title={item.title} className="size-11 rounded hover:bg-muted [&_svg]:text-xl cursor-pointer">
+            <FontAwesomeIcon icon={iconMap[item.icon]} className="size-5" aria-hidden="true" />
+          </Button>
         ) : (
-          <button
+          <Button
             key={index}
             type="button"
-            className="hatena-bookmark-button inline-flex size-11 items-center justify-center rounded hover:bg-muted"
+            variant="ghost"
+            size="icon"
+            className="hatena-bookmark-button size-11 rounded hover:bg-muted cursor-pointer"
             data-hatena-bookmark-layout="touch-counter"
             title={item.title}
             aria-label={item.title}
             onClick={item.onClick}
           >
             <Image src="https://b.st-hatena.com/images/v4/public/entry-button/button-only@2x.png" alt={item.title} width={24} height={24} unoptimized />
-          </button>
+          </Button>
         ),
       )}
     </div>
