@@ -15,6 +15,7 @@ import { ProductGrid } from "@/components/layout/product";
 import { filterProducts, type ProductFilter } from "@/utils/filterProducts";
 import { ProductRows, ProductThumbnails } from "./views";
 import { ChevronDown } from "lucide-react";
+import { PageHero } from "@/components/layout/page-hero";
 
 export { ProductPage };
 
@@ -56,7 +57,7 @@ function ProductPageInner({ items, categories, categoryCounts }: { items?: Produ
 
   return (
     <div className="max-w-full my-3">
-      <ProductHero className="mb-6" title={"Products"} description="開発したツールやWEBサービスなどをまとめています．" />
+      <PageHero className="mb-6" title="Products" description="開発したツールやWEBサービスなどをまとめています．" />
 
       <div className="flex flex-col gap-5">
         <CategoryFilter heading="カテゴリから絞り込む" categories={categories} selectedCategories={selectedCategories} onCategoryClick={handleCategory} counts={categoryCounts} />
@@ -71,15 +72,6 @@ function ProductPage(props: Parameters<typeof ProductPageInner>[0]) {
     <Suspense fallback={null}>
       <ProductPageInner {...props} />
     </Suspense>
-  );
-}
-
-export function ProductHero({ title, description, className = "" }: { title: string; description: string; className?: string }) {
-  return (
-    <section className={`${className} text-center space-y-4`}>
-      <h1 className="text-3xl font-bold">{title}</h1>
-      <p className="text-secondary-foreground/70 text-sm md:text-base">{description}</p>
-    </section>
   );
 }
 

@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Icon } from "@radix-ui/react-select";
 import { supportItems } from "@/config/supportItem";
 import type { SupportItem } from "@/types/support";
+import { PageHero } from "@/components/layout/page-hero";
 
 const pathnames: BreadcrumbsProps["paths"] = [{ name: "Support", href: "/support" }];
 
@@ -14,15 +15,18 @@ export const metadata: Metadata = {
 };
 
 export default function Support() {
+  const enabledItems = supportItems.filter((item) => item.enabled !== false);
+  const description = `${enabledItems.map((item) => item.title).join("，")}にアクセスできます．必要なトピックを選んでください．`;
+
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
       <div className="space-y-12">
-        <SupportHero />
+        <PageHero title="サポートセンター" description={description} />
 
         {/* 概要カード（すぐに各詳細ページへ遷移可能） */}
         <SectionGrid>
-          {supportItems.filter((i) => i.enabled !== false).map((item, index) => (
+          {enabledItems.map((item, index) => (
             <SupportCard key={index} {...item} />
           ))}
         </SectionGrid>
@@ -30,23 +34,6 @@ export default function Support() {
     </main>
   );
 }
-
-const SupportHero: React.FC = () => {
-  return (
-    <header className="text-center space-y-4">
-      <h1 className="text-3xl font-bold tracking-tight">サポートセンター</h1>
-      <p className="text-secondary-foreground/70 text-sm md:text-base">
-        {supportItems.filter((i) => i.enabled !== false).map((item, index) => (
-          <span key={index}>
-            {item.title}
-            {index < supportItems.filter((i) => i.enabled !== false).length - 1 ? "，" : ""}
-          </span>
-        ))}
-        にアクセスできます．必要なトピックを選んでください．
-      </p>
-    </header>
-  );
-};
 
 const SectionGrid = ({ children }: { children: React.ReactNode }) => <div className="grid gap-5 md:gap-10 sm:grid-cols-2">{children}</div>;
 

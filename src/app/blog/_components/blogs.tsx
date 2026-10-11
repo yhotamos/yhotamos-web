@@ -13,6 +13,7 @@ import { Blog, Changelog, QiitaBlog } from "@/types/blog";
 import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
 import { BlogSectionHeader } from "./section-header";
 import { BlogCards } from "@/components/layout/blog-cards";
+import { PageHero } from "@/components/layout/page-hero";
 import { BlogList } from "./list";
 import { BlogArchive } from "./archive";
 import { CategoryFilter } from "@/components/ui/category-filter";
@@ -142,7 +143,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
 
   return (
     <div className={`${className} w-full min-h-screen`}>
-      <BlogHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
+      <PageHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
       <Tabs defaultValue={tab} value={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">
@@ -223,15 +224,6 @@ export function Blogs(props: Parameters<typeof BlogsInner>[0]) {
     <Suspense fallback={null}>
       <BlogsInner {...props} />
     </Suspense>
-  );
-}
-
-export function BlogHero({ title, description, className = "" }: { title: string; description: string; className?: string }) {
-  return (
-    <section className={`${className} text-center`}>
-      <h1 className="text-2xl font-bold mb-2">{title}</h1>
-      <p className="text-secondary-foreground/70">{description}</p>
-    </section>
   );
 }
 

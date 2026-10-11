@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { TabsContent } from "@/components/ui/tabs";
 import { ProjectRepositoryTabs } from "./repository-tabs";
 import { ProjectPickup } from "@/components/layout/project-pickup";
+import { PageHero } from "@/components/layout/page-hero";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBook, faCodeFork, faFlask, faHandshake, faStar } from "@fortawesome/free-solid-svg-icons";
@@ -21,7 +22,7 @@ interface ProjectPageProps {
 export function ProjectPage({ title, repos, featuredRepos, issues, pullRequests }: ProjectPageProps) {
   return (
     <div className="w-full space-y-10">
-      <ProjectHero title={title} className="" />
+      <PageHero title={title} description="現在進行中のプロジェクトや実験的なアイデアを紹介します．" />
       <ProjectPickup repos={featuredRepos} />
       <Hr />
       <div className="grid grid-cols-1 items-start gap-x-3 gap-y-6 md:grid-cols-2">
@@ -34,17 +35,6 @@ export function ProjectPage({ title, repos, featuredRepos, issues, pullRequests 
       <ProjectRepos repos={repos} />
       <ProjectFooter />
     </div>
-  );
-}
-
-export function ProjectHero({ title, className = "" }: { title: string; description?: string; className?: string }) {
-  return (
-    <section className={cn(className, "text-center space-y-4")}>
-      <h1 className="text-3xl font-bold">{title}</h1>
-      <div>
-        <p className="text-muted-foreground text-sm md:text-base">現在進行中のプロジェクトや実験的なアイデアを紹介します．</p>
-      </div>
-    </section>
   );
 }
 
