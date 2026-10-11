@@ -6,8 +6,8 @@ import { FormattedDate, DiffDate } from "@/components/ui/formatted-date";
 import { cn } from "@/lib/utils";
 import { Blog } from "@/types/blog";
 
-export function BlogCards({ title, className, blogs, currentTab }: { title?: string; className?: string; blogs?: Blog[]; currentTab?: string }) {
-  const gridClass = currentTab === "all" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4";
+export function BlogCards({ title, className, blogs, currentTab, columns = 3 }: { title?: string; className?: string; blogs?: Blog[]; currentTab?: string; columns?: 2 | 3 }) {
+  const gridClass = cn("grid grid-cols-1 md:grid-cols-2 gap-4", currentTab !== "all" && columns === 3 && "lg:grid-cols-3");
 
   return (
     <div className={cn(className)}>

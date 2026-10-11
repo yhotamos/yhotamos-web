@@ -176,7 +176,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
                 onYearChange={handleYearChange}
                 onMonthChange={handleMonthSelectChange}
               />
-              <BlogCards blogs={filteredBlogs} />
+              <BlogCards blogs={filteredBlogs} columns={2} />
             </div>
             <div className="lg:w-96 shrink-0 space-y-4">
               <div className="border border-gray-200 dark:border-secondary-foreground/30 rounded-lg p-4">
