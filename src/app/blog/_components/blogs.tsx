@@ -143,7 +143,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
 
   return (
     <div className={`${className} w-full min-h-screen`}>
-      <PageHero className="mb-6" title={title || "ブログ記事"} description="最新のガジェットレビューや技術記事をお届けします．" />
+      <PageHero className="mb-6" title={title || "Blog"} description="技術記事や開発の記録をまとめています．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
       <Tabs defaultValue={tab} value={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">
