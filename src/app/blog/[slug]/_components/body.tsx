@@ -19,7 +19,7 @@ export function BlogBody({ blogId, body, children }: { blogId: string; body: Blo
         <BlogToc items={tocItems} />
       </div>
       <div className={clsx(
-        "group/article w-full min-w-0 max-w-none rounded-[4px] bg-white p-2 dark:bg-secondary md:px-6 md:py-3 prose prose-sm prose-neutral dark:prose-invert",
+        "group/article -mx-5 w-auto min-w-0 max-w-none rounded-[4px] bg-white px-6 py-2 dark:bg-secondary md:mx-0 md:w-full md:px-6 md:py-3 prose prose-sm prose-neutral dark:prose-invert",
         "md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20 [&_h3]:scroll-mt-20",
         "lg:col-span-2 lg:col-start-1 lg:row-start-1"
       )}>
