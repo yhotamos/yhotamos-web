@@ -38,11 +38,11 @@ export default async function Home() {
       <ProductGrid items={items} title="Products" sort="users-desc" limit={8} expandable />
       <Hr />
       <div className="space-y-3 my-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">最新の記事</h2>
-          <Link href="/blog" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">ブログを見る ＞</Link>
-        </div>
+        <h2 className="text-lg font-bold">最新の記事</h2>
         <BlogCards blogs={recentBlogs} />
+        <div className="mt-4 text-right">
+          <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground hover:underline">ブログを見る ＞</Link>
+        </div>
       </div>
       <Hr />
       <ProjectPickup open={true} repos={repos} />
