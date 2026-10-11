@@ -13,6 +13,12 @@
   line-height: 1.7;
 }
 
+.markdown img[src^="https://img.shields.io/"] {
+  display: inline-block;
+  margin: 0;
+  vertical-align: middle;
+}
+
 /* プロダクトの明るいコード背景では，読みやすい濃い色を使う */
 :global(html:not(.dark)) .markdown pre[data-code-theme="adaptive"] {
   --code-comment: #57606a;
