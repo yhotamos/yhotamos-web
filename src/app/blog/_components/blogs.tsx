@@ -18,7 +18,16 @@ import { BlogList } from "./list";
 import { BlogArchive } from "./archive";
 import { CategoryFilter } from "@/components/ui/category-filter";
 
-function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: { title?: string; className?: string; qittaBlogs?: QiitaBlog[]; blogs?: Blog[]; blogTags?: string[]; changelogs?: Changelog[] }) {
+interface BlogsProps {
+  title: string;
+  className?: string;
+  qittaBlogs?: QiitaBlog[];
+  blogs?: Blog[];
+  blogTags?: string[];
+  changelogs?: Changelog[];
+}
+
+function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: BlogsProps) {
   const trigger =
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
@@ -143,7 +152,7 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
 
   return (
     <div className={`${className} w-full min-h-screen`}>
-      <PageHero className="mb-6" title={title || "Blog"} description="技術記事や開発の記録をまとめています．" />
+      <PageHero className="mb-6" title={title} description="技術記事や開発の記録をまとめています．" />
       {/* <BlogSearch className="mb-5" tags={blogTags} /> */}
       <Tabs defaultValue={tab} value={tab} className={`${className} flex flex-col`} onValueChange={(value) => handleTabChange(value)}>
         <TabsList className="flex flex-wrap gap-4 h-auto bg-secondary dark:bg-background mb-3">

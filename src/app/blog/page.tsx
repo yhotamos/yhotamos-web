@@ -22,7 +22,7 @@ export default async function Blog() {
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <Blogs qittaBlogs={qittaBlogs} blogs={blogData} blogTags={blogTags} changelogs={changelogs} />
+      <Blogs title={pathnames[0].name} qittaBlogs={qittaBlogs} blogs={blogData} blogTags={blogTags} changelogs={changelogs} />
     </main>
   );
 }
