@@ -16,11 +16,40 @@ type CategoryFilterProps = {
 
 const collapsedMaxHeight = 94;
 
+function CategoryBadge({ category, count, isActive, onClick }: {
+  category: string;
+  count?: number;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Badge
+      asChild
+      variant="outline"
+      className={cn(
+        "cursor-pointer rounded-full border-0 px-2.5 py-1 text-[13px] leading-4",
+        "bg-gray-200 text-black hover:bg-gray-300 dark:bg-secondary dark:text-white dark:hover:bg-muted",
+        isActive && "bg-violet-500 text-white hover:bg-violet-600 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-600"
+      )}
+    >
+      <button type="button" aria-pressed={isActive} onClick={onClick}>
+        {category}
+        {count !== undefined && <span className="tabular-nums opacity-60">{count}</span>}
+        {isActive && <span aria-hidden="true">✕</span>}
+      </button>
+    </Badge>
+  );
+}
+
 export function CategoryFilter({ heading, categories, selectedCategories, onCategoryClick, counts }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const listId = useId();
+  const orderedCategories = [
+    ...categories.filter((category) => selectedCategories.includes(category)),
+    ...categories.filter((category) => !selectedCategories.includes(category)),
+  ];
 
   useEffect(() => {
     const content = contentRef.current;
@@ -39,27 +68,15 @@ export function CategoryFilter({ heading, categories, selectedCategories, onCate
       <div className="flex items-center justify-between gap-2">
         <div id={listId} className={cn("min-w-0 flex-1", !isOpen && "overflow-auto")} style={{ maxHeight: isOpen ? undefined : collapsedMaxHeight }}>
           <div ref={contentRef} className="flex flex-wrap gap-2">
-            {categories.map((category) => {
-              const isActive = selectedCategories.includes(category);
-              return (
-                <Badge
-                  key={category}
-                  asChild
-                  variant="outline"
-                  className={cn(
-                    "cursor-pointer rounded-full border-0 px-2.5 py-1 text-[13px] leading-4",
-                    "bg-gray-200 text-black hover:bg-gray-300 dark:bg-secondary dark:text-white dark:hover:bg-muted",
-                    isActive && "bg-violet-500 text-white hover:bg-violet-600 dark:bg-violet-500 dark:text-white dark:hover:bg-violet-600"
-                  )}
-                >
-                  <button type="button" aria-pressed={isActive} onClick={() => onCategoryClick(category)}>
-                    {category}
-                    {counts?.[category] !== undefined && <span className="tabular-nums opacity-60">{counts[category]}</span>}
-                    {isActive && <span aria-hidden="true">✕</span>}
-                  </button>
-                </Badge>
-              );
-            })}
+            {orderedCategories.map((category) => (
+              <CategoryBadge
+                key={category}
+                category={category}
+                count={counts?.[category]}
+                isActive={selectedCategories.includes(category)}
+                onClick={() => onCategoryClick(category)}
+              />
+            ))}
             {categories.length === 0 && <p className="text-sm text-muted-foreground">カテゴリがありません</p>}
           </div>
         </div>
