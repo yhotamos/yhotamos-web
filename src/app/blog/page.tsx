@@ -14,10 +14,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Blog() {
-  const qittaBlogs = await getQiitaList();
-  const blogData = getBlogData();
-  const blogTags = getAllBlogTags();
-  const changelogs = getChangelog();
+  const [qittaBlogs, blogData, blogTags, changelogs] = await Promise.all([
+    getQiitaList(),
+    getBlogData(),
+    getAllBlogTags(),
+    getChangelog(),
+  ]);
 
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">

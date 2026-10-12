@@ -10,14 +10,14 @@ import Link from "next/link";
 import { getBlogData } from "@/lib/getBlog";
 
 export async function generateStaticParams() {
-  const blogs = getBlogData() ?? [];
-  return blogs.map((blog) => ({ slug: blog.id }));
+  const blogs = await getBlogData();
+  return blogs.map((blog) => ({ slug: blog.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const slug = await params;
   const blogId = decodeURIComponent(slug.slug);
-  const blogBody = getBlogBody(blogId);
+  const blogBody = await getBlogBody(blogId);
 
   return {
     title: blogBody?.data.title || "Blog",
@@ -30,7 +30,7 @@ export const revalidate = 60;
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const slug = await params;
   const blogId = decodeURIComponent(slug.slug);
-  const blogBody = getBlogBody(blogId);
+  const blogBody = await getBlogBody(blogId);
   // console.log("blogId", blogBody);
   if (!blogBody) {
     return <NotFoundPage className={`min-h-screen mt-20 text-center font-bold`} backTop={true} />;
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const pathnames: BreadcrumbsProps["paths"] = [
     { name: "Blog", href: "/blog" },
-    { name: blogBody.data.title, href: `/blog/${blogBody.data.title}` },
+    { name: blogBody.data.title, href: `/blog/${blogBody.data.slug}` },
   ];
 
   return (
@@ -61,7 +61,7 @@ const BlogHeader: React.FC<{ data: Blog }> = ({ data }) => {
       </div>
       <div className="text-sm text-secondary-foreground/70">
         投稿日
-        <FormattedDate isoDate={data.date} />・<DiffDate isoDate={data.date} />
+        <FormattedDate isoDate={data.publishedAt} />・<DiffDate isoDate={data.publishedAt} />
       </div>
       <div className="flex flex-wrap justify-start items-center gap-2 mt-5">
         {data.type === "dev" && <div className="text-sm text-secondary-foreground/70 pt-1">開発者向け ・</div>}

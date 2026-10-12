@@ -18,11 +18,11 @@ export const revalidate = 60;
 
 export default async function Home() {
   const urls: BreadcrumbsProps["paths"] = [];
-  const [items, repos] = await Promise.all([
+  const [items, repos, blogs] = await Promise.all([
     getProductItems().catch(() => []),
     getFeaturedRepos().catch(() => []),
+    getBlogData(),
   ]);
-  const blogs = getBlogData();
   const recentBlogs = filterItems({ items: blogs, tags: [], sort: "blog-new", limit: 6 });
 
   return (

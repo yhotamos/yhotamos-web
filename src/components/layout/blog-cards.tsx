@@ -15,7 +15,7 @@ export function BlogCards({ title, className, blogs, currentTab, columns = 3 }: 
       <div className={gridClass}>
         {blogs?.map((blog, index) => (
           <Link
-            href={"/blog/" + blog.id}
+            href={"/blog/" + blog.slug}
             key={index}
             className="block bg-background dark:bg-secondary border rounded-lg overflow-hidden shadow hover:shadow-sm transition"
           >
@@ -25,7 +25,7 @@ export function BlogCards({ title, className, blogs, currentTab, columns = 3 }: 
               {blog.excerpt && <p className="text-sm text-secondary-foreground/70 mb-2 line-clamp-3">{blog.excerpt}</p>}
               <div>
                 <p className="text-sm text-secondary-foreground/70 mb-2">
-                  <FormattedDate isoDate={blog.date} isTime={false} /> ・ <DiffDate isoDate={blog.date} />
+                  <FormattedDate isoDate={blog.publishedAt} isTime={false} /> ・ <DiffDate isoDate={blog.publishedAt} />
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {blog.tags?.map((tag: string) => (

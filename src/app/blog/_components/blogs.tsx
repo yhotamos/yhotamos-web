@@ -49,17 +49,17 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
   });
 
   const availableYears = useMemo(() => {
-    const years = new Set<number>(blogs.map((b) => new Date(b.date).getFullYear()));
+    const years = new Set<number>(blogs.map((b) => new Date(b.publishedAt).getFullYear()));
     return [...years].sort((a, b) => b - a);
   }, [blogs]);
 
   const filteredBlogs = useMemo(() => {
     let result = filterItems({ items: blogs, tags: selectedTags, filter: "", sort: sort, order: sortOrder });
     if (selectedYear !== null) {
-      result = result.filter((b) => new Date(b.date).getFullYear() === selectedYear);
+      result = result.filter((b) => new Date(b.publishedAt).getFullYear() === selectedYear);
     }
     if (selectedMonth !== null) {
-      result = result.filter((b) => new Date(b.date).getMonth() + 1 === selectedMonth);
+      result = result.filter((b) => new Date(b.publishedAt).getMonth() + 1 === selectedMonth);
     }
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
@@ -285,7 +285,7 @@ function ChangeLog({ className, changelogs }: { className?: string; changelogs: 
             <div className="flex gap-3 my-2">
               <div>{log.title}</div>
               <div>・</div>
-              <FormattedDate isoDate={log.date} />
+              <FormattedDate isoDate={log.publishedAt} />
             </div>
             <div
               className={cn(

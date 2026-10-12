@@ -23,7 +23,7 @@ export function BlogArchive({
     const items = (blogs as Blog[]) ?? [];
     const yearMap = new Map<number, Map<number, number>>();
     items.forEach((blog) => {
-      const d = new Date(blog.date);
+      const d = new Date(blog.publishedAt);
       const year = d.getFullYear();
       const month = d.getMonth() + 1;
       if (!yearMap.has(year)) yearMap.set(year, new Map());

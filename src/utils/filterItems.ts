@@ -28,11 +28,11 @@ export function filterItems({ items, tags = [], filter, sort, order = "desc", li
   }
 
   if (sort === "blog-new") {
-    filtered = filtered.sort((a, b) => dir * ((new Date(b.date).getTime() || 0) - (new Date(a.date).getTime() || 0)));
+    filtered = filtered.sort((a, b) => dir * ((new Date(b.publishedAt).getTime() || 0) - (new Date(a.publishedAt).getTime() || 0)));
   }
 
   if (sort === "blog-update") {
-    filtered = filtered.sort((a, b) => dir * ((new Date(b.updateDate).getTime() || 0) - (new Date(a.updateDate).getTime() || 0)));
+    filtered = filtered.sort((a, b) => dir * ((new Date(b.updatedAt ?? b.publishedAt).getTime() || 0) - (new Date(a.updatedAt ?? a.publishedAt).getTime() || 0)));
   }
 
   if (sort === "blog-views") {

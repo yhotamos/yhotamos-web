@@ -1,73 +1,77 @@
-import fs from "fs";
-import path from "path";
+import path from "node:path";
 import matter from "gray-matter";
-import type { Blog, BlogBodyData, Changelog } from "@/types/blog";
+import type { Blog, BlogBodyData, BlogIndexEntry, Changelog } from "@/types/blog";
 
-const blogPathName = "content/blog";
-const blogIndexPath = path.join(blogPathName, "blogIndex.json");
-const blogDir = path.join(process.cwd(), blogPathName);
+const contentBaseUrl = "https://yhotamos.github.io/yhotamos-web-content/";
 
-export function getBlogData(): Blog[] {
-  if (!fs.existsSync(blogIndexPath)) {
-    return [];
+async function fetchContent(relativePath: string): Promise<string> {
+  const url = new URL(relativePath, contentBaseUrl);
+  const response = await fetch(url, { next: { revalidate: 60 } });
+  if (!response.ok) {
+    throw new Error(`記事データの取得に失敗しました: ${url} (${response.status})`);
   }
-  const blogIndex = fs.readFileSync(blogIndexPath, "utf-8");
-  const blogIndexJson: Blog[] = JSON.parse(blogIndex);
-
-  return blogIndexJson;
+  return response.text();
 }
 
-export function getBlogBody(id: string): BlogBodyData | undefined {
-  // blogIndexPathの中から、dirNameに合致するものを探す
-  const blogIndex = getBlogData();
-  const dirName = blogIndex.find((blog) => blog.id === id)?.dirName;
-  if (!dirName) {
+async function getBlogIndex(): Promise<BlogIndexEntry[]> {
+  const entries: BlogIndexEntry[] = JSON.parse(await fetchContent("blog/index.json"));
+  const slugs = new Set<string>();
+
+  for (const entry of entries) {
+    const { slug } = entry.meta;
+    if (typeof slug !== "string" || !slug.trim()) {
+      throw new Error(`記事のslugが未設定です: ${entry.path}`);
+    }
+    if (slugs.has(slug)) {
+      throw new Error(`記事のslugが重複しています: ${slug}`);
+    }
+    slugs.add(slug);
+  }
+
+  return entries.sort((a, b) => new Date(b.meta.publishedAt).getTime() - new Date(a.meta.publishedAt).getTime());
+}
+
+export async function getBlogData(): Promise<Blog[]> {
+  const entries = await getBlogIndex();
+  return entries.map((entry) => entry.meta);
+}
+
+export async function getBlogBody(slug: string): Promise<BlogBodyData | undefined> {
+  const entries = await getBlogIndex();
+  const blog = entries.find((entry) => entry.meta.slug === slug);
+  if (!blog) {
     return;
   }
-  const mdPath = path.join(blogDir, dirName, "index.md");
-  const source = fs.readFileSync(mdPath, "utf-8");
-  const { data, content } = matter(source);
-  return {
-    data: data as Blog,
-    content: content
-  };
+
+  const source = await fetchContent(`blog/${blog.path}`);
+  const { content } = matter(source);
+  return { data: blog.meta, content };
 }
 
-export function getAllBlogTags() {
-  const blogIndex = getBlogData();
-  const tags = blogIndex.map((blog) => blog.tags).flat();
-  const tagsSet = new Set(tags);
-  return [...tagsSet] as string[];
+export async function getAllBlogTags(): Promise<string[]> {
+  const blogs = await getBlogData();
+  return [...new Set(blogs.flatMap((blog) => blog.tags))];
 }
 
-const changelogPath = path.join(process.cwd(), "content/changelog");
+type ChangelogIndexEntry = {
+  meta: Omit<Changelog, "content" | "slug"> & { slug?: string };
+  path: string;
+};
 
-export function getChangelog(): Changelog[] {
-  if (!fs.existsSync(changelogPath)) {
-    return [];
-  }
-
-  const files = fs.readdirSync(changelogPath).filter((file) => file.endsWith(".md"));
-
-  const changelogs = files.map((file) => {
-    const filePath = path.join(changelogPath, file);
-    const fileContent = fs.readFileSync(filePath, "utf-8");
-    const { data, content } = matter(fileContent);
-
-    // ファイル名から日付とslugを抽出（例：20250719_タイトル.md）
-    const [date, ...titleParts]: string[] = file.replace(/\.md$/, "").split("_");
-    const slug = titleParts.join("_");
-    const newdate = new Date(`${date.slice(0, 4)}/${date.slice(4, 6)}/${date.slice(6, 8)}`);
+export async function getChangelog(): Promise<Changelog[]> {
+  const entries: ChangelogIndexEntry[] = JSON.parse(await fetchContent("changelog/index.json"));
+  const changelogs = await Promise.all(entries.map(async (entry) => {
+    const source = await fetchContent(`changelog/${entry.path}`);
+    const { content } = matter(source);
     return {
-      slug,
-      date: newdate.toLocaleString().split(" ")[0], // 日付をYYYY/MM/DD形式に変換
-      title: data.title || slug,
-      version: data.version || null,
-      tags: data.tags || [],
+      slug: entry.meta.slug || path.posix.basename(entry.path, ".md").replace(/^\d{8}_/, ""),
+      publishedAt: entry.meta.publishedAt,
+      title: entry.meta.title,
+      version: entry.meta.version || null,
+      tags: entry.meta.tags || [],
       content,
     };
-  });
+  }));
 
-  // 日付で降順ソート
-  return changelogs.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return changelogs.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 }

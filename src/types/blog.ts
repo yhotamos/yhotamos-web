@@ -1,21 +1,21 @@
 export type Blog = {
-  id: string;
   title: string
   slug: string
   thumbnail: string
   description: string
-  date: string
-  updateDate: string
+  publishedAt: string
+  updatedAt?: string
   type: string
   version: string
   category: string
   tags: string[]
-  dirName?: string
   excerpt?: string
   users?: number
   views?: number
   likes?: number
 }
+
+export type BlogIndexEntry = { meta: Blog; path: string };
 
 export type QiitaBlog = {
   id: string;
@@ -31,7 +31,7 @@ export type QiitaBlog = {
 
 export type Changelog = {
   slug: string;
-  date: string;
+  publishedAt: string;
   title: string;
   version: string | null;
   tags: string[];

@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate-blog-index && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "next typegen && tsc --noEmit",
-    "generate-blog-index": "node scripts/generateBlogIndex.js"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "type": "module",
   "dependencies": {
