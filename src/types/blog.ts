@@ -29,13 +29,4 @@ export type QiitaBlog = {
   tags: string[];
 };
 
-export type Changelog = {
-  slug: string;
-  publishedAt: string;
-  title: string;
-  version: string | null;
-  tags: string[];
-  content: string;
-};
-
 export type BlogBodyData = { data: Blog; content: string };

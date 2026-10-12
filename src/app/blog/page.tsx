@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Blogs } from "./_components/blogs";
 import { Breadcrumbs, BreadcrumbsProps } from "@/components/layout/breadcrumbs";
 import { getQiitaList } from "@/lib/googleSheets";
-import { getBlogData, getAllBlogTags, getChangelog } from "@/lib/getBlog";
+import { getBlogData, getAllBlogTags } from "@/lib/getBlog";
 
 export const revalidate = 60;
 
@@ -14,17 +14,16 @@ export const metadata: Metadata = {
 };
 
 export default async function Blog() {
-  const [qittaBlogs, blogData, blogTags, changelogs] = await Promise.all([
+  const [qittaBlogs, blogData, blogTags] = await Promise.all([
     getQiitaList(),
     getBlogData(),
     getAllBlogTags(),
-    getChangelog(),
   ]);
 
   return (
     <main className="max-w-7xl mx-auto p-5 grid gap-3">
       <Breadcrumbs paths={pathnames} />
-      <Blogs title={pathnames[0].name} qittaBlogs={qittaBlogs} blogs={blogData} blogTags={blogTags} changelogs={changelogs} />
+      <Blogs title={pathnames[0].name} qittaBlogs={qittaBlogs} blogs={blogData} blogTags={blogTags} />
     </main>
   );
 }

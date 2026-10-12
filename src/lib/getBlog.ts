@@ -1,6 +1,5 @@
-import path from "node:path";
 import matter from "gray-matter";
-import type { Blog, BlogBodyData, BlogIndexEntry, Changelog } from "@/types/blog";
+import type { Blog, BlogBodyData, BlogIndexEntry } from "@/types/blog";
 
 const contentBaseUrl = "https://yhotamos.github.io/yhotamos-web-content/";
 
@@ -51,27 +50,4 @@ export async function getBlogBody(slug: string): Promise<BlogBodyData | undefine
 export async function getAllBlogTags(): Promise<string[]> {
   const blogs = await getBlogData();
   return [...new Set(blogs.flatMap((blog) => blog.tags))];
-}
-
-type ChangelogIndexEntry = {
-  meta: Omit<Changelog, "content" | "slug"> & { slug?: string };
-  path: string;
-};
-
-export async function getChangelog(): Promise<Changelog[]> {
-  const entries: ChangelogIndexEntry[] = JSON.parse(await fetchContent("changelog/index.json"));
-  const changelogs = await Promise.all(entries.map(async (entry) => {
-    const source = await fetchContent(`changelog/${entry.path}`);
-    const { content } = matter(source);
-    return {
-      slug: entry.meta.slug || path.posix.basename(entry.path, ".md").replace(/^\d{8}_/, ""),
-      publishedAt: entry.meta.publishedAt,
-      title: entry.meta.title,
-      version: entry.meta.version || null,
-      tags: entry.meta.tags || [],
-      content,
-    };
-  }));
-
-  return changelogs.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 }

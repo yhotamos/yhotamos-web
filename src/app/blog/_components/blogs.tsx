@@ -1,21 +1,17 @@
 "use client";
 
-import { FormattedDate } from "@/components/ui/formatted-date";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { Suspense, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { filterItems, type SortType } from "@/utils/filterItems";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import { Blog, Changelog, QiitaBlog } from "@/types/blog";
+import { Blog, QiitaBlog } from "@/types/blog";
 import { useBlogDateFilter } from "@/hooks/useBlogDateFilter";
 import { BlogSectionHeader } from "./section-header";
 import { BlogCards } from "@/components/layout/blog-cards";
 import { PageHero } from "@/components/layout/page-hero";
 import { BlogList } from "./list";
-import { BlogArchive } from "./archive";
+import { BlogArchive, BlogArchiveDetail } from "./archive";
 import { CategoryFilter } from "@/components/ui/category-filter";
 
 interface BlogsProps {
@@ -24,10 +20,9 @@ interface BlogsProps {
   qittaBlogs?: QiitaBlog[];
   blogs?: Blog[];
   blogTags?: string[];
-  changelogs?: Changelog[];
 }
 
-function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [], changelogs = [] }: BlogsProps) {
+function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = [] }: BlogsProps) {
   const trigger =
     "relative !bg-secondary dark:!bg-black border-0 after:content-[''] after:block data-[state=active]:after:w-1/2 after:h-[2px] after:bg-black dark:after:bg-white after:absolute after:bottom-0";
   const triggerText = "!shadow-none text-secondary-foreground/50 data-[state=active]:text-secondary-foreground";
@@ -220,8 +215,10 @@ function BlogsInner({ title, className, qittaBlogs = [], blogs = [], blogTags = 
           />
           <BlogList className="bg-white dark:bg-background" qittaBlogs={filteredQiitaBlogs} />
         </TabsContent>
-        <TabsContent className="ms-3" value="update">
-          <Update changelogs={changelogs} blogs={blogs} onMonthClick={handleMonthClick} />
+        <TabsContent value="update">
+          <div className="border border-muted-foreground/50 rounded-lg p-4">
+            <BlogArchiveDetail blogs={blogs} onMonthClick={handleMonthClick} />
+          </div>
         </TabsContent>
       </Tabs>
     </div>
@@ -241,68 +238,6 @@ export function BlogSearch({ className = "" }: { tags: string[]; className?: str
     <div className={`${className}`}>
       {/* 検索バー */}
       <input type="text" placeholder="記事を検索" className="w-full border border-muted-foreground/50 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500" />
-    </div>
-  );
-}
-
-function Update({ changelogs, blogs, onMonthClick }: { changelogs: Changelog[]; blogs?: Blog[]; onMonthClick?: (year: number, month: number) => void }) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-2">本サイトの更新情報</div>
-        <ChangeLog changelogs={changelogs} />
-      </div>
-      <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-2">プロダクト・ツールの更新履歴</div>
-        <NotFound />
-      </div>
-      <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-2">ブログ・記事の追加・更新情報</div>
-        <BlogArchive blogs={blogs} onMonthClick={onMonthClick} />
-      </div>
-      <div className="border border-muted-foreground/50 rounded-lg p-4">
-        <div className="text-lg font-semibold mb-2">メディア・コミュニティ活動情報</div>
-        <NotFound />
-      </div>
-    </div>
-  );
-}
-
-function NotFound() {
-  return (
-    <div className="min-h-[200px] flex items-center justify-center">
-      <div className="text-lg">更新情報はありません</div>
-    </div>
-  );
-}
-
-function ChangeLog({ className, changelogs }: { className?: string; changelogs: Changelog[] }) {
-  return (
-    <div className={cn(className, "space-y-4")}>
-      {changelogs ? (
-        changelogs.map((log, index) => (
-          <div key={index}>
-            <div className="flex gap-3 my-2">
-              <div>{log.title}</div>
-              <div>・</div>
-              <FormattedDate isoDate={log.publishedAt} />
-            </div>
-            <div
-              className={cn(
-                "prose prose-sm prose-neutral dark:prose-invert ",
-                "[&_p]:mb-0 [&_ul]:mt-1 md:[&_ol]:text-base md:[&_p]:text-base [&_h1]:text-2xl [&_h1]:scroll-mt-20 [&_h2]:border-b [&_h2]:border-secondary-foreground/30 [&_h2]:scroll-mt-20",
-                "[&_h3]:scroll-mt-20",
-              )}
-            >
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                {log.content}
-              </ReactMarkdown>
-            </div>
-          </div>
-        ))
-      ) : (
-        <NotFound />
-      )}
     </div>
   );
 }
